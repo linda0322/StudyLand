@@ -27,6 +27,8 @@
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .font-iansui { font-family: 'Iansui', serif; }
         .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
+        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
         .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         canvas { touch-action: none; border-radius: 2.5rem; }
         #sync-status { transition: opacity 0.3s; opacity: 0; }
@@ -40,8 +42,8 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </a>
         <div id="sync-status" class="text-[10px] font-cubic text-blue-500 bg-white/50 px-3 py-1 rounded-full">雲端同步中...</div>
-        <div class="glass-panel px-4 py-2 rounded-full font-cubic text-xs text-slate-600">
-            探險家：<span id="display-username" class="text-blue-600">載入中</span>
+        <div class="glass-panel px-4 py-2 rounded-full font-cubic thin-border text-[10px] text-slate-500 tracking-wider">
+            探險家：<span id="display-username" class="text-sm font-cubic thin-border text-slate-700">載入中</span>
         </div>
     </nav>
 
