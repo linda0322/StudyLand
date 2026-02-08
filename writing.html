@@ -239,7 +239,7 @@
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbzJnjgmToB2wH9jgri2IP04l34k_cqLGad6EqKHjKVq6w3_bx7dxZz88c7nOZt_2oQZ/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxcN6vSqaukUo0q0LL-iUL2kNClC6J9A8P66JEf4T3KK4Y7PaBUP893SCk7AWE_hKlM/exec"; 
         
         const canvas = document.getElementById('drawing-canvas');
         const ctx = canvas.getContext('2d', { desynchronized: true });
@@ -297,7 +297,11 @@
             try {
                 const response = await fetch(GAS_URL, { 
                     method: "POST", 
-                    body: JSON.stringify({ action, userId, payload }) 
+                    body: JSON.stringify({ 
+                    appType: "WRITING",
+                    userId: user, 
+                    action: "load" 
+                     })
                 });
                 const result = await response.text();
                 syncStatus.classList.remove('show');
@@ -309,11 +313,25 @@
         }
 
         async function saveProgress() {
-            localStorage.setItem('writing_characters', JSON.stringify(characters));
-            localStorage.setItem('writing_current_index', currentIndex);
-            await cloudAction("save", { characters, currentIndex });
-        }
+            const user = localStorage.getItem('writing_username');
+            if (!user) return;
+            const requestData = {
+                appType: "WRITING",
+                userId: user,
+                action: "save",
+                payload: characters
+            };
 
+            try { await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(requestData)
+                    });
+                console.log("Progress saved");
+                } catch (e) {
+            console.error("Save failed", e);
+            }
+        }
         async function initApp() {
             const savedName = localStorage.getItem('writing_username');
             if (!savedName) {
