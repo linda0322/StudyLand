@@ -395,14 +395,13 @@
         galleryGrid.innerHTML = '';
     
         masterLibrary.forEach((item, index) => {
-            const itemCat = (item.categories && item.categories.length > 0) ? item.categories[0] : "未分類";
+            const itemCategories = item.categories || ["未分類"];
             
             const matchesChar = item.char.includes(searchTerm);
             const matchesEnglish = item.en ? String(item.en).toLowerCase().includes(searchTerm) : false;
             const matchesSearch = matchesChar || matchesEnglish;
-            // ------------------------------------
     
-            const matchesCategory = categoryTerm === 'all' || itemCat === categoryTerm;
+            const matchesCategory = categoryTerm === 'all' || itemCategories.includes(categoryTerm);
     
             if (matchesSearch && matchesCategory) {
                 const isCompleted = userCharacters[index]?.completed;
@@ -429,7 +428,7 @@
             }
         });
     }
-
+    
     function preventDefaults(e) { if (e.target === canvas) e.preventDefault(); }
     document.addEventListener('touchmove', preventDefaults, { passive: false });
     document.addEventListener('touchstart', preventDefaults, { passive: false });
