@@ -63,16 +63,16 @@
     <main class="w-full max-w-md flex flex-col items-center">
         <div class="w-full flex justify-between items-end mb-4 px-2">
             <div>
-                <div id="word-en" class="text-xl font-cubic text-slate-500 mb-1">Loading...</div>
-                <div class="glass-panel px-3 py-1 rounded-full font-cubic text-[12px] text-slate-500">
-                    筆劃：<span id="current-strokes" class="text-blue-500">0</span> / <span id="target-strokes">0</span>
+                <div class="text-[10px] text-slate-500 font-cubic thin-border uppercase tracking-wider">筆劃
+                    <span id="current-strokes" class="text-2xl font-cubic thin-border text-slate-700">0</span>
+                    <span id="target-strokes" class="text-xs px-2 py-0.5 bg-slate-100 font-cubic thin-border text-slate-400 rounded-full">/ 0</span>
                 </div>
             </div>
             <div class="flex gap-2">
-                <button id="undo-btn" class="p-2 glass-panel rounded-full text-slate-600 hover:bg-white transition-all active:scale-95 shadow-lg" title="還原">
+                <button id="undo-btn" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white transition-all active:scale-95 shadow-lg" title="還原">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
                 </button>
-                <button id="clear-btn" class="px-4 py-2 glass-panel rounded-full font-cubic thin-border text-xs text-slate-600 hover:bg-white transition-all active:scale-95 shadow-lg">重寫</button>
+                <button id="clear-btn" class="px-4 py-2 glass-panel rounded-full font-cubic thin-border text-xs text-slate-500 hover:bg-white transition-all active:scale-95 shadow-lg">重寫</button>
             </div>
         </div>
 
