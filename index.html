@@ -33,12 +33,7 @@
         .view-section { display: none; height: 100vh; width: 100vw; overflow: hidden; }
         .view-section.active { display: block; }
 
-        .modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-            display: none; align-items: center; justify-content: center; z-index: 1000;
-        }
-        .modal.active { display: flex; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
         .modal-overlay.active { display: flex; }
         
         .btn-hover { transition: transform 0.1s; }
@@ -50,49 +45,58 @@
             box-shadow: 0 8px 0 #2A60A2;
         }
 
-        .text-border {
-            -webkit-text-stroke: 1px currentColor;
-            paint-order: stroke fill;
-        }
+        .text-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
+        .name-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
+        .font-cubic { font-family: 'Cubic11', sans-serif; }
 
-        .name-border {
-            -webkit-text-stroke: 0.5px currentColor;
-            paint-order: stroke fill;
-        }
-      
+        /* 圖文配對專用樣式 */
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        .gallery-container { display: flex; flex-direction: column; gap: 16px; padding: 10px 4px 60px 4px; overflow-y: auto; height: 100%; }
+        .level-card { width: 100%; border-radius: 24px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: row; height: 120px; align-items: center; flex-shrink: 0; }
+        .level-card:active { transform: scale(0.98); }
+        .level-thumb { width: 80px; height: 100%; object-fit: contain; padding: 12px; margin-left: 10px; }
+        .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 8px; }
+        .card { aspect-ratio: 3/4; perspective: 1000px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 12px; }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card.matched { opacity: 0; pointer-events: none; transform: scale(0); transition: all 0.5s ease-out; }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 12px; padding: 4px; }
+        .card-back { background: #38C0FF; color: white; border: 2px solid white; z-index: 2; }
+        .card-front { background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%); color: #38C0FF; font-size: 14px; transform: rotateY(180deg); }
+        .card-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; padding: 6px; }
+        .star-active, .star-inactive { display: inline-block; width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; vertical-align: middle; }
+        .star-active { background-image: url('https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/star.svg'); }
+        .star-inactive { background-image: url('https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/star-empty.svg'); opacity: 0.5; }
+        #result-stars .star-active, #result-stars .star-inactive { width: 80px; height: 80px; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-blue-50">
 
-    <!-- 登入介面 -->
+    <!-- 1. 登入介面 -->
     <div id="login-view" class="modal-overlay">
         <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
             <img src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Robot.gif" alt="機器人" class="w-24 h-24 mb-6">
-            <h2 class="text-xl text-border text-slate-700 mb-4" style="font-family: 'Cubic11';">登入</h2>
-            <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl px-4 py-4 text-center name-border mb-6 outline-none focus:border-[#38C0FF]" style="font-family: 'Cubic11';">
-            <button id="login-btn" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl name-border shadow-lg shadow-[#38C0FF]/10" style="font-family: 'Cubic11';">進入遊戲</button>
+            <h2 class="text-xl text-border text-slate-700 mb-4 font-cubic">登入</h2>
+            <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl px-4 py-4 text-center name-border mb-6 outline-none focus:border-[#38C0FF] font-cubic">
+            <button id="login-btn" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl name-border shadow-lg shadow-[#38C0FF]/10 font-cubic">進入遊戲</button>
         </div>
     </div>
 
-    <!-- 2. 主選單 (Main Menu View) -->
+    <!-- 2. 主選單 -->
     <div id="menu-view" class="view-section flex flex-col items-center justify-center p-4">
         <div class="w-full max-w-2xl text-center">
             <div class="flex justify-between items-center mb-12 px-4">
-                <span id="welcome-text" class="text-2xl font-bold text-blue-800" style="font-family: 'Cubic11';">你好！</span>
+                <span id="welcome-text" class="text-2xl font-bold text-blue-800 font-cubic">你好！</span>
                 <button id="logout-btn" class="bg-red-400 text-white px-4 py-2 rounded-lg text-sm">登出</button>
             </div>
-            
-            <h2 class="text-4xl font-bold text-white drop-shadow-lg mb-12" style="font-family: 'Cubic11';">請選擇學習任務</h2>
-            
+            <h2 class="text-4xl font-bold text-white drop-shadow-lg mb-12 font-cubic">請選擇學習任務</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
-                <!-- App 1: 圖文配對 -->
                 <div onclick="launchApp('matching')" class="app-card p-6 rounded-3xl cursor-pointer btn-hover text-center">
                     <img src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Icon.png" class="w-24 h-24 mx-auto mb-4 rounded-2xl">
                     <h3 class="text-2xl font-bold text-blue-700">圖文配對</h3>
                     <p class="text-gray-600 mt-2">挑戰記憶力與認字能力</p>
                 </div>
-
-                <!-- App 2: 寫字雲 -->
                 <div onclick="launchApp('writing')" class="app-card p-6 rounded-3xl cursor-pointer btn-hover text-center">
                     <img src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Icon.png" class="w-24 h-24 mx-auto mb-4 rounded-2xl">
                     <h3 class="text-2xl font-bold text-green-700">寫字練習</h3>
@@ -102,32 +106,87 @@
         </div>
     </div>
 
-    <!-- 3. 圖文配對容器 (Matching App Container) -->
-    <div id="matching-container" class="view-section relative bg-white">
-        <button onclick="backToMenu()" class="absolute top-4 left-4 z-50 bg-white/80 p-2 rounded-full shadow">返回選單</button>
-        <iframe id="matching-frame" class="w-full h-full border-none"></iframe>
+    <!-- 3. 圖文配對整合視圖 -->
+    <div id="matching-view" class="view-section relative bg-[#38C0FF]/10 overflow-hidden">
+        <!-- 同步狀態 -->
+        <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 opacity-0 transition-opacity duration-300">
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <span id="sync-text" class="text-xs font-bold text-slate-600">同步中...</span>
+        </div>
+
+        <main class="w-full h-full flex flex-col p-4">
+            <!-- 頂部欄 -->
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <button onclick="backToMenu()" class="p-2 glass-panel rounded-full text-slate-500 shadow-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </button>
+                    <div id="game-timer-panel" class="hidden glass-panel px-4 py-1.5 rounded-full">
+                        <div id="timer" class="text-xl font-cubic text-slate-700">00:00</div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button id="reset-btn" class="hidden px-4 py-2 glass-panel text-slate-600 rounded-full font-cubic text-xs shadow-lg" onclick="resetGame()">重玩</button>
+                </div>
+            </div>
+
+            <!-- 關卡選擇視圖 -->
+            <div id="gallery-subview" class="flex-1 overflow-hidden">
+                <div class="gallery-container scrollbar-hide" id="levels-list"></div>
+            </div>
+
+            <!-- 遊戲進行視圖 -->
+            <div id="game-subview" class="hidden flex-1 flex flex-col overflow-hidden">
+                <div class="flex justify-center mb-4">
+                    <div class="glass-panel px-6 py-2 rounded-full shadow-lg flex items-center gap-3">
+                        <span id="level-title" class="text-sm font-cubic text-blue-500">關卡</span>
+                        <span id="match-count" class="text-2xl font-black text-slate-700">0</span>
+                        <span id="total-pairs" class="text-sm text-slate-400">/ 10</span>
+                    </div>
+                </div>
+                <div id="game-grid" class="game-grid scrollbar-hide flex-1"></div>
+            </div>
+        </main>
     </div>
 
-    <!-- 4. 寫字練習容器 (Writing App Container) -->
+    <!-- 寫字練習容器 -->
     <div id="writing-container" class="view-section relative bg-white">
-        <button onclick="backToMenu()" class="absolute top-4 left-4 z-50 bg-white/80 p-2 rounded-full shadow">返回選單</button>
+        <button onclick="backToMenu()" class="absolute top-4 left-4 z-50 bg-white/80 p-2 rounded-full shadow-lg text-blue-600 font-cubic flex items-center gap-2 px-4 py-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            返回選單
+        </button>
         <iframe id="writing-frame" class="w-full h-full border-none"></iframe>
+    </div>
+
+    <!-- 圖文配對結果彈窗 -->
+    <div id="result-modal" class="modal-overlay">
+        <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
+            <div id="result-stars" class="mb-4 flex gap-1"></div>
+            <p id="result-time" class="text-slate-500 mb-6 font-cubic">完成時間 00:00</p>
+            <button onclick="showGallery()" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl font-cubic name-border">返回關卡</button>
+        </div>
     </div>
 
     <script>
         const GAS_URL_MATCHING = "https://script.google.com/macros/s/AKfycbyw6uG_CLmIM_CMV5Tq3iWmj3kdjTD841DMZ95XEaeRIQPaxqolMmlVkYNm_cPmrMe_/exec";
         const GAS_URL_WRITING = "https://script.google.com/macros/s/AKfycbzJnjgmToB2wH9jgri2IP04l34k_cqLGad6EqKHjKVq6w3_bx7dxZz88c7nOZt_2oQZ/exec";
 
-        // 切換視圖功能
+        let levels = [
+            { id: 'wood1', name: '木部（一）', icon: '🪵', thumbnail: 'https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/apple-tree.svg', pairs: [ { zh: "桌子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2vVy6qufcVwEgmBn0lQ13bNjIWGDBjgtzw1yop_ppR6K3e-gsmmZxwG_NuPQRMFJRefcLf9T1FDvytx61TFpry9pxRWRfB7KEHfUqWgCiRrUe0Y_vCfzv7ew8kQ3p317yxwC0mHn1ThBK/s800/desk_book.png" }, { zh: "梨子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1Snh-pHbogpnOQcjKUC5WGLRnUM66zWNZlim5bNU__zoyvQcbiixj0o3Hnu_Z0Ilgn0K_A1ssNRb91Hndr51A0mEk4l-1cVU74mfRvRu6LqiJfdRRRUgWXV0V_fTo-i42FK7Dz32r96A/s800/fruit_chugoku_nashi.png" }, { zh: "書櫃", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgNl8O_TzTIG9QjkF9iqKDpSbx025gVVBczo2UrIOCs523HlrWjY_kl1sxPP4f_2i8d6vplw7vYyj2UgK4AYSNky7XqmJ48kcQzjKFT_hl1F4wktme_JhDVdC-CEQTjehIyI_YwaVW8fWSs/s800/tosyokan_book_tana.png" }, { zh: "辣椒", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7cvuaI7YyDn3yzdCJq4NNzB6E5sWpkylreOxATVAOpfHVfCqa_cQfF7xkxXuWTa4l2toYR6I1DGEHE0oKalvQs_6U3_HoA5pnL-AfKoVPReKU7J9LuzlwWnnmWfmUmWR1O0o8_hhlaZeE/s800/tougarashi_redpepper.png" }, { zh: "椰子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoVm07WHBlDyQdQR-RJDPzZQtEin3_O8_Rq_fr-zpJWdCR-iTwLs2wzfyyXLEz9cBPEa2VnwzRBfnUug3LgZnKZrEJzS54C_SwN255VI1vAbBNB6d3Abev18P5bESkdGYp0KRtlCPq7t__/s1600/fruit_coconut_half.png" }, { zh: "楊柳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSTVEIaZuK5nz__bdKOwr5l09s2PXKFO28zufU1yrLTHjAJ5ZZAGEurl-62AvOsDHUS4uW_Dpv4zBBlaOSDdUGKJh_T6RRKd1rvWI6g1PkY0VaFjncM1It00bM8BkxRZauOSU18X2bydnP/s800/tree_shidare_yanagi.png" }, { zh: "梅花", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSJTlGOxfgZwX_mYREF9n9cXHoz2BpPR4uK3GWb3AmHaMVq1gudeQ6TsmiaJ6FQz9HKbsIGhkB9x4KZu2VT5a19_Nv3OSA4HJ74Q9LWavfh758cffqFkUlnFn7VyrjFG2nDSKgBNP6xfuG/s800/flower_ume_kaika.png" }, { zh: "果實", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilqhbReGQT2DKIVUvjUTXWudlbIBvj_UNmv_uCQL3GR5E1Lum0zROzmgw7Z9CYWHoQj6PUoxOk_qb3tJqtUmXQJekcVwlIlhR7eIrz0c4oJlCTRBidOFm7DY3DyEopIHsXhXJjH-eYSx4/s800/fruits_basket.png" }, { zh: "盆栽", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjfA2a6DiWQXEiABf0fZsAjzB2b9WSKk0joJpEtFy_HwC0oD0f3fkrZrRhsk7-gyu_tWCk5F5iZf_9gYnHZ4qMquwq2QBwtTM2YKQLzpdolbAwwbfkKOVuelO4mwIcjILPX3WX2uZh5bwY/s800/flower_surfinia_safinia+.png" }, { zh: "欄杆", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuVlwp8VERYX2VAxcsFJZyo3oiMxmSa9gEaqG_IMhG79eqbgJ38opsq0QaFor-jKXx_M5v-WhxNrfI-wOEk65HkYfbqTFnE27jqleruBXcCJzyjpxdebR43C1JPImSHKPyhWehmAu9jrc/s800/ihan_saku_norikoeru.png" } ] },
+            { id: 'wood2', name: '木部（二）', icon: '🌴', thumbnail: 'https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/sakura-tree.svg', pairs: [ { zh: "木材", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjo7TN9LCVKD620pWFCnzjdMrgeaWfp6XOeOyqkVZL2qEUIo2Y_55ZztJlC74OGScUr4ceS57vOvZd_B22qzpVyJQSODFKJ_pwE4OkGSItMVnPyC_ONbED2v5mO1J5DrJIfIjqAoib7rvI/s800/wood_maruta.png" }, { zh: "大樹", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpqy4lZlKBo6VgFAwjEXkmYLA0uG3i0l8YhHJE4bu88kS58Mw3oZIAAtGG6y6fj48hz11yZoUv8MSUUyKgxb-R1NfbGTlw1oO3ZCGalEsHlUvc6OCSZT63c5rUnEUhsV-A_NXMrzfC5Zw/s800/tree_keyaki.png" }, { zh: "大樓", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi4obsY_J-Eyf4kgK-NrPChwY1-XVaWcWlrhQlsaWoxfJaVIc8QHC-4I8n8een7nMit4wUemj-cw5aGEIvGnp21ZProJxy24WThwqrjfDb-t6mrH4Y7G3F-IaNHivzj07ouNoRq1LFUuIsO/s800/building.png" }, { zh: "森林", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJcDbc8m-8N272agxxY_OxD_wx8Yd7ej-a1oLvbkqY_vV-pedJTucl31tMyUxFQ4_urlaCS9cxNa5J95wutPcwxWXrgQhYv508_7YVZ02XyU8fi6r8xGlC5GbrSCFRQqhgxwxbSZCmZJ8/s800/kouyou_tree.png" }, { zh: "花朵", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhZmfZ9R4cG9csWKYUA72GMevvbPvQjOCIxaZlL3DJlIOsso0B1A7eaenLZhOL2cPrezRvV6xFRjJkrP_eJc8A9cFiTAcO_pVqEI8tIyuB-a5z1CQ7Rn1RndCpgMMNYTA8OM7UdWTxkAS4/s800/flower_cosmos.png" }, { zh: "樹根", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj22-mR1GoYYRFLkhjiC3P7Ubl1scaswqHRx5UfwKXnYj_aKudfP8heEKZecGrC_sG8VzUJms3r_TUKs1Bl4NLGXn_hLja7yw-rQzxoE13rFercdoFkonFVDPYNXyLVLp4t3Lj-9TJwgXA9/s767/tree_root_green_nobg.png" }, { zh: "核桃", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj40KGGr2ZUkRXRD-8Nr15FJzo5gZa1Y2ubZnqpzpmqEtufLbyjZ6xmw8nZxNAAEVTcxAqefg7Jb-RxPpRNbPjiVV58vuLE_z0RhpLlcHitp33pEj5wVP1mpy989XWTjmoUBjXJw_Y17Kk/s800/nuts_kurumi.png" }, { zh: "大橋", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLBglHRopbkO7FvVspc7_dYliFAQVVmd4fgknUft-LqmFil1X_jWyFc1H9a_A69NyU-q13n_mPoII9ukkRPKomgbDWWGSV79satqxIfWOX8IgXzgmC5dDNKNiwDfE6TBpfoEyPbkL_C9V3/s800/landmark_golden_gate_bridge.png" }, { zh: "學校", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJa70lbnuP2paN7aManaWTWvISVAb1j3C1b2mXz-H_kLlstiE2rhwDQAT4WSqOZPxrYgZirbjUfFXDDaTPlPfsv6ucMk0untZu7zcH7UEGID4LnOvEOzIUOSTAo_-kvHcl49DnmUPfpqo/s1600/school.png" }, { zh: "椅子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZyrTkpr3LoNifVcXZ21kESg4o984PFyR-WVLrUyHUOoLXkBbjiNtl2OlRysoFgobwpJtYIKp17LnIkZP0B20ZKQu5JrM7_x-6hqgg_O2CLSs9HYxUuHoreuD_g97UtwicKViAveI9hhER/s800/gakkou_isu_chair.png" } ] }
+        ];
+
+        let currentLevel = null, flippedCards = [], matchedCount = 0, isProcessing = false, seconds = 0, timerInterval;
+
         function showView(viewId) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             const loginOverlay = document.getElementById('login-view');
             if (viewId === 'login-view') {
-                loginOverlay.classList.add('active'); // 登入頁
+                loginOverlay.classList.add('active');
             } else {
-                loginOverlay.classList.remove('active'); // 彈窗消失
+                loginOverlay.classList.remove('active');
                 const targetView = document.getElementById(viewId);
-                if (targetView) targetView.classList.add('active'); // 顯示目標頁面
+                if (targetView) targetView.classList.add('active');
             }
         }
 
@@ -141,7 +200,6 @@
             }
         }
 
-        // 登入邏輯
         document.getElementById('login-btn').onclick = () => {
             const name = document.getElementById('username-input').value.trim();
             if (name) {
@@ -150,31 +208,191 @@
             }
         };
 
-        // 登出邏輯
         document.getElementById('logout-btn').onclick = () => {
-            if(confirm("確定要登出並切換使用者嗎？")) {
+            if(confirm("確定要登出嗎？")) {
                 localStorage.removeItem('app_user');
-                init();
+                location.reload();
             }
         };
 
-        // 啟動子 App
         function launchApp(appId) {
             const user = localStorage.getItem('app_user');
             if (appId === 'matching') {
-                // 如果你決定用 iframe 整合，可以動態設定 src
-                // 或者直接將原本 Matching Game 的 HTML 貼到這層
-                // 下面是以 iframe 為例，你可以將兩份 HTML 合併在同一個檔案中避免 iframe
-                document.getElementById('matching-frame').src = "matching_game_content.html?user=" + encodeURIComponent(user);
-                showView('matching-container');
+                showView('matching-view');
+                initMatchingGame(user);
             } else {
-                document.getElementById('writing-frame').src = "writing_cloud_content.html?user=" + encodeURIComponent(user);
+                // 將使用者名稱傳遞給寫字練習
+                localStorage.setItem('writing_username', user);
+                document.getElementById('writing-frame').src = "writing_cloud_content.html";
                 showView('writing-container');
             }
         }
 
         function backToMenu() {
+            clearInterval(timerInterval);
             showView('menu-view');
+            // 清除寫字練習 iframe 來源以節省資源
+            document.getElementById('writing-frame').src = "about:blank";
+        }
+
+        // 圖文配對遊戲邏輯
+        function initMatchingGame(username) {
+            fetchRecords(username);
+            showGallery();
+        }
+
+        async function fetchRecords(name) {
+            const status = document.getElementById('sync-status');
+            const txt = document.getElementById('sync-text');
+            status.style.opacity = '1'; txt.innerText = '同步中...';
+            try {
+                const res = await fetch(`${GAS_URL_MATCHING}?name=${encodeURIComponent(name)}`);
+                const data = await res.json();
+                Object.keys(data).forEach(lvlId => {
+                    localStorage.setItem(`best_${lvlId}`, data[lvlId].time);
+                    localStorage.setItem(`best_sec_${lvlId}`, data[lvlId].seconds);
+                    localStorage.setItem(`best_stars_${lvlId}`, data[lvlId].stars);
+                });
+                txt.innerText = '已同步';
+                renderLevels();
+                setTimeout(() => status.style.opacity = '0', 1000);
+            } catch (e) {
+                txt.innerText = '已離線';
+                renderLevels();
+                setTimeout(() => status.style.opacity = '0', 2000);
+            }
+        }
+
+        function showGallery() {
+            document.getElementById('gallery-subview').classList.remove('hidden');
+            document.getElementById('game-subview').classList.add('hidden');
+            document.getElementById('result-modal').classList.remove('active');
+            document.getElementById('game-timer-panel').classList.add('hidden');
+            document.getElementById('reset-btn').classList.add('hidden');
+            renderLevels();
+        }
+
+        function renderLevels() {
+            const list = document.getElementById('levels-list');
+            list.innerHTML = '';
+            levels.forEach(lvl => {
+                const best = localStorage.getItem(`best_${lvl.id}`) || '--:--';
+                const stars = parseInt(localStorage.getItem(`best_stars_${lvl.id}`) || '0');
+                const card = document.createElement('div');
+                card.className = 'level-card bg-white shadow-lg cursor-pointer mb-4 p-4';
+                card.innerHTML = `
+                    <img src="${lvl.thumbnail}" class="level-thumb">
+                    <div class="flex-1 ml-4">
+                        <h3 class="text-xl font-cubic text-slate-700">${lvl.name}</h3>
+                        <div class="flex items-center justify-between mt-2">
+                            <div class="flex">${getStarsHtml(stars)}</div>
+                            <span class="text-sm font-cubic text-slate-400">BEST: ${best}</span>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => startLevel(lvl);
+                list.appendChild(card);
+            });
+        }
+
+        function startLevel(lvl) {
+            currentLevel = lvl;
+            document.getElementById('gallery-subview').classList.add('hidden');
+            document.getElementById('game-subview').classList.remove('hidden');
+            document.getElementById('level-title').innerText = lvl.name;
+            document.getElementById('game-timer-panel').classList.remove('hidden');
+            document.getElementById('reset-btn').classList.remove('hidden');
+            resetGame();
+        }
+
+        function resetGame() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = ''; flippedCards = []; matchedCount = 0;
+            document.getElementById('match-count').innerText = '0';
+            document.getElementById('total-pairs').innerText = `/ ${currentLevel.pairs.length}`;
+            
+            let data = [];
+            currentLevel.pairs.forEach((p, i) => {
+                data.push({ c: p.img, id: i, t: 'img' });
+                data.push({ c: p.zh, id: i, t: 'txt' });
+            });
+            data.sort(() => Math.random() - 0.5);
+
+            data.forEach(d => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.id = d.id; card.dataset.type = d.t;
+                card.innerHTML = `<div class="card-inner">
+                    <div class="card-back"><span class="text-4xl">${currentLevel.icon}</span></div>
+                    <div class="card-front">${d.t==='img'?`<img src="${d.c}" class="card-img">`:`<div class="font-bold text-xl">${d.c}</div>`}</div>
+                </div>`;
+                card.onclick = () => handleCardClick(card);
+                grid.appendChild(card);
+            });
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval); seconds = 0;
+            const timerEl = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                seconds++;
+                const m = Math.floor(seconds/60).toString().padStart(2,'0');
+                const s = (seconds%60).toString().padStart(2,'0');
+                timerEl.innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function handleCardClick(card) {
+            if (isProcessing || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            card.classList.add('flipped');
+            flippedCards.push(card);
+            if (flippedCards.length === 2) {
+                isProcessing = true;
+                const [c1, c2] = flippedCards;
+                if (c1.dataset.id === c2.dataset.id && c1.dataset.type !== c2.dataset.type) {
+                    setTimeout(() => {
+                        c1.classList.add('matched'); c2.classList.add('matched');
+                        matchedCount++;
+                        document.getElementById('match-count').innerText = matchedCount;
+                        flippedCards = []; isProcessing = false;
+                        if (matchedCount === currentLevel.pairs.length) finishGame();
+                    }, 600);
+                } else {
+                    setTimeout(() => {
+                        c1.classList.remove('flipped'); c2.classList.remove('flipped');
+                        flippedCards = []; isProcessing = false;
+                    }, 1000);
+                }
+            }
+        }
+
+        async function finishGame() {
+            clearInterval(timerInterval);
+            const timeStr = document.getElementById('timer').innerText;
+            const stars = seconds <= 60 ? 3 : (seconds <= 120 ? 2 : 1);
+            
+            document.getElementById('result-stars').innerHTML = getStarsHtml(stars);
+            document.getElementById('result-time').innerText = `完成時間 ${timeStr}`;
+            document.getElementById('result-modal').classList.add('active');
+
+            const bestSec = localStorage.getItem(`best_sec_${currentLevel.id}`);
+            if(!bestSec || seconds < parseInt(bestSec)) {
+                localStorage.setItem(`best_${currentLevel.id}`, timeStr);
+                localStorage.setItem(`best_sec_${currentLevel.id}`, seconds);
+                localStorage.setItem(`best_stars_${currentLevel.id}`, stars);
+            }
+
+            fetch(GAS_URL_MATCHING, { 
+                method: 'POST', mode: 'no-cors', 
+                body: JSON.stringify({ name: localStorage.getItem('app_user'), level: currentLevel.id, time: timeStr, stars: stars }) 
+            });
+        }
+
+        function getStarsHtml(count) {
+            let h = '';
+            for(let i=1; i<=3; i++) h += `<span class="${i <= count ? 'star-active' : 'star-inactive'}"></span>`;
+            return h;
         }
 
         window.onload = init;
