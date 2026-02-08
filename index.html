@@ -28,13 +28,40 @@
             background-color: #38C0FF;
             background-size: cover;
             background-position: center;
+            height: 100vh;
+            margin: 0;
         }
 
-        .view-section { display: none; height: 100vh; width: 100vw; overflow: hidden; }
+        .view-section { 
+            display: none; 
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden; 
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
         .view-section.active { display: block; }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-        .modal-overlay.active { display: flex; }
+        /* 修復：確保遮罩在不使用時不會阻擋點擊 */
+        .modal-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.6); 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 2000; 
+            padding: 20px; 
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active { 
+            display: flex; 
+            pointer-events: auto;
+            opacity: 1;
+        }
         
         .btn-hover { transition: transform 0.1s; }
         .btn-hover:active { transform: scale(0.95); }
@@ -49,7 +76,6 @@
         .name-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
         .font-cubic { font-family: 'Cubic11', sans-serif; }
 
-        /* 圖文配對專用樣式 */
         .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
         .gallery-container { display: flex; flex-direction: column; gap: 16px; padding: 10px 4px 60px 4px; overflow-y: auto; height: 100%; }
         .level-card { width: 100%; border-radius: 24px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: row; height: 120px; align-items: center; flex-shrink: 0; }
@@ -71,15 +97,15 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-blue-50">
+<body>
 
-    <!-- 1. 登入介面 -->
+    <!-- 1. 登入介面 (修復後) -->
     <div id="login-view" class="modal-overlay">
         <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
             <img src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Robot.gif" alt="機器人" class="w-24 h-24 mb-6">
-            <h2 class="text-xl text-border text-slate-700 mb-4 font-cubic">登入</h2>
+            <h2 class="text-xl text-border text-slate-700 mb-4 font-cubic">登入 StudyLand</h2>
             <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl px-4 py-4 text-center name-border mb-6 outline-none focus:border-[#38C0FF] font-cubic">
-            <button id="login-btn" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl name-border shadow-lg shadow-[#38C0FF]/10 font-cubic">進入遊戲</button>
+            <button id="login-btn" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl name-border shadow-lg shadow-[#38C0FF]/10 font-cubic btn-hover">進入遊戲</button>
         </div>
     </div>
 
@@ -87,8 +113,8 @@
     <div id="menu-view" class="view-section flex flex-col items-center justify-center p-4">
         <div class="w-full max-w-2xl text-center">
             <div class="flex justify-between items-center mb-12 px-4">
-                <span id="welcome-text" class="text-2xl font-bold text-blue-800 font-cubic">你好！</span>
-                <button id="logout-btn" class="bg-red-400 text-white px-4 py-2 rounded-lg text-sm">登出</button>
+                <span id="welcome-text" class="text-2xl font-bold text-blue-900 drop-shadow-sm font-cubic">你好！</span>
+                <button id="logout-btn" class="bg-red-500/80 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-cubic transition-colors">登出</button>
             </div>
             <h2 class="text-4xl font-bold text-white drop-shadow-lg mb-12 font-cubic">請選擇學習任務</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
@@ -108,14 +134,7 @@
 
     <!-- 3. 圖文配對整合視圖 -->
     <div id="matching-view" class="view-section relative bg-[#38C0FF]/10 overflow-hidden">
-        <!-- 同步狀態 -->
-        <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 opacity-0 transition-opacity duration-300">
-            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span id="sync-text" class="text-xs font-bold text-slate-600">同步中...</span>
-        </div>
-
         <main class="w-full h-full flex flex-col p-4">
-            <!-- 頂部欄 -->
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                     <button onclick="backToMenu()" class="p-2 glass-panel rounded-full text-slate-500 shadow-lg">
@@ -130,12 +149,10 @@
                 </div>
             </div>
 
-            <!-- 關卡選擇視圖 -->
             <div id="gallery-subview" class="flex-1 overflow-hidden">
                 <div class="gallery-container scrollbar-hide" id="levels-list"></div>
             </div>
 
-            <!-- 遊戲進行視圖 -->
             <div id="game-subview" class="hidden flex-1 flex flex-col overflow-hidden">
                 <div class="flex justify-center mb-4">
                     <div class="glass-panel px-6 py-2 rounded-full shadow-lg flex items-center gap-3">
@@ -151,7 +168,7 @@
 
     <!-- 寫字練習容器 -->
     <div id="writing-container" class="view-section relative bg-white">
-        <button onclick="backToMenu()" class="absolute top-4 left-4 z-50 bg-white/80 p-2 rounded-full shadow-lg text-blue-600 font-cubic flex items-center gap-2 px-4 py-2">
+        <button onclick="backToMenu()" class="absolute top-4 left-4 z-[3000] bg-white/90 p-2 rounded-xl shadow-lg text-blue-600 font-cubic flex items-center gap-2 px-4 py-2 hover:bg-white active:scale-95 transition-all">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             返回選單
         </button>
@@ -169,7 +186,6 @@
 
     <script>
         const GAS_URL_MATCHING = "https://script.google.com/macros/s/AKfycbyw6uG_CLmIM_CMV5Tq3iWmj3kdjTD841DMZ95XEaeRIQPaxqolMmlVkYNm_cPmrMe_/exec";
-        const GAS_URL_WRITING = "https://script.google.com/macros/s/AKfycbzJnjgmToB2wH9jgri2IP04l34k_cqLGad6EqKHjKVq6w3_bx7dxZz88c7nOZt_2oQZ/exec";
 
         let levels = [
             { id: 'wood1', name: '木部（一）', icon: '🪵', thumbnail: 'https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/apple-tree.svg', pairs: [ { zh: "桌子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2vVy6qufcVwEgmBn0lQ13bNjIWGDBjgtzw1yop_ppR6K3e-gsmmZxwG_NuPQRMFJRefcLf9T1FDvytx61TFpry9pxRWRfB7KEHfUqWgCiRrUe0Y_vCfzv7ew8kQ3p317yxwC0mHn1ThBK/s800/desk_book.png" }, { zh: "梨子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1Snh-pHbogpnOQcjKUC5WGLRnUM66zWNZlim5bNU__zoyvQcbiixj0o3Hnu_Z0Ilgn0K_A1ssNRb91Hndr51A0mEk4l-1cVU74mfRvRu6LqiJfdRRRUgWXV0V_fTo-i42FK7Dz32r96A/s800/fruit_chugoku_nashi.png" }, { zh: "書櫃", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgNl8O_TzTIG9QjkF9iqKDpSbx025gVVBczo2UrIOCs523HlrWjY_kl1sxPP4f_2i8d6vplw7vYyj2UgK4AYSNky7XqmJ48kcQzjKFT_hl1F4wktme_JhDVdC-CEQTjehIyI_YwaVW8fWSs/s800/tosyokan_book_tana.png" }, { zh: "辣椒", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7cvuaI7YyDn3yzdCJq4NNzB6E5sWpkylreOxATVAOpfHVfCqa_cQfF7xkxXuWTa4l2toYR6I1DGEHE0oKalvQs_6U3_HoA5pnL-AfKoVPReKU7J9LuzlwWnnmWfmUmWR1O0o8_hhlaZeE/s800/tougarashi_redpepper.png" }, { zh: "椰子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoVm07WHBlDyQdQR-RJDPzZQtEin3_O8_Rq_fr-zpJWdCR-iTwLs2wzfyyXLEz9cBPEa2VnwzRBfnUug3LgZnKZrEJzS54C_SwN255VI1vAbBNB6d3Abev18P5bESkdGYp0KRtlCPq7t__/s1600/fruit_coconut_half.png" }, { zh: "楊柳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSTVEIaZuK5nz__bdKOwr5l09s2PXKFO28zufU1yrLTHjAJ5ZZAGEurl-62AvOsDHUS4uW_Dpv4zBBlaOSDdUGKJh_T6RRKd1rvWI6g1PkY0VaFjncM1It00bM8BkxRZauOSU18X2bydnP/s800/tree_shidare_yanagi.png" }, { zh: "梅花", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSJTlGOxfgZwX_mYREF9n9cXHoz2BpPR4uK3GWb3AmHaMVq1gudeQ6TsmiaJ6FQz9HKbsIGhkB9x4KZu2VT5a19_Nv3OSA4HJ74Q9LWavfh758cffqFkUlnFn7VyrjFG2nDSKgBNP6xfuG/s800/flower_ume_kaika.png" }, { zh: "果實", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilqhbReGQT2DKIVUvjUTXWudlbIBvj_UNmv_uCQL3GR5E1Lum0zROzmgw7Z9CYWHoQj6PUoxOk_qb3tJqtUmXQJekcVwlIlhR7eIrz0c4oJlCTRBidOFm7DY3DyEopIHsXhXJjH-eYSx4/s800/fruits_basket.png" }, { zh: "盆栽", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjfA2a6DiWQXEiABf0fZsAjzB2b9WSKk0joJpEtFy_HwC0oD0f3fkrZrRhsk7-gyu_tWCk5F5iZf_9gYnHZ4qMquwq2QBwtTM2YKQLzpdolbAwwbfkKOVuelO4mwIcjILPX3WX2uZh5bwY/s800/flower_surfinia_safinia+.png" }, { zh: "欄杆", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuVlwp8VERYX2VAxcsFJZyo3oiMxmSa9gEaqG_IMhG79eqbgJ38opsq0QaFor-jKXx_M5v-WhxNrfI-wOEk65HkYfbqTFnE27jqleruBXcCJzyjpxdebR43C1JPImSHKPyhWehmAu9jrc/s800/ihan_saku_norikoeru.png" } ] },
@@ -181,6 +197,7 @@
         function showView(viewId) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             const loginOverlay = document.getElementById('login-view');
+            
             if (viewId === 'login-view') {
                 loginOverlay.classList.add('active');
             } else {
@@ -209,10 +226,8 @@
         };
 
         document.getElementById('logout-btn').onclick = () => {
-            if(confirm("確定要登出嗎？")) {
-                localStorage.removeItem('app_user');
-                location.reload();
-            }
+            localStorage.removeItem('app_user');
+            location.reload();
         };
 
         function launchApp(appId) {
@@ -221,7 +236,6 @@
                 showView('matching-view');
                 initMatchingGame(user);
             } else {
-                // 將使用者名稱傳遞給寫字練習
                 localStorage.setItem('writing_username', user);
                 document.getElementById('writing-frame').src = "writing_cloud_content.html";
                 showView('writing-container');
@@ -230,37 +244,12 @@
 
         function backToMenu() {
             clearInterval(timerInterval);
-            showView('menu-view');
-            // 清除寫字練習 iframe 來源以節省資源
             document.getElementById('writing-frame').src = "about:blank";
+            showView('menu-view');
         }
 
-        // 圖文配對遊戲邏輯
         function initMatchingGame(username) {
-            fetchRecords(username);
             showGallery();
-        }
-
-        async function fetchRecords(name) {
-            const status = document.getElementById('sync-status');
-            const txt = document.getElementById('sync-text');
-            status.style.opacity = '1'; txt.innerText = '同步中...';
-            try {
-                const res = await fetch(`${GAS_URL_MATCHING}?name=${encodeURIComponent(name)}`);
-                const data = await res.json();
-                Object.keys(data).forEach(lvlId => {
-                    localStorage.setItem(`best_${lvlId}`, data[lvlId].time);
-                    localStorage.setItem(`best_sec_${lvlId}`, data[lvlId].seconds);
-                    localStorage.setItem(`best_stars_${lvlId}`, data[lvlId].stars);
-                });
-                txt.innerText = '已同步';
-                renderLevels();
-                setTimeout(() => status.style.opacity = '0', 1000);
-            } catch (e) {
-                txt.innerText = '已離線';
-                renderLevels();
-                setTimeout(() => status.style.opacity = '0', 2000);
-            }
         }
 
         function showGallery() {
@@ -282,11 +271,11 @@
                 card.className = 'level-card bg-white shadow-lg cursor-pointer mb-4 p-4';
                 card.innerHTML = `
                     <img src="${lvl.thumbnail}" class="level-thumb">
-                    <div class="flex-1 ml-4">
+                    <div class="flex-1 ml-4 text-left">
                         <h3 class="text-xl font-cubic text-slate-700">${lvl.name}</h3>
                         <div class="flex items-center justify-between mt-2">
                             <div class="flex">${getStarsHtml(stars)}</div>
-                            <span class="text-sm font-cubic text-slate-400">BEST: ${best}</span>
+                            <span class="text-xs font-cubic text-slate-400">最佳: ${best}</span>
                         </div>
                     </div>
                 `;
@@ -367,7 +356,7 @@
             }
         }
 
-        async function finishGame() {
+        function finishGame() {
             clearInterval(timerInterval);
             const timeStr = document.getElementById('timer').innerText;
             const stars = seconds <= 60 ? 3 : (seconds <= 120 ? 2 : 1);
@@ -382,11 +371,6 @@
                 localStorage.setItem(`best_sec_${currentLevel.id}`, seconds);
                 localStorage.setItem(`best_stars_${currentLevel.id}`, stars);
             }
-
-            fetch(GAS_URL_MATCHING, { 
-                method: 'POST', mode: 'no-cors', 
-                body: JSON.stringify({ name: localStorage.getItem('app_user'), level: currentLevel.id, time: timeStr, stars: stars }) 
-            });
         }
 
         function getStarsHtml(count) {
