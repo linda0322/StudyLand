@@ -33,11 +33,17 @@
         .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
         #watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(0, 0, 0, 0.05); z-index: 1; pointer-events: none;}
         canvas { touch-action: none; border-radius: 2.5rem; background: transparent; position: relative; z-index: 2;}
+
+        #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                            display: flex; pointer-events: none;}
+        #success-overlay.active {transform: translate(-50%, -50%) scale(1.5);}
         
         #sync-status { transition: opacity 0.3s; opacity: 0; }
         #sync-status.show { opacity: 1; }
     </style>
 </head>
+
+    
 <body class="min-h-screen flex flex-col items-center p-4">
 
     <nav class="w-full max-w-md flex justify-between items-center mb-6 mt-2">
@@ -218,15 +224,11 @@
         function showSuccess() {
             const overlay = document.getElementById('success-overlay');
             overlay.classList.remove('hidden');
-            setTimeout(() => {
-                overlay.classList.add('hidden');
-                if (currentIndex < userCharacters.length - 1) {
-                    currentIndex++;
-                    clearCanvas();
-                    renderGame();
-                    renderSteps();
-                }
-            }, 1500);
+            overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.add('active'), 10); 
+                setTimeout(() => {overlay.classList.remove('active');
+                    setTimeout(() => {overlay.classList.add('hidden'); if (currentIndex < userCharacters.length - 1) {currentIndex++; clearCanvas(); renderGame(); renderSteps();}}, 500);
+                }, 1500);
         }
 
         function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); paths = []; updateStrokeCount(); }
