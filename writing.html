@@ -64,7 +64,7 @@
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center p-4">
+<body class="min-h-screen flex flex-col items-center px-4 pt-12 pb-4">
 
     <nav class="w-full max-w-md flex justify-between items-end mb-6 mt-2 px-2">
         <div class="flex items-center gap-2">
@@ -85,9 +85,8 @@
             </svg>
         </button>
     
-        <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
-            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span id="sync-text" class="font-cubic text-xs thin-border text-slate-600">同步中...</span>
+        <div id="sync-status" class="fixed top-4 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div><span id="sync-text" class="font-cubic text-xs thin-border text-slate-600">同步中...</span>
         </div>
     </nav>
 
@@ -381,13 +380,11 @@
         const categoryTerm = galleryCategoryFilter.value;
     
         if (galleryCategoryFilter.options.length === 1 && masterLibrary.length > 0) {
-            const allCategories = [];
+            const allCats = [];
             masterLibrary.forEach(item => {
-                if (item.categories && Array.isArray(item.categories)) {
-                    allCategories.push(...item.categories);
-                }
+                if (item.categories) allCats.push(...item.categories);
             });
-            const uniqueCategories = [...new Set(allCategories)];
+            const uniqueCategories = [...new Set(allCats)];
             uniqueCategories.forEach(cat => {
                 const opt = document.createElement('option');
                 opt.value = opt.innerText = cat;
@@ -398,35 +395,29 @@
         galleryGrid.innerHTML = '';
     
         masterLibrary.forEach((item, index) => {
-            const char = item.char || "";
-            const strokes = item.strokes || 0;
-            const itemCategory = (item.categories && item.categories.length > 0) ? item.categories[0] : "未分類";
-    
-            const matchesSearch = char.includes(searchTerm);
-            const matchesCategory = categoryTerm === 'all' || itemCategory === categoryTerm;
+            const itemCat = (item.categories && item.categories.length > 0) ? item.categories[0] : "未分類";
+            
+            const matchesSearch = item.char.includes(searchTerm);
+            const matchesCategory = categoryTerm === 'all' || itemCat === categoryTerm;
     
             if (matchesSearch && matchesCategory) {
-                const isCompleted = userCharacters[index] ? userCharacters[index].completed : false;
-                
+                const isCompleted = userCharacters[index]?.completed;
                 const card = document.createElement('div');
                 card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
                     index === currentIndex ? 'border-amber-400 bg-amber-50' : 'border-slate-100 bg-slate-50 hover:bg-white'
                 }`;
-    
                 card.innerHTML = `
-                    <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${char}</span>
-                    <span class="text-[8px] font-cubic text-slate-400 mt-1">${strokes} 劃</span>
+                    <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
+                    <span class="text-[8px] font-cubic text-slate-400 mt-1">${item.strokes} 劃</span>
                 `;
-    
                 card.onclick = () => {
                     currentIndex = index;
                     clearCanvas();
                     renderGame();
                     renderSteps();
                     galleryOverlay.classList.remove('active');
-                    if (stepContainer.children[index]) {
-                        stepContainer.children[index].scrollIntoView({ behavior: 'smooth', inline: 'center' });
-                    }
+                    const targetStep = stepContainer.children[index];
+                    if (targetStep) targetStep.scrollIntoView({ behavior: 'smooth', inline: 'center' });
                 };
                 galleryGrid.appendChild(card);
             }
