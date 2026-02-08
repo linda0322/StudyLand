@@ -15,13 +15,13 @@
         }
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            touch-action: none; 
             -webkit-user-select: none;
-            overflow: hidden; 
             background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
             background-size: cover;
             background-position: center;
+            background-attachment: fixed; 
             background-color: #38C0FF;
+            min-height: 100vh;
         }
         
         #login-overlay {
@@ -36,11 +36,10 @@
             backdrop-filter: blur(5px);
         }
 
-        .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
-        .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
-        .font-cubic {font-family: 'Cubic11', sans-serif;}
+        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
+        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
+        .font-cubic { font-family: 'Cubic11', sans-serif; }
         .hidden { display: none !important; }
-        
     </style>
 </head>
 <body>
@@ -48,9 +47,9 @@
     <div id="login-overlay">
         <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
             <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="w-24 h-24 mb-6">
-            <h2 class="text-xl font-cubic thick-border text-slate-700 mb-4">登入</h2>
+            <h2 class="text-xl font-cubic thick-border text-slate-700 mb-4">登入 StudyLand</h2>
             <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl px-4 py-4 text-center font-cubic thin-border mb-6 outline-none focus:border-[#38C0FF] transition-all">
-            <button id="confirm-user" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl font-cubic thin-border shadow-[#38C0FF]/30 hover:bg-[#2da9e6] active:scale-95 transition-all">登入</button>
+            <button id="confirm-user" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl font-cubic thin-border shadow-lg shadow-[#38C0FF]/30 hover:bg-[#2da9e6] active:scale-95 transition-all">開始練習</button>
         </div>
     </div>
 
@@ -59,10 +58,9 @@
             <h1 class="text-4xl font-bold text-white drop-shadow-lg mb-2">
                 Hello, <span id="user-display-name">探險家</span>!
             </h1>
-            <p class="text-white/90 text-lg">準備好今天要挑戰哪一個島嶼了嗎？</p>
+            <p class="text-white/90 text-lg drop-shadow-md">準備好今天要挑戰哪一個島嶼了嗎？</p>
         </header>
 
-    <!-- 遊戲選擇 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <a href="word-challenge.html" class="group bg-white/90 backdrop-blur-md p-6 rounded-[35px] shadow-xl hover:-translate-y-3 transition-all duration-300">
                 <div class="bg-yellow-100 h-44 rounded-[25px] mb-4 flex items-center justify-center text-6xl group-hover:rotate-6 transition-transform">📝</div>
@@ -87,7 +85,6 @@
         const confirmBtn = document.getElementById('confirm-user');
         const userDisplayName = document.getElementById('user-display-name');
 
-        // 檢查是否已經登入
         window.addEventListener('DOMContentLoaded', () => {
             const savedName = localStorage.getItem('studyLandUser');
             if (savedName) {
@@ -97,36 +94,26 @@
 
         confirmBtn.addEventListener('click', async () => {
             const username = usernameInput.value.trim();
-            
             if (!username) {
                 alert('你的名字是甚麼？');
                 return;
             }
 
-            // 1. 本地儲存
             localStorage.setItem('studyLandUser', username);
-
-            // 2. 顯示主頁 UI
             showMainPage(username);
 
-            // 3. 同步到 Google Sheet
-            try {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: username })
-                });
-                console.log('Login data sent to Google Sheets');
-            } catch (error) {
-                console.error('Error sending to Sheets:', error);
-            }
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username })
+            }).catch(error => console.error('Error:', error));
         });
 
         function showMainPage(name) {
             userDisplayName.textContent = name;
-            loginOverlay.classList.add('hidden'); // 隱藏登入視窗
-            mainContent.classList.remove('hidden'); // 顯示遊戲
+            loginOverlay.classList.add('hidden');
+            mainContent.classList.remove('hidden');
         }
     </script>
 </body>
