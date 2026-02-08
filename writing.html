@@ -38,11 +38,15 @@
 <body class="min-h-screen flex flex-col items-center p-4">
 
     <nav class="w-full max-w-md flex justify-between items-center mb-6 mt-2">
-        <a href="index.html" class="glass-panel p-3 rounded-full hover:bg-white/80 transition-all active:scale-90">
+        <a href="index.html" class="glass-panel p-3 rounded-full shadow-md hover:bg-white/80 transition-all active:scale-90">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </a>
-        <div id="sync-status" class="text-[10px] font-cubic text-blue-500 bg-white/50 px-3 py-1 rounded-full">雲端同步中...</div>
-        <div class="glass-panel px-4 py-2 rounded-full font-cubic thin-border text-[10px] text-slate-500 tracking-wider">
+        <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <span id="sync-text" class="font-cubic text-xs thin-border text-slate-600">同步中...</span>
+        </div>
+        
+        <div class="glass-panel px-4 py-2 rounded-full shadow-md font-cubic thin-border text-[10px] text-slate-500 tracking-wider">
             探險家：<span id="display-username" class="text-sm font-cubic thin-border text-slate-700">載入中</span>
         </div>
     </nav>
