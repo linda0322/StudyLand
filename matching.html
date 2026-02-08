@@ -110,25 +110,9 @@
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyw6uG_CLmIM_CMV5Tq3iWmj3kdjTD841DMZ95XEaeRIQPaxqolMmlVkYNm_cPmrMe_/exec";
-        let levels = [
-            { 
-                id: 'wood1', name: '木部（一）', icon: '🪵', thumbnail: 'https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/apple-tree.svg',
-                pairs: [ 
-                    { zh: "桌子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2vVy6qufcVwEgmBn0lQ13bNjIWGDBjgtzw1yop_ppR6K3e-gsmmZxwG_NuPQRMFJRefcLf9T1FDvytx61TFpry9pxRWRfB7KEHfUqWgCiRrUe0Y_vCfzv7ew8kQ3p317yxwC0mHn1ThBK/s800/desk_book.png" }, 
-                    { zh: "梨子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1Snh-pHbogpnOQcjKUC5WGLRnUM66zWNZlim5bNU__zoyvQcbiixj0o3Hnu_Z0Ilgn0K_A1ssNRb91Hndr51A0mEk4l-1cVU74mfRvRu6LqiJfdRRRUgWXV0V_fTo-i42FK7Dz32r96A/s800/fruit_chugoku_nashi.png" }, 
-                    { zh: "書櫃", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgNl8O_TzTIG9QjkF9iqKDpSbx025gVVBczo2UrIOCs523HlrWjY_kl1sxPP4f_2i8d6vplw7vYyj2UgK4AYSNky7XqmJ48kcQzjKFT_hl1F4wktme_JhDVdC-CEQTjehIyI_YwaVW8fWSs/s800/tosyokan_book_tana.png" }, 
-                    { zh: "辣椒", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7cvuaI7YyDn3yzdCJq4NNzB6E5sWpkylreOxATVAOpfHVfCqa_cQfF7xkxXuWTa4l2toYR6I1DGEHE0oKalvQs_6U3_HoA5pnL-AfKoVPReKU7J9LuzlwWnnmWfmUmWR1O0o8_hhlaZeE/s800/tougarashi_redpepper.png" }, 
-                    { zh: "椰子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoVm07WHBlDyQdQR-RJDPzZQtEin3_O8_Rq_fr-zpJWdCR-iTwLs2wzfyyXLEz9cBPEa2VnwzRBfnUug3LgZnKZrEJzS54C_SwN255VI1vAbBNB6d3Abev18P5bESkdGYp0KRtlCPq7t__/s1600/fruit_coconut_half.png" }, 
-                    { zh: "楊柳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSTVEIaZuK5nz__bdKOwr5l09s2PXKFO28zufU1yrLTHjAJ5ZZAGEurl-62AvOsDHUS4uW_Dpv4zBBlaOSDdUGKJh_T6RRKd1rvWI6g1PkY0VaFjncM1It00bM8BkxRZauOSU18X2bydnP/s800/tree_shidare_yanagi.png" },
-                    { zh: "梅花", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSJTlGOxfgZwX_mYREF9n9cXHoz2BpPR4uK3GWb3AmHaMVq1gudeQ6TsmiaJ6FQz9HKbsIGhkB9x4KZu2VT5a19_Nv3OSA4HJ74Q9LWavfh758cffqFkUlnFn7VyrjFG2nDSKgBNP6xfuG/s800/flower_ume_kaika.png" },
-                    { zh: "果實", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilqhbReGQT2DKIVUvjUTXWudlbIBvj_UNmv_uCQL3GR5E1Lum0zROzmgw7Z9CYWHoQj6PUoxOk_qb3tJqtUmXQJekcVwlIlhR7eIrz0c4oJlCTRBidOFm7DY3DyEopIHsXhXJjH-eYSx4/s800/fruits_basket.png" },
-                    { zh: "盆栽", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjfA2a6DiWQXEiABf0fZsAjzB2b9WSKk0joJpEtFy_HwC0oD0f3fkrZrRhsk7-gyu_tWCk5F5iZf_9gYnHZ4qMquwq2QBwtTM2YKQLzpdolbAwwbfkKOVuelO4mwIcjILPX3WX2uZh5bwY/s800/flower_surfinia_safinia+.png" },
-                    { zh: "欄杆", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuVlwp8VERYX2VAxcsFJZyo3oiMxmSa9gEaqG_IMhG79eqbgJ38opsq0QaFor-jKXx_M5v-WhxNrfI-wOEk65HkYfbqTFnE27jqleruBXcCJzyjpxdebR43C1JPImSHKPyhWehmAu9jrc/s800/ihan_saku_norikoeru.png" }
-                ] 
-            }
-        ];
-
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxcPaVvIymeOBpktpuqKyRzJVLKBNIyFn43H1O4UNEkt1FfQoC63s_e6QpuR0K4AmhX/exec";
+        
+        let levels = [];
         let currentLevel = null;
         let flippedCards = [];
         let matchedPairs = 0;
@@ -142,7 +126,28 @@
                 return; 
             }
             document.getElementById('display-username').innerText = username;
+            
+            await fetchLevelsFromGAS();
             showGallery();
+        }
+
+        async function fetchLevelsFromGAS() {
+            const syncStatus = document.getElementById('sync-status');
+            const syncText = document.getElementById('sync-text');
+            syncStatus.style.opacity = '1';
+            syncText.innerText = "載入中...";
+            
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'fetchLevels' })
+                });
+                levels = await response.json();
+            } catch (e) {
+                console.error("載入關卡失敗", e);
+            } finally {
+                syncStatus.style.opacity = '0';
+            }
         }
 
         function showGallery() {
@@ -160,7 +165,7 @@
             list.innerHTML = '';
             levels.forEach(level => {
                 const card = document.createElement('div');
-                card.className = 'level-card glass-panel cursor-pointer hover:bg-white/40';
+                card.className = 'level-card glass-panel cursor-pointer hover:bg-white/40 shadow-sm mb-2';
                 card.innerHTML = `
                     <img src="${level.thumbnail}" class="level-thumb">
                     <div class="flex-1 p-4">
@@ -199,7 +204,7 @@
                 card.className = 'card';
                 card.innerHTML = `
                     <div class="card-inner">
-                        <div class="card-back font-cubic text-2xl">?</div>
+                        <div class="card-back font-cubic text-4xl">${level.backEmoji || '❓'}</div>
                         <div class="card-front">
                             ${data.type === 'text' ? `<span class="font-cubic text-lg">${data.content}</span>` : `<img src="${data.content}" class="card-img">`}
                         </div>
@@ -248,27 +253,40 @@
 
         async function endGame() {
             clearInterval(timerInterval);
+            const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
             const timeStr = document.getElementById('timer').innerText;
-            const stars = 3;
-            
-            document.getElementById('result-stars').innerHTML = Array(stars).fill('<div class="star-active"></div>').join('');
-            document.getElementById('result-time').innerText = `完成時間 ${timeStr}`;
-            document.getElementById('result-modal').classList.add('active');
             
             const syncStatus = document.getElementById('sync-status');
+            const syncText = document.getElementById('sync-text');
             syncStatus.style.opacity = '1';
+            syncText.innerText = "同步中...";
+
             try {
-                await fetch(GAS_URL, { 
-                    method: 'POST', mode: 'no-cors', 
+                const response = await fetch(GAS_URL, { 
+                    method: 'POST', 
                     body: JSON.stringify({ 
-                        name: localStorage.getItem('studyLandUser'), 
-                        level: currentLevel.id, 
-                        time: timeStr, 
-                        stars: stars 
+                        action: 'saveProgress',
+                        username: localStorage.getItem('studyLandUser'), 
+                        levelId: currentLevel.id, 
+                        duration: durationSeconds 
                     }) 
                 });
-            } catch(e) {}
-            setTimeout(() => syncStatus.style.opacity = '0', 1000);
+                
+                const result = await response.json();
+                const stars = result.stars || 1;
+                
+                document.getElementById('result-stars').innerHTML = Array(3).fill(0).map((_, i) => 
+                    `<div class="${i < stars ? 'star-active' : 'star-inactive'}"></div>`
+                ).join('');
+                document.getElementById('result-time').innerText = `完成時間 ${timeStr} (${stars}星)`;
+                document.getElementById('result-modal').classList.add('active');
+                
+            } catch(e) {
+                console.error("儲存失敗", e);
+                document.getElementById('result-modal').classList.add('active');
+            } finally {
+                setTimeout(() => syncStatus.style.opacity = '0', 1000);
+            }
         }
 
         function resetGame() { if(currentLevel) startLevel(currentLevel); }
