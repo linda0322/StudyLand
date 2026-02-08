@@ -28,6 +28,7 @@
         .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
         .font-cubic { font-family: 'Cubic11', sans-serif; }
+        .font-sans { font-family: 'Noto Sans TC', sans-serif; }
         
         .gallery-container { display: flex; flex-direction: column; gap: 16px; padding: 10px 4px 60px 4px; overflow-y: auto; height: 100%; }
         .level-card { width: 100%; border-radius: 24px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: row; height: 120px; align-items: center; flex-shrink: 0; }
@@ -206,7 +207,7 @@
                     <div class="card-inner">
                         <div class="card-back font-cubic text-4xl">${level.backEmoji || '❓'}</div>
                         <div class="card-front">
-                            ${data.type === 'text' ? `<span class="font-cubic text-lg">${data.content}</span>` : `<img src="${data.content}" class="card-img">`}
+                            ${data.type === 'text' ? `<span class="font-sans text-lg">${data.content}</span>` : `<img src="${data.content}" class="card-img">`}
                         </div>
                     </div>
                 `;
@@ -278,7 +279,7 @@
                 document.getElementById('result-stars').innerHTML = Array(3).fill(0).map((_, i) => 
                     `<div class="${i < stars ? 'star-active' : 'star-inactive'}"></div>`
                 ).join('');
-                document.getElementById('result-time').innerText = `完成時間 ${timeStr} (${stars}星)`;
+                document.getElementById('result-time').innerText = `完成時間 ${timeStr}`;
                 document.getElementById('result-modal').classList.add('active');
                 
             } catch(e) {
