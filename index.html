@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <main id="main-content" class="container mx-auto px-6 py-12 hidden">
+    <main id="main-content" class="container mx-auto px-6 py-12 hidden flex flex-col items-center justify-start min-height-screen">
         <header class="text-center mb-16">
             <h1 class="text-4xl font-bold text-white drop-shadow-lg mb-2">
                 Hello, <span id="user-display-name">探險家</span>!
@@ -115,6 +115,7 @@
             userDisplayName.textContent = name;
             loginOverlay.classList.add('hidden');
             mainContent.classList.remove('hidden');
+            window.scrollTo(0, 0);
         }
 
         const logoutBtn = document.getElementById('logout-btn');
