@@ -80,21 +80,30 @@
         <header class="text-center mb-10 flex flex-col items-center">
             <div class="relative mb-4">
                <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" 
-                 class="w-[200px] h-auto drop-shadow-md select-none pointer-events-none" draggable="false">
+                 class="w-[180px] h-auto drop-shadow-md select-none pointer-events-none" draggable="false">
             <div class="absolute -top-1 -right-5 text-[30px] text-shadow-sm font-cubic thick-border text-white animate-bounce tracking-widest">GO!</div>
             </div>
         </header>
 
         <!-- 遊戲列表 -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            
+            <!-- 遊戲一 -->
             <a href="word-challenge.html" class="group bg-white backdrop-blur-md p-4 rounded-[25px] shadow-xl hover:-translate-y-2 transition-all duration-300">
-                <div class="bg-yellow-100 h-28 rounded-[20px] mb-3 flex items-center justify-center text-4xl transition-transform">📝</div>
-                <h3 class="font-cubic text-lg thin-border text-slate-800 mb-1">單字島嶼</h3>
+                <div class="bg-white h-28 rounded-[20px] mb-3 flex items-center justify-center overflow-hidden">
+                <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC_Icon.png" alt="單字練習"
+                    class="w-16 h-16 object-contain group-hover:scale-110 transition-transform duration-300 select-none pointer-events-none" draggable="false">
+                </div>
+                <h3 class="font-cubic text-lg thin-border text-slate-800 mb-1 text-center">單字練習</h3>
             </a>
 
+            <!-- 遊戲二 -->
             <a href="#" class="group bg-white backdrop-blur-md p-4 rounded-[25px] shadow-xl hover:-translate-y-2 transition-all duration-300">
-                <div class="bg-purple-100 h-28 rounded-[20px] mb-3 flex items-center justify-center text-4xl transition-transform">🧪</div>
-                <h3 class="font-cubic text-lg thin-border text-slate-800 mb-1">科學實驗</h3>
+                <div class="bg-white h-28 rounded-[20px] mb-3 flex items-center justify-center overflow-hidden">
+                <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC_Icon.png" alt="圖文配對"
+                    class="w-16 h-16 object-contain group-hover:scale-110 transition-transform duration-300 select-none pointer-events-none" draggable="false">
+                </div>
+                <h3 class="font-cubic text-lg thin-border text-slate-800 mb-1 text-center">圖文配對</h3>
             </a>
         </div>
     </main>
