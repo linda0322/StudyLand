@@ -52,6 +52,11 @@
        
         .step-btn.active { background-color: #38C0FF; color: white; border-color: white; }
         .step-btn.completed::after { content: '✓'; position: absolute; top: -2px; right: -2px; background: #10B981; color: white; width: 14px; height: 14px; border-radius: 50%; font-size: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid white; }
+
+        #gallery-overlay {position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem;}
+        #gallery-overlay.active { display: flex; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
         #sync-status { transition: opacity 0.3s; opacity: 0; }
         #sync-status.show { opacity: 1; }
@@ -59,26 +64,55 @@
     </style>
 </head>
 
-    
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<body class="min-h-screen flex flex-col items-center p-4">
 
-    <nav class="mb-4 px-1 flex items-center justify-between">
-        <!-- 同步通知 -->
-        <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
+    <nav class="w-full max-w-md flex justify-end items-center mb-6 mt-2 gap-2">
+        <div id="sync-status" class="fixed top-6 left-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
             <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             <span id="sync-text" class="font-cubic text-xs thin-border text-slate-600">同步中...</span>
         </div>
-        <!-- 玩家資訊 -->
-        <div class="flex items-center gap-2">
+
         <div class="glass-panel px-4 py-2 rounded-full shadow-md font-cubic thin-border text-[10px] text-slate-500 tracking-wider">
             探險家：<span id="display-username" class="text-sm font-cubic thin-border text-slate-700">載入中</span>
         </div>
-        <!-- 返回主頁 -->
-        <a href="index.html" class="glass-panel p-2 rounded-full text-slate-500 shadow-lg hover:bg-white transition-all active:scale-95">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+
+        <button id="gallery-trigger-btn" class="p-2 glass-panel text-slate-600 rounded-full hover:bg-white transition-all shadow-lg active:scale-95" title="字庫">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg>
+        </button>
+        <a href="index.html" class="glass-panel p-2.5 rounded-full text-slate-500 shadow-lg hover:bg-white transition-all active:scale-95">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         </a>
-        </div>
     </nav>
+
+    <div id="gallery-overlay">
+        <div class="bg-white p-6 rounded-[40px] shadow-2xl w-full max-w-md h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg>
+                    </div>
+                    <h3 class="font-cubic thin-border text-slate-700 text-xl">字庫</h3>
+                </div>
+                <button id="close-gallery" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <div class="flex flex-col gap-2 mb-6">
+                <div class="relative w-full">
+                    <input type="text" id="gallery-search" placeholder="搜尋" class="w-full bg-slate-100 border-none rounded-2xl px-4 py-3 pl-10 text-sm font-cubic outline-none focus:ring-2 focus:ring-amber-200">
+                    <svg class="absolute left-3 top-3.5 text-slate-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
+                </div>
+                <select id="gallery-category-filter" class="w-full bg-slate-100 border-none rounded-2xl px-4 py-3 text-sm font-cubic text-slate-500 outline-none">
+                    <option value="all">所有主題</option>
+                </select>
+            </div>
+
+            <div id="gallery-grid" class="grid grid-cols-4 gap-3 overflow-y-auto pr-1 scrollbar-hide"></div>
+            <div class="mt-6 text-center text-[10px] text-slate-400 font-cubic thin-border uppercase tracking-widest">點擊字卡切換練習</div>
+        </div>
+    </div>
+    
 
     <main class="w-full max-w-md flex flex-col items-center">
         
@@ -321,6 +355,56 @@
             ctx.stroke();
         });
         updateStrokeCount();
+    }
+
+    const galleryOverlay = document.getElementById('gallery-overlay');
+    const galleryGrid = document.getElementById('gallery-grid');
+    const gallerySearch = document.getElementById('gallery-search');
+    const galleryCategoryFilter = document.getElementById('gallery-category-filter');
+    document.getElementById('gallery-trigger-btn').onclick = () => {
+        renderGallery();
+        galleryOverlay.classList.add('active');
+        };
+    document.getElementById('close-gallery').onclick = () => galleryOverlay.classList.remove('active');
+    gallerySearch.oninput = renderGallery;
+    galleryCategoryFilter.onchange = renderGallery;
+
+    function renderGallery() {
+            const searchTerm = gallerySearch.value.toLowerCase();
+            const categoryTerm = galleryCategoryFilter.value;
+        
+        if (galleryCategoryFilter.options.length === 1) {
+            const categories = [...new Set(masterLibrary.map(item => item.category))];
+            categories.forEach(cat => {
+                if (cat) {
+                    const opt = document.createElement('option');
+                    opt.value = opt.innerText = cat;
+                    galleryCategoryFilter.appendChild(opt);
+                }
+            });
+         }
+    
+        galleryGrid.innerHTML = '';
+        
+        masterLibrary.forEach((item, index) => {
+            const matchesSearch = item.char.includes(searchTerm);
+            const matchesCategory = categoryTerm === 'all' || item.category === categoryTerm;
+    
+            if (matchesSearch && matchesCategory) {
+                const isCompleted = userCharacters[index]?.completed;
+                const card = document.createElement('div');
+                    card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
+                        index === currentIndex ? 'border-amber-400 bg-amber-50' : 'border-slate-100 bg-slate-50 hover:bg-white'}`;
+                    card.innerHTML = `
+                        <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
+                        <span class="text-[8px] font-cubic text-slate-400 mt-1">${item.strokes} 劃</span>`;
+                card.onclick = () => {currentIndex = index; clearCanvas(); renderGame(); renderSteps(); galleryOverlay.classList.remove('active');
+                    const targetStep = stepContainer.children[index];
+                    if (targetStep) targetStep.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+                };
+                galleryGrid.appendChild(card);
+            }
+        });
     }
 
     function preventDefaults(e) { if (e.target === canvas) e.preventDefault(); }
