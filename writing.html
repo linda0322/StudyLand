@@ -62,9 +62,9 @@
     
 <body class="min-h-screen flex flex-col items-center p-4">
 
-    <nav class="w-full max-w-md flex justify-end items-center mb-6 mt-2 gap-3">
+    <nav class="w-full max-w-md flex justify-start items-center mb-6 mt-2 gap-3">
         <!-- 同步通知 -->
-        <div id="sync-status" class="fixed top-6 left-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
+        <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
             <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             <span id="sync-text" class="font-cubic text-xs thin-border text-slate-600">同步中...</span>
         </div>
@@ -73,8 +73,8 @@
             探險家：<span id="display-username" class="text-sm font-cubic thin-border text-slate-700">載入中</span>
         </div>
         <!-- 返回主頁 -->
-        <a href="index.html" class="glass-panel p-2.5 rounded-full shadow-md hover:bg-white/80 transition-all active:scale-90">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <a href="index.html" class="glass-panel p-2 rounded-full text-slate-500 shadow-lg hover:bg-white transition-all active:scale-95">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         </a>
     </nav>
 
