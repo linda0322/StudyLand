@@ -413,8 +413,7 @@
                 
                 card.innerHTML = `
                     <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
-                    <span class="text-[9px] font-cubic text-slate-400 mt-1 truncate w-full px-1 text-center">${item.en || ''}</span>
-                    <span class="text-[8px] font-cubic text-slate-300">${item.strokes} 劃</span>
+                    <span class="text-[8px] font-cubic text-slate-500 mt-1">${item.strokes} 劃</span>
                 `;
                 
                 card.onclick = () => {
