@@ -3,16 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-                         /*-- 網頁寬度=裝置螢幕寬度 --*/  /*-- 1:1 --*/     /*-- 縮放1倍 --*/   /*-- 禁止手指縮放 --*/ /*-- 網頁內容填滿螢幕 --*/
-    
     <title>圖文配對</title>
-    
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/man_icon.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/waffle.svg">
     <script src="https://cdn.tailwindcss.com"></script>
-
-    /**-- 預設：思源黑體 --*/
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
-    
     <style>
         @font-face {
             font-family: 'Cubic11';
@@ -24,266 +18,260 @@
             touch-action: manipulation; 
             -webkit-user-select: none; 
             overflow: hidden; 
-            background-image: url('https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Sky.png');
-            background-color: #38C0FF;
-            background-size: cover;
-            background-position: center;
+            background-image: url('https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Sky.png'); 
+            background-size: cover; 
+            background-position: center; 
+            background-color: #1dc5fd; 
+            height: 100vh;
         }
-        .pixel-font { font-family: 'Cubic11', sans-serif; }
-        .card { perspective: 1000px; cursor: pointer; transition: transform 0.2s; }
-        .card:active { transform: scale(0.95); }
-        .card-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; position: relative; width: 100%; height: 100%; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
+        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
+        .font-cubic { font-family: 'Cubic11', sans-serif; }
+        
+        .gallery-container { display: flex; flex-direction: column; gap: 16px; padding: 10px 4px 60px 4px; overflow-y: auto; height: 100%; }
+        .level-card { width: 100%; border-radius: 24px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: row; height: 120px; align-items: center; flex-shrink: 0; }
+        .level-card:active { transform: scale(0.98); }
+        .level-thumb { width: 80px; height: 100%; object-fit: contain; padding: 12px; margin-left: 10px; }
+        .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 8px; }
+        .card { aspect-ratio: 3/4; perspective: 1000px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 12px; }
         .card.flipped .card-inner { transform: rotateY(180deg); }
         .card.matched { opacity: 0; pointer-events: none; transform: scale(0); transition: all 0.5s ease-out; }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 15px -3px rgba(0,0,0,0.1); }
-        .card-front { background: white; transform: rotateY(180deg); border: 4px solid #38C0FF; color: #1e293b; padding: 10px; text-align: center; line-height: 1.2; }
-        .card-back { background: #38C0FF; border: 4px solid white; color: white; font-size: 2.5rem; font-weight: bold; }
-
-        #gallery { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 1.25rem; 
-            padding: 1.5rem; 
-            overflow-y: auto; 
-            max-height: 75vh; 
-            width: 100%;
-        }
-        .level-node { 
-            background: rgba(255, 255, 255, 0.9); 
-            backdrop-filter: blur(10px);
-            border-radius: 2rem; 
-            padding: 1.5rem 1rem; 
-            text-align: center; 
-            position: relative; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
-        }
-        .level-node:active { transform: scale(0.95); border-color: #38C0FF; }
-        
-        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
-        .modal.active { display: flex; animation: fadeIn 0.3s ease-out; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        /* --- CSS 結束 --- */
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 12px; padding: 4px; }
+        .card-back { background: #38C0FF; color: white; border: 2px solid white; z-index: 2; }
+        .card-front { background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%); color: #38C0FF; font-size: 14px; transform: rotateY(180deg); }
+        .card-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; padding: 6px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .star-active, .star-inactive { display: inline-block; width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; vertical-align: middle; }
+        #result-stars .star-active, #result-stars .star-inactive { width: 80px; height: 80px; }
+        .star-active { background-image: url('https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/star.svg'); }
+        .star-inactive { background-image: url('https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/star-empty.svg'); opacity: 0.5; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="h-screen flex flex-col items-center">
+<body class="flex flex-col items-center p-4">
 
-    <div class="w-full max-w-md flex justify-between items-center p-4 z-10">
-        <div id="sync-status" class="bg-white/90 backdrop-blur px-4 py-2 rounded-full flex items-center gap-2 shadow-sm transition-opacity duration-300 opacity-0">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span id="sync-text" class="text-xs font-bold text-slate-600 italic">已同步</span>
-        </div>
-        <button id="logout-btn" class="bg-white/90 backdrop-blur p-2 rounded-full shadow-lg active:scale-90 transition-transform">
-            <img src="https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/arrow-left.svg" class="w-6 h-6">
-        </button>
+    <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 opacity-0 transition-opacity duration-300">
+        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+        <span id="sync-text" class="text-xs font-bold text-slate-600">同步中...</span>
     </div>
 
-    <div id="map-view" class="w-full max-w-md flex-1 flex flex-col items-center">
-        <h1 class="pixel-font text-3xl text-white my-6 drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">圖文配對大挑戰</h1>
-        <div id="gallery" class="px-6"></div>
-    </div>
-
-    <div id="game-view" class="hidden fixed inset-0 bg-[#38C0FF] z-50 flex flex-col items-center">
-        <div class="w-full max-w-md p-6 flex justify-between items-center">
-            <button onclick="backToMap()" class="bg-white/20 px-4 py-2 rounded-full text-white font-bold backdrop-blur">⬅ 返回</button>
-            <div class="bg-white/20 px-6 py-2 rounded-full text-white pixel-font text-2xl backdrop-blur shadow-inner">
-                <span id="timer">00:00</span>
+    <main class="w-full max-w-md h-full flex flex-col mt-[4vh] pb-6">
+        <nav class="mb-4 px-1 flex items-center justify-between shrink-0">
+            <div id="top-left-container" class="flex items-center gap-2">
+                <div id="user-info-panel" class="glass-panel px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
+                    <span class="text-[10px] text-slate-500 font-cubic thin-border uppercase tracking-wider">探險家</span>
+                    <span id="display-username" class="text-sm font-cubic thin-border text-slate-700">載入中...</span>
+                </div>
+                <a href="index.html" id="logout-btn" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white/50 active:scale-90 transition-all shadow-lg" title="主頁">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </a>
+                
+                <div id="game-timer-panel" class="hidden bg-transparent px-1.5 py-2 flex items-center justify-start gap-2">
+                    <div id="timer" class="text-2xl font-cubic thick-border text-white">00:00</div>
+                </div>
             </div>
-        </div>
-        <div id="game-grid" class="grid grid-cols-3 gap-3 p-4 w-full max-w-md flex-1 content-center"></div>
-    </div>
 
-    <div id="user-modal" class="modal">
-        <div class="bg-white rounded-[2.5rem] p-10 w-full max-w-xs text-center shadow-2xl">
-            <h2 class="pixel-font text-2xl mb-8 text-slate-700">冒險者是誰？</h2>
-            <input id="username-input" type="text" placeholder="輸入名字" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl mb-8 outline-none focus:border-sky-400 transition-all text-center font-bold text-lg text-slate-700">
-            <button id="confirm-user" class="w-full bg-sky-500 text-white py-4 rounded-2xl font-bold text-xl shadow-[0_8px_0_#0369a1] active:shadow-none active:translate-y-2 transition-all">開始挑戰</button>
-        </div>
-    </div>
+            <div class="flex gap-2 items-center">
+                 <button id="reload-btn" onclick="location.reload()" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white/50 active:scale-90 transition-all shadow-lg">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                </button>
+                 <button id="back-to-gallery" class="hidden p-2 glass-panel rounded-full text-slate-500 shadow-lg hover:bg-white/50" onclick="showGallery()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </button>
+                <button id="reset-btn" class="hidden px-4 py-2 glass-panel text-slate-600 rounded-full hover:bg-white transition-colors font-cubic thin-border text-xs shadow-lg active:scale-95" onclick="resetGame()">重玩</button>
+            </div>
+        </nav>
 
-    <div id="result-modal" class="modal">
-        <div class="bg-white rounded-[2.5rem] p-10 w-full max-w-xs text-center shadow-2xl border-4 border-yellow-200">
-            <div id="result-stars" class="text-5xl mb-6"></div>
-            <h2 id="result-title" class="pixel-font text-3xl text-slate-700 mb-2 italic">太精彩了！</h2>
-            <p id="result-time" class="text-slate-400 font-bold mb-8 text-lg"></p>
-            <button onclick="backToMap()" class="w-full bg-sky-500 text-white py-5 rounded-2xl font-bold text-2xl shadow-[0_8px_0_#0369a1] active:shadow-none active:translate-y-2 transition-all">下一關</button>
+        <div id="gallery-view" class="hidden flex flex-col flex-1 overflow-hidden">
+            <div class="gallery-container scrollbar-hide" id="levels-list"></div>
+        </div>
+
+        <div id="game-view" class="hidden flex flex-col flex-1 overflow-hidden">
+            <div class="hidden justify-between items-center mb-4">
+                <div class="flex items-center gap-3 glass-panel px-4 py-2 rounded-full shadow-lg">
+                    <span id="level-title" class="text-[10px] text-blue-500 font-bold uppercase">關卡</span>
+                    <span id="match-count" class="text-xl font-black text-slate-700">0</span>
+                    <span id="total-pairs" class="text-xs text-slate-400">/ 10</span>
+                </div>
+            </div>
+            <div id="game-container" class="game-grid scrollbar-hide flex-1"></div>
+        </div>
+    </main>
+
+    <div id="result-modal" class="modal-overlay">
+        <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
+            <div id="result-stars" class="mb-4 flex gap-1"></div>
+            <p id="result-time" class="text-slate-500 mb-6 font-cubic">完成時間 00:00</p>
+            <button onclick="showGallery()" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl font-cubic thin-border shadow-[#38C0FF]/10">返回</button>
         </div>
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxcN6vSqaukUo0q0LL-iUL2kNClC6J9A8P66JEf4T3KK4Y7PaBUP893SCk7AWE_hKlM/exec"; 
-        const levels = [
-            { id: 1, title: '第一關：水果', items: [
-                { word: '紅蘋果', img: '🍎' }, { word: '黃香蕉', img: '🍌' }, { word: '綠葡萄', img: '🍇' }
-            ]},
-            { id: 2, title: '第二關：動物', items: [
-                { word: '小貓咪', img: '🐱' }, { word: '小灰狗', img: '🐶' }, { word: '小雞排', img: '🐥' }
-            ]}
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbyw6uG_CLmIM_CMV5Tq3iWmj3kdjTD841DMZ95XEaeRIQPaxqolMmlVkYNm_cPmrMe_/exec";
+        let levels = [
+            { 
+                id: 'wood1', name: '木部（一）', icon: '🪵', thumbnail: 'https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/apple-tree.svg',
+                pairs: [ 
+                    { zh: "桌子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2vVy6qufcVwEgmBn0lQ13bNjIWGDBjgtzw1yop_ppR6K3e-gsmmZxwG_NuPQRMFJRefcLf9T1FDvytx61TFpry9pxRWRfB7KEHfUqWgCiRrUe0Y_vCfzv7ew8kQ3p317yxwC0mHn1ThBK/s800/desk_book.png" }, 
+                    { zh: "梨子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1Snh-pHbogpnOQcjKUC5WGLRnUM66zWNZlim5bNU__zoyvQcbiixj0o3Hnu_Z0Ilgn0K_A1ssNRb91Hndr51A0mEk4l-1cVU74mfRvRu6LqiJfdRRRUgWXV0V_fTo-i42FK7Dz32r96A/s800/fruit_chugoku_nashi.png" }, 
+                    { zh: "書櫃", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgNl8O_TzTIG9QjkF9iqKDpSbx025gVVBczo2UrIOCs523HlrWjY_kl1sxPP4f_2i8d6vplw7vYyj2UgK4AYSNky7XqmJ48kcQzjKFT_hl1F4wktme_JhDVdC-CEQTjehIyI_YwaVW8fWSs/s800/tosyokan_book_tana.png" }, 
+                    { zh: "辣椒", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7cvuaI7YyDn3yzdCJq4NNzB6E5sWpkylreOxATVAOpfHVfCqa_cQfF7xkxXuWTa4l2toYR6I1DGEHE0oKalvQs_6U3_HoA5pnL-AfKoVPReKU7J9LuzlwWnnmWfmUmWR1O0o8_hhlaZeE/s800/tougarashi_redpepper.png" }, 
+                    { zh: "椰子", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoVm07WHBlDyQdQR-RJDPzZQtEin3_O8_Rq_fr-zpJWdCR-iTwLs2wzfyyXLEz9cBPEa2VnwzRBfnUug3LgZnKZrEJzS54C_SwN255VI1vAbBNB6d3Abev18P5bESkdGYp0KRtlCPq7t__/s1600/fruit_coconut_half.png" }, 
+                    { zh: "楊柳", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSTVEIaZuK5nz__bdKOwr5l09s2PXKFO28zufU1yrLTHjAJ5ZZAGEurl-62AvOsDHUS4uW_Dpv4zBBlaOSDdUGKJh_T6RRKd1rvWI6g1PkY0VaFjncM1It00bM8BkxRZauOSU18X2bydnP/s800/tree_shidare_yanagi.png" },
+                    { zh: "梅花", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSJTlGOxfgZwX_mYREF9n9cXHoz2BpPR4uK3GWb3AmHaMVq1gudeQ6TsmiaJ6FQz9HKbsIGhkB9x4KZu2VT5a19_Nv3OSA4HJ74Q9LWavfh758cffqFkUlnFn7VyrjFG2nDSKgBNP6xfuG/s800/flower_ume_kaika.png" },
+                    { zh: "果實", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilqhbReGQT2DKIVUvjUTXWudlbIBvj_UNmv_uCQL3GR5E1Lum0zROzmgw7Z9CYWHoQj6PUoxOk_qb3tJqtUmXQJekcVwlIlhR7eIrz0c4oJlCTRBidOFm7DY3DyEopIHsXhXJjH-eYSx4/s800/fruits_basket.png" },
+                    { zh: "盆栽", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjfA2a6DiWQXEiABf0fZsAjzB2b9WSKk0joJpEtFy_HwC0oD0f3fkrZrRhsk7-gyu_tWCk5F5iZf_9gYnHZ4qMquwq2QBwtTM2YKQLzpdolbAwwbfkKOVuelO4mwIcjILPX3WX2uZh5bwY/s800/flower_surfinia_safinia+.png" },
+                    { zh: "欄杆", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuVlwp8VERYX2VAxcsFJZyo3oiMxmSa9gEaqG_IMhG79eqbgJ38opsq0QaFor-jKXx_M5v-WhxNrfI-wOEk65HkYfbqTFnE27jqleruBXcCJzyjpxdebR43C1JPImSHKPyhWehmAu9jrc/s800/ihan_saku_norikoeru.png" }
+                ] 
+            }
         ];
 
-        let currentLevel = null, flippedCards = [], matchedPairs = 0, startTime = null, timerInterval = null;
-        const syncStatus = document.getElementById('sync-status'), syncText = document.getElementById('sync-text');
-
-        // --- 核心邏輯 ---
+        let currentLevel = null;
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let startTime = null;
+        let timerInterval = null;
 
         async function initApp() {
-            // 自動抓取 index.html 存下的名字
-            const user = localStorage.getItem('match_username');
-            if (!user) {
-                document.getElementById('user-modal').classList.add('active');
-                return;
+            const username = localStorage.getItem('studyLandUser');
+            if (!username) { 
+                window.location.href = 'index.html'; 
+                return; 
             }
-            document.getElementById('user-modal').classList.remove('active');
-            await fetchRecords(user); 
+            document.getElementById('display-username').innerText = username;
             showGallery();
         }
 
-        async function fetchRecords(name) {
-            syncStatus.style.opacity = '1'; syncText.innerText = '同步紀錄...';
-            try {
-                const res = await fetch(`${GAS_URL}?name=${encodeURIComponent(name)}`);
-                const data = await res.json();
-                levels.forEach(l => {
-                    localStorage.removeItem(`best_${l.id}`);
-                    localStorage.removeItem(`best_stars_${l.id}`);
-                });
-                Object.keys(data).forEach(id => {
-                    localStorage.setItem(`best_${id}`, data[id].time);
-                    localStorage.setItem(`best_stars_${id}`, data[id].stars);
-                });
-                syncText.innerText = '已同步';
-            } catch (e) { syncText.innerText = '離線模式'; }
-            setTimeout(() => syncStatus.style.opacity = '0', 1000);
+        function showGallery() {
+            document.getElementById('gallery-view').classList.remove('hidden');
+            document.getElementById('game-view').classList.add('hidden');
+            document.getElementById('game-timer-panel').classList.add('hidden');
+            document.getElementById('back-to-gallery').classList.add('hidden');
+            document.getElementById('reset-btn').classList.add('hidden');
+            document.getElementById('result-modal').classList.remove('active');
+            renderLevels();
         }
 
-        async function winGame() {
+        function renderLevels() {
+            const list = document.getElementById('levels-list');
+            list.innerHTML = '';
+            levels.forEach(level => {
+                const card = document.createElement('div');
+                card.className = 'level-card glass-panel cursor-pointer hover:bg-white/40';
+                card.innerHTML = `
+                    <img src="${level.thumbnail}" class="level-thumb">
+                    <div class="flex-1 p-4">
+                        <h3 class="font-cubic thin-border text-slate-700 text-lg">${level.name}</h3>
+                        <p class="text-xs text-slate-500 font-cubic">配對挑戰</p>
+                    </div>
+                `;
+                card.onclick = () => startLevel(level);
+                list.appendChild(card);
+            });
+        }
+
+        function startLevel(level) {
+            currentLevel = level;
+            matchedPairs = 0;
+            flippedCards = [];
+            document.getElementById('gallery-view').classList.add('hidden');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('game-timer-panel').classList.remove('hidden');
+            document.getElementById('back-to-gallery').classList.remove('hidden');
+            document.getElementById('reset-btn').classList.remove('hidden');
+            
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.innerHTML = '';
+            
+            const cards = [];
+            level.pairs.forEach(pair => {
+                cards.push({ type: 'text', content: pair.zh, matchId: pair.zh });
+                cards.push({ type: 'img', content: pair.img, matchId: pair.zh });
+            });
+            
+            cards.sort(() => Math.random() - 0.5);
+            
+            cards.forEach(data => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-back font-cubic text-2xl">?</div>
+                        <div class="card-front">
+                            ${data.type === 'text' ? `<span class="font-cubic text-lg">${data.content}</span>` : `<img src="${data.content}" class="card-img">`}
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => flipCard(card, data);
+                gameContainer.appendChild(card);
+            });
+            
+            startTimer();
+        }
+
+        function flipCard(card, data) {
+            if (flippedCards.length === 2 || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            
+            card.classList.add('flipped');
+            flippedCards.push({ card, data });
+            
+            if (flippedCards.length === 2) {
+                setTimeout(checkMatch, 600);
+            }
+        }
+
+        function checkMatch() {
+            const [c1, c2] = flippedCards;
+            if (c1.data.matchId === c2.data.matchId) {
+                c1.card.classList.add('matched');
+                c2.card.classList.add('matched');
+                matchedPairs++;
+                if (matchedPairs === currentLevel.pairs.length) endGame();
+            } else {
+                c1.card.classList.remove('flipped');
+                c2.card.classList.remove('flipped');
+            }
+            flippedCards = [];
+        }
+
+        function startTimer() {
+            startTime = Date.now();
             clearInterval(timerInterval);
-            const duration = Math.floor((new Date() - startTime) / 1000);
-            const stars = duration < 12 ? 3 : (duration < 25 ? 2 : 1);
+            timerInterval = setInterval(() => {
+                const sec = Math.floor((Date.now() - startTime) / 1000);
+                document.getElementById('timer').innerText = `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+            }, 1000);
+        }
+
+        async function endGame() {
+            clearInterval(timerInterval);
             const timeStr = document.getElementById('timer').innerText;
-
-            // 本地存儲
-            localStorage.setItem(`best_${currentLevel.id}`, timeStr);
-            localStorage.setItem(`best_stars_${currentLevel.id}`, stars);
-
-            // 雲端上傳 (加上 appType: "MATCHING")
-            syncStatus.style.opacity = '1'; syncText.innerText = '上傳成績...';
+            const stars = 3;
+            
+            document.getElementById('result-stars').innerHTML = Array(stars).fill('<div class="star-active"></div>').join('');
+            document.getElementById('result-time').innerText = `完成時間 ${timeStr}`;
+            document.getElementById('result-modal').classList.add('active');
+            
+            const syncStatus = document.getElementById('sync-status');
+            syncStatus.style.opacity = '1';
             try {
                 await fetch(GAS_URL, { 
                     method: 'POST', mode: 'no-cors', 
                     body: JSON.stringify({ 
-                        appType: "MATCHING",
-                        name: localStorage.getItem('match_username'), 
+                        name: localStorage.getItem('studyLandUser'), 
                         level: currentLevel.id, 
                         time: timeStr, 
                         stars: stars 
                     }) 
                 });
-                syncText.innerText = '已上傳';
-            } catch (e) { syncText.innerText = '上傳失敗'; }
-
-            document.getElementById('result-stars').innerHTML = '⭐'.repeat(stars);
-            document.getElementById('result-time').innerText = `⏱ ${timeStr}`;
-            document.getElementById('result-modal').classList.add('active');
-            setTimeout(() => syncStatus.style.opacity = '0', 1500);
+            } catch(e) {}
+            setTimeout(() => syncStatus.style.opacity = '0', 1000);
         }
 
-        function showGallery() {
-            const gallery = document.getElementById('gallery');
-            gallery.innerHTML = '';
-            levels.forEach(l => {
-                const s = parseInt(localStorage.getItem(`best_stars_${l.id}`)) || 0;
-                const t = localStorage.getItem(`best_${l.id}`) || '--:--';
-                const div = document.createElement('div');
-                div.className = 'level-node';
-                div.innerHTML = `
-                    <div class="text-xs font-black text-sky-400 mb-1">LEVEL ${l.id}</div>
-                    <div class="text-lg font-bold text-slate-700 mb-2">${l.title}</div>
-                    <div class="text-yellow-400 mb-1 text-xl">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
-                    <div class="text-xs text-slate-300 font-mono">${t}</div>
-                `;
-                div.onclick = () => startLevel(l);
-                gallery.appendChild(div);
-            });
-        }
-
-        function startLevel(l) {
-            currentLevel = l; matchedPairs = 0; flippedCards = [];
-            document.getElementById('map-view').classList.add('hidden');
-            document.getElementById('game-view').classList.remove('hidden');
-            
-            let cards = [];
-            l.items.forEach(i => {
-                cards.push({ v: i.img, m: i.word });
-                cards.push({ v: i.word, m: i.img });
-            });
-            cards.sort(() => Math.random() - 0.5);
-
-            const grid = document.getElementById('game-grid');
-            grid.innerHTML = '';
-            cards.forEach(c => {
-                const card = document.createElement('div');
-                card.className = 'card aspect-square';
-                card.innerHTML = `
-                    <div class="card-inner">
-                        <div class="card-front pixel-font text-2xl">${c.v}</div>
-                        <div class="card-back">?</div>
-                    </div>`;
-                card.onclick = () => {
-                    if (flippedCards.length < 2 && !card.classList.contains('flipped')) {
-                        card.classList.add('flipped');
-                        flippedCards.push({el: card, data: c});
-                        if (flippedCards.length === 2) checkMatch();
-                    }
-                };
-                grid.appendChild(card);
-            });
-            startTimer();
-        }
-
-        function checkMatch() {
-            const [a, b] = flippedCards;
-            if (a.data.v === b.data.m) {
-                setTimeout(() => {
-                    a.el.classList.add('matched'); b.el.classList.add('matched');
-                    matchedPairs++;
-                    if (matchedPairs === currentLevel.items.length) winGame();
-                }, 500);
-                flippedCards = [];
-            } else {
-                setTimeout(() => {
-                    a.el.classList.remove('flipped'); b.el.classList.remove('flipped');
-                    flippedCards = [];
-                }, 1000);
-            }
-        }
-
-        function startTimer() {
-            startTime = new Date();
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                const diff = Math.floor((new Date() - startTime) / 1000);
-                const m = Math.floor(diff/60).toString().padStart(2,'0'), s = (diff%60).toString().padStart(2,'0');
-                document.getElementById('timer').innerText = `${m}:${s}`;
-            }, 1000);
-        }
-
-        function backToMap() {
-            document.getElementById('game-view').classList.add('hidden');
-            document.getElementById('result-modal').classList.remove('active');
-            document.getElementById('map-view').classList.remove('hidden');
-            showGallery();
-        }
-
-        document.getElementById('confirm-user').onclick = () => {
-            const val = document.getElementById('username-input').value.trim();
-            if (val) { localStorage.setItem('match_username', val); initApp(); }
-        };
-
-        document.getElementById('logout-btn').onclick = () => { if(confirm("返回選單？")) window.location.href = "index.html"; };
-        
+        function resetGame() { if(currentLevel) startLevel(currentLevel); }
         window.onload = initApp;
     </script>
 </body>
