@@ -23,9 +23,11 @@
             background-attachment: fixed;
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23BAE6FF'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, auto;
             overflow-x: hidden;
+            -webkit-user-select: none;
         }
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .font-iansui { font-family: 'Iansui', serif; }
+        
         .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
         .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
@@ -37,9 +39,17 @@
         #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                             display: flex; pointer-events: none;}
         #success-overlay.active {transform: translate(-50%, -50%) scale(1.5);}
+
+        .progress-bar-container {position: relative; width: 100%; height: 10px; background-color: rgba(255, 255, 255, 0.5); border-radius: 5px; margin-bottom: 25px; margin-top: 15px;}
+        #progress-fill {height: 100%; background-color: #10B981; width: 0%; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); border-radius: 5px;}
+        #progress-character {position: absolute; bottom: 8px; left: 0%; width: 40px; height: 40px; transform: translateX(-50%); transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); pointer-events: none; z-index: 20;}
+
+        .step-btn.active { background-color: #38C0FF; color: white; border-color: white; }
+        .step-btn.completed::after { content: '✓'; position: absolute; top: -2px; right: -2px; background: #10B981; color: white; width: 14px; height: 14px; border-radius: 50%; font-size: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid white; }
         
         #sync-status { transition: opacity 0.3s; opacity: 0; }
         #sync-status.show { opacity: 1; }
+        
     </style>
 </head>
 
@@ -47,28 +57,31 @@
 <body class="min-h-screen flex flex-col items-center p-4">
 
     <nav class="w-full max-w-md flex justify-between items-center mb-6 mt-2">
+        <!-- 返回主頁 -->
         <a href="index.html" class="glass-panel p-3 rounded-full shadow-md hover:bg-white/80 transition-all active:scale-90">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </a>
+        <!-- 同步通知 -->
         <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
             <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             <span id="sync-text" class="font-cubic text-xs thin-border text-slate-600">同步中...</span>
         </div>
-        
+        <!-- 玩家資訊 -->
         <div class="glass-panel px-4 py-2 rounded-full shadow-md font-cubic thin-border text-[10px] text-slate-500 tracking-wider">
             探險家：<span id="display-username" class="text-sm font-cubic thin-border text-slate-700">載入中</span>
         </div>
     </nav>
 
     <main class="w-full max-w-md flex flex-col items-center">
+        
+        <!-- 操作欄 -->
         <div class="w-full flex justify-between items-end mb-4 px-2">
-            <div>
-                <div class="text-[10px] text-slate-500 font-cubic thin-border uppercase tracking-wider">筆劃
-                    <span id="current-strokes" class="text-2xl font-cubic thin-border text-slate-700">0</span>
-                    <span id="target-strokes" class="text-xs px-2 py-0.5 bg-slate-100 font-cubic thin-border text-slate-400 rounded-full">/ 0</span>
-                </div>
+            <div class="flex items-center gap-3 glass-panel px-4 py-2 rounded-full shadow-lg">
+                <span class="text-[10px] text-slate-500 font-cubic thin-border uppercase tracking-wider">筆劃</span>
+                <span id="current-strokes" class="text-2xl font-cubic thin-border text-slate-700">0</span>
+                <span id="target-strokes" class="text-xs px-2 py-0.5 bg-slate-100 font-cubic thin-border text-slate-400 rounded-full">/ 0</span>
             </div>
-            <div class="flex gap-2">
+        <div class="flex gap-2">
                 <button id="undo-btn" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white transition-all active:scale-95 shadow-lg" title="還原">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
                 </button>
@@ -76,16 +89,23 @@
             </div>
         </div>
 
+        <!-- 畫布 -->
         <div class="canvas-container w-full aspect-square mb-8">
             <div id="watermark" class="absolute inset-0 flex items-center justify-center text-[min(55vw,240px)] text-slate-100 font-iansui pointer-events-none select-none"></div>
             <canvas id="main-canvas"></canvas>
             <div id="success-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden z-[50]">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#10B981"/><path d="M8 12L11 15L16 9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
+        </div>
+
+        <!-- 底部 Scroller -->
+        <div class="glass-panel p-5 rounded-3xl shadow-xl">
+            <div id="progress-text" class="text-[11px] text-slate-500 font-cubic thin-border mb-2 text-center">準備中...</div>
+            <div class="progress-bar-container">
+                <div id="progress-fill"></div>
+                <img id="progress-character" src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Rick.gif" alt="角色動畫">
             </div>
-        
-        <div id="step-container" class="flex gap-3 overflow-x-auto w-full pb-6 px-2 no-scrollbar">
-            </div>
+            <div id="step-container" class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide"></div>
     </main>
 
     <script>
@@ -100,7 +120,12 @@
         const canvas = document.getElementById('main-canvas');
         const ctx = canvas.getContext('2d');
         const watermark = document.getElementById('watermark');
+        const stepContainer = document.getElementById('step-container');
         const syncStatus = document.getElementById('sync-status');
+        const progressFill = document.getElementById('progress-fill');
+        const progressChar = document.getElementById('progress-character');
+        const progressText = document.getElementById('progress-text');
+        
 
         async function initApp() {
             const username = localStorage.getItem('studyLandUser');
@@ -154,13 +179,21 @@
             container.innerHTML = '';
             userCharacters.forEach((item, index) => {
                 const div = document.createElement('div');
-                div.className = `flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center font-cubic text-xl transition-all shadow-sm ${
-                    index === currentIndex ? 'bg-blue-500 text-white scale-110' : 'glass-panel text-slate-500'
-                } ${item.completed ? 'ring-2 ring-green-400' : ''}`;
+                div.className = `step-btn relative flex-none w-12 h-12 rounded-2xl bg-white font-iansui thin-border text-xl shadow-sm border-2 transition-all ${
+                    index === currentIndex ? 'active border-white' : 'text-slate-400 border-transparent'
+                } ${item.completed ? '' : ''}`;
                 div.innerText = item.char;
                 div.onclick = () => { currentIndex = index; clearCanvas(); renderGame(); renderSteps(); };
                 container.appendChild(div);
             });
+            const progressPercent = (completedCount / characters.length) * 100;
+            progressFill.style.width = `${progressPercent}%`;
+            progressChar.style.left = `${progressPercent}%`;
+            progressText.innerText = `學習進度：${completedCount}`;
+            watermark.innerText = characters[currentIndex].char;
+            document.getElementById('target-strokes').innerText = "/ " + characters[currentIndex].strokes;
+            document.getElementById('current-strokes').innerText = paths.length;
+            updateReference();
         }
 
         // 繪圖邏輯
