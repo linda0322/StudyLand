@@ -27,6 +27,22 @@
             <span class="text-xl font-bold text-gray-700">寫字練習雲</span>
         </a>
     </div>
+
+    <div id="login-section" class="mb-8">
+    <input id="global-username" type="text" placeholder="輸入你的名字" class="p-2 border rounded">
+    <button onclick="saveUser()" class="bg-blue-500 text-white p-2 rounded">登入</button>
+    </div>
+    
+    <script>
+    function saveUser() {
+        const name = document.getElementById('global-username').value;
+        if(name) {
+            localStorage.setItem('match_username', name);
+            localStorage.setItem('writing_username', name);
+            alert('登入成功：' + name);
+        }
+    }
+    </script>
     
     <p class="mt-10 text-gray-400 text-sm">點擊上方圖示進入遊戲</p>
 </body>
