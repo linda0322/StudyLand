@@ -135,7 +135,7 @@
             const syncStatus = document.getElementById('sync-status');
             const syncText = document.getElementById('sync-text');
             syncStatus.style.opacity = '1';
-            syncText.innerText = "載入中...";
+            syncText.innerText = "同步中...";
             
             try {
                 const response = await fetch(GAS_URL, {
@@ -144,7 +144,7 @@
                 });
                 levels = await response.json();
             } catch (e) {
-                console.error("載入關卡失敗", e);
+                console.error("載入失敗", e);
             } finally {
                 syncStatus.style.opacity = '0';
             }
