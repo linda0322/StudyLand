@@ -183,7 +183,7 @@
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyw6uG_CLmIM_CMV5Tq3iWmj3kdjTD841DMZ95XEaeRIQPaxqolMmlVkYNm_cPmrMe_/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxcN6vSqaukUo0q0LL-iUL2kNClC6J9A8P66JEf4T3KK4Y7PaBUP893SCk7AWE_hKlM/exec";
 
         let levels = [
             { 
@@ -445,8 +445,15 @@
             
             syncStatus.style.opacity = '1'; syncText.innerText = '更新中...';
             await fetch(GAS_URL, { 
-                method: 'POST', mode: 'no-cors', 
-                body: JSON.stringify({ name: localStorage.getItem('match_username'), level: currentLevel.id, time: timerEl.innerText, stars: stars }) 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify({ 
+                    appType: "MATCHING", // 新增這行
+                    name: localStorage.getItem('match_username'), 
+                    level: currentLevel.id, 
+                    time: timerEl.innerText, 
+                    stars: stars 
+                }) 
             });
             
             document.getElementById('result-stars').innerHTML = getStarsHtml(stars);
