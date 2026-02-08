@@ -21,7 +21,10 @@
             background-position: center;
             background-attachment: fixed; 
             background-color: #38C0FF;
-            min-height: 100vh;
+            height: auto;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: auto !important;
         }
         
         #login-overlay {
@@ -55,7 +58,7 @@
         </div>
     </div>
 
-    <main id="main-content" class="container mx-auto px-6 py-8 hidden">
+    <main id="main-content" class="container mx-auto px-6 py-8 hidden flex flex-col justify-start">
         <div class="mb-8 px-1 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <div class="glass-panel px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
@@ -133,7 +136,15 @@
             loginOverlay.classList.add('hidden');
             mainContent.classList.remove('hidden');
             window.scrollTo(0, 0);
-        }
+            setTimeout(() => {
+                window.scrollTo({
+                top: 0,
+                behavior: 'instant'
+                });
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0; 
+                }, 10); 
+         }
 
         const logoutBtn = document.getElementById('logout-btn');
             logoutBtn.addEventListener('click', () => {
