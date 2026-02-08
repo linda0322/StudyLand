@@ -58,6 +58,7 @@
         </div>
     </div>
 
+    <!-- 玩家資訊 -->
     <main id="main-content" class="container mx-auto px-6 py-8 hidden flex flex-col justify-start">
         <div class="mb-8 px-1 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -74,10 +75,17 @@
                 </button>
             </div>
         </div>
-        <header class="text-center mb-16">
+
+        <!-- NPC -->
+        <header class="text-center mb-10 flex flex-col items-center">
+            <div class="relative mb-4">
+                <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="w-20 h-20 drop-shadow-md">
+                <div class="absolute -top-2 -right-2 bg-white text-[10px] px-2 py-0.5 rounded-full shadow-sm font-cubic text-[#38C0FF] animate-bounce">GO!</div>
+            </div>
             <h1 class="font-cubic text-white/90 text-2xl drop-shadow-md">今天想進入哪個島嶼？</h1>
         </header>
 
+        <!-- 遊戲列表 -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <a href="word-challenge.html" class="group bg-white/90 backdrop-blur-md p-4 rounded-[25px] shadow-lg hover:-translate-y-2 transition-all duration-300">
                 <div class="bg-yellow-100 h-28 rounded-[20px] mb-3 flex items-center justify-center text-4xl transition-transform">📝</div>
