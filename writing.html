@@ -61,13 +61,21 @@
         
         #sync-status { transition: opacity 0.3s; opacity: 0; }
         #sync-status.show { opacity: 1; }
+
+        @media (min-width: 768px) {
+            body {justify-content: center; padding-top: 2rem;}
+            main {gap: 1.5rem;}
+            }
+            body {background: #1dc5fd url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png') no-repeat top center / 100% auto !important;
+            background-attachment: scroll !important;
+            }
         
     </style>
 </head>
 
-<body class="flex flex-col items-center px-4 pt-4 pb-8">
+<body class="flex flex-col items-center justify-center px-4 min-h-screen py-6">
 
-    <nav class="w-full max-w-md flex justify-between items-end mb-6 mt-2 px-2">
+    <nav class="w-full max-w-md flex justify-between items-end mb-6 px-2">
         <div class="flex items-center gap-2">
             <div class="glass-panel px-4 py-2 rounded-full shadow-md font-cubic thin-border text-[10px] text-slate-500 tracking-wider">
                 探險家：<span id="display-username" class="text-sm font-cubic thin-border text-slate-700">載入中</span>
@@ -117,7 +125,7 @@
     </div>
     
 
-    <main class="w-full max-w-md flex flex-col items-center">
+    <main class="w-full max-w-md flex flex-col items-center justify-center flex-grow gap-y-2">
         
         <!-- 操作欄 -->
         <div class="w-full flex justify-between items-end mb-4 px-2">
