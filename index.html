@@ -115,17 +115,22 @@
     </div>
 
     <script>
-        // 設定目前的後端 URL (從你提供的檔案中提取)
         const GAS_URL_MATCHING = "https://script.google.com/macros/s/AKfycbyw6uG_CLmIM_CMV5Tq3iWmj3kdjTD841DMZ95XEaeRIQPaxqolMmlVkYNm_cPmrMe_/exec";
         const GAS_URL_WRITING = "https://script.google.com/macros/s/AKfycbzJnjgmToB2wH9jgri2IP04l34k_cqLGad6EqKHjKVq6w3_bx7dxZz88c7nOZt_2oQZ/exec";
 
         // 切換視圖功能
         function showView(viewId) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+            const loginOverlay = document.getElementById('login-view');
+            if (viewId === 'login-view') {
+                loginOverlay.classList.add('active'); // 登入頁
+            } else {
+                loginOverlay.classList.remove('active'); // 彈窗消失
+                const targetView = document.getElementById(viewId);
+                if (targetView) targetView.classList.add('active'); // 顯示目標頁面
+            }
         }
 
-        // 初始化檢查
         function init() {
             const user = localStorage.getItem('app_user');
             if (user) {
