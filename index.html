@@ -2,48 +2,132 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>學習 App 整合平台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>StudyLand</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC_Icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { 
-            background-color: #f0f9ff;
-            background-image: radial-gradient(#bae6fd 1px, transparent 1px);
-            background-size: 20px 20px;
+        @font-face {
+            font-family: 'Cubic11';
+            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
+            font-display: swap;
         }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            touch-action: none; 
+            -webkit-user-select: none;
+            overflow: hidden; 
+            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
+            background-size: cover;
+            background-position: center;
+            background-color: #38C0FF;
+        }
+        
+        #login-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+        .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+        .font-cubic {font-family: 'Cubic11', sans-serif;}
+        .hidden { display: none !important; }
+        
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6">
-    <h1 class="text-3xl font-bold text-sky-700 mb-8">我的學習小天地</h1>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-lg">
-        <a href="matching.html" class="flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg border-2 border-sky-200 hover:border-sky-500 hover:scale-105 transition-all">
-            <div class="text-4xl mb-3">🧩</div>
-            <span class="text-xl font-bold text-gray-700">圖文配對遊戲</span>
-        </a>
+<body>
 
-        <a href="writing.html" class="flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg border-2 border-orange-200 hover:border-orange-500 hover:scale-105 transition-all">
-            <div class="text-4xl mb-3">✍️</div>
-            <span class="text-xl font-bold text-gray-700">寫字練習雲</span>
-        </a>
+    <div id="login-overlay">
+        <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
+            <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="w-24 h-24 mb-6">
+            <h2 class="text-xl font-cubic thick-border text-slate-700 mb-4">登入</h2>
+            <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl px-4 py-4 text-center font-cubic thin-border mb-6 outline-none focus:border-[#38C0FF] transition-all">
+            <button id="confirm-user" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl font-cubic thin-border shadow-[#38C0FF]/30 hover:bg-[#2da9e6] active:scale-95 transition-all">登入</button>
+        </div>
     </div>
 
-    <div id="login-section" class="mb-8">
-    <input id="global-username" type="text" placeholder="輸入你的名字" class="p-2 border rounded">
-    <button onclick="saveUser()" class="bg-blue-500 text-white p-2 rounded">登入</button>
-    </div>
-    
+    <main id="main-content" class="container mx-auto px-6 py-12 hidden">
+        <header class="text-center mb-16">
+            <h1 class="text-4xl font-bold text-white drop-shadow-lg mb-2">
+                Hello, <span id="user-display-name">探險家</span>!
+            </h1>
+            <p class="text-white/90 text-lg">準備好今天要挑戰哪一個島嶼了嗎？</p>
+        </header>
+
+    <!-- 遊戲選擇 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <a href="word-challenge.html" class="group bg-white/90 backdrop-blur-md p-6 rounded-[35px] shadow-xl hover:-translate-y-3 transition-all duration-300">
+                <div class="bg-yellow-100 h-44 rounded-[25px] mb-4 flex items-center justify-center text-6xl group-hover:rotate-6 transition-transform">📝</div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">單字島嶼</h3>
+                <p class="text-slate-500">練習精選英文單字，累積你的能量金幣。</p>
+            </a>
+
+            <a href="#" class="group bg-white/90 backdrop-blur-md p-6 rounded-[35px] shadow-xl hover:-translate-y-3 transition-all duration-300">
+                <div class="bg-purple-100 h-44 rounded-[25px] mb-4 flex items-center justify-center text-6xl group-hover:rotate-6 transition-transform">🧪</div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">科學實驗</h3>
+                <p class="text-slate-500">敬請期待，新的冒險即將開啟...</p>
+            </a>
+        </div>
+    </main>
+
     <script>
-    function saveUser() {
-        const name = document.getElementById('global-username').value;
-        if(name) {
-            localStorage.setItem('match_username', name);
-            localStorage.setItem('writing_username', name);
-            alert('登入成功：' + name);
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHbvqj1HIR4EWMes6lIvLLYBZ7VaGMlz_jSPD4FU2skachrCKFgAVw5ppMfMSq5mre/exec';
+        
+        const loginOverlay = document.getElementById('login-overlay');
+        const mainContent = document.getElementById('main-content');
+        const usernameInput = document.getElementById('username-input');
+        const confirmBtn = document.getElementById('confirm-user');
+        const userDisplayName = document.getElementById('user-display-name');
+
+        // 檢查是否已經登入
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('studyLandUser');
+            if (savedName) {
+                showMainPage(savedName);
+            }
+        });
+
+        confirmBtn.addEventListener('click', async () => {
+            const username = usernameInput.value.trim();
+            
+            if (!username) {
+                alert('你的名字是甚麼？');
+                return;
+            }
+
+            // 1. 本地儲存
+            localStorage.setItem('studyLandUser', username);
+
+            // 2. 顯示主頁 UI
+            showMainPage(username);
+
+            // 3. 同步到 Google Sheet
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username })
+                });
+                console.log('Login data sent to Google Sheets');
+            } catch (error) {
+                console.error('Error sending to Sheets:', error);
+            }
+        });
+
+        function showMainPage(name) {
+            userDisplayName.textContent = name;
+            loginOverlay.classList.add('hidden'); // 隱藏登入視窗
+            mainContent.classList.remove('hidden'); // 顯示遊戲
         }
-    }
     </script>
-    
-    <p class="mt-10 text-gray-400 text-sm">點擊上方圖示進入遊戲</p>
 </body>
 </html>
