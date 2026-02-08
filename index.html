@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>StudyLand</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Cubic11';
+            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Iansui';
+            src: url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@9d9a8e68bf1e138dd91e562eeff28d95bca33196/fonts/ttf/Iansui-Regular.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        body { 
+            font-family: 'Noto Sans TC', sans-serif; 
+            touch-action: manipulation; 
+            -webkit-user-select: none; 
+            overflow: hidden; 
+            background-image: url('https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Sky.png');
+            background-color: #38C0FF;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .view-section { display: none; height: 100vh; width: 100vw; overflow: hidden; }
+        .view-section.active { display: block; }
+
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        
+        .btn-hover { transition: transform 0.1s; }
+        .btn-hover:active { transform: scale(0.95); }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 4px solid #4A90E2;
+            box-shadow: 0 8px 0 #2A60A2;
+        }
+
+        .text-border {
+            -webkit-text-stroke: 1px currentColor;
+            paint-order: stroke fill;
+        }
+
+        .name-border {
+            -webkit-text-stroke: 0.5px currentColor;
+            paint-order: stroke fill;
+        }
+      
+    </style>
+</head>
+<body class="bg-blue-50">
+
+    <!-- 登入介面 -->
+    <div id="login-view" class="modal-overlay">
+        <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
+            <img src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Robot.gif" alt="機器人" class="w-24 h-24 mb-6">
+            <h2 class="text-xl text-border text-slate-700 mb-4" style="font-family: 'Cubic11';">登入</h2>
+            <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl px-4 py-4 text-center name-border mb-6 outline-none focus:border-[#38C0FF]" style="font-family: 'Cubic11';">
+            <button id="login-btn" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl name-border shadow-lg shadow-[#38C0FF]/10" style="font-family: 'Cubic11';">進入遊戲</button>
+        </div>
+    </div>
+
+    <!-- 2. 主選單 (Main Menu View) -->
+    <div id="menu-view" class="view-section flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-2xl text-center">
+            <div class="flex justify-between items-center mb-12 px-4">
+                <span id="welcome-text" class="text-2xl font-bold text-blue-800" style="font-family: 'Cubic11';">你好！</span>
+                <button id="logout-btn" class="bg-red-400 text-white px-4 py-2 rounded-lg text-sm">登出</button>
+            </div>
+            
+            <h2 class="text-4xl font-bold text-white drop-shadow-lg mb-12" style="font-family: 'Cubic11';">請選擇學習任務</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+                <!-- App 1: 圖文配對 -->
+                <div onclick="launchApp('matching')" class="app-card p-6 rounded-3xl cursor-pointer btn-hover text-center">
+                    <img src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Icon.png" class="w-24 h-24 mx-auto mb-4 rounded-2xl">
+                    <h3 class="text-2xl font-bold text-blue-700">圖文配對</h3>
+                    <p class="text-gray-600 mt-2">挑戰記憶力與認字能力</p>
+                </div>
+
+                <!-- App 2: 寫字雲 -->
+                <div onclick="launchApp('writing')" class="app-card p-6 rounded-3xl cursor-pointer btn-hover text-center">
+                    <img src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Icon.png" class="w-24 h-24 mx-auto mb-4 rounded-2xl">
+                    <h3 class="text-2xl font-bold text-green-700">寫字練習</h3>
+                    <p class="text-gray-600 mt-2">練習筆順，寫出好字</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 圖文配對容器 (Matching App Container) -->
+    <div id="matching-container" class="view-section relative bg-white">
+        <button onclick="backToMenu()" class="absolute top-4 left-4 z-50 bg-white/80 p-2 rounded-full shadow">返回選單</button>
+        <iframe id="matching-frame" class="w-full h-full border-none"></iframe>
+    </div>
+
+    <!-- 4. 寫字練習容器 (Writing App Container) -->
+    <div id="writing-container" class="view-section relative bg-white">
+        <button onclick="backToMenu()" class="absolute top-4 left-4 z-50 bg-white/80 p-2 rounded-full shadow">返回選單</button>
+        <iframe id="writing-frame" class="w-full h-full border-none"></iframe>
+    </div>
+
+    <script>
+        // 設定目前的後端 URL (從你提供的檔案中提取)
+        const GAS_URL_MATCHING = "https://script.google.com/macros/s/AKfycbyw6uG_CLmIM_CMV5Tq3iWmj3kdjTD841DMZ95XEaeRIQPaxqolMmlVkYNm_cPmrMe_/exec";
+        const GAS_URL_WRITING = "https://script.google.com/macros/s/AKfycbzJnjgmToB2wH9jgri2IP04l34k_cqLGad6EqKHjKVq6w3_bx7dxZz88c7nOZt_2oQZ/exec";
+
+        // 切換視圖功能
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        // 初始化檢查
+        function init() {
+            const user = localStorage.getItem('app_user');
+            if (user) {
+                document.getElementById('welcome-text').innerText = `你好，${user}！`;
+                showView('menu-view');
+            } else {
+                showView('login-view');
+            }
+        }
+
+        // 登入邏輯
+        document.getElementById('login-btn').onclick = () => {
+            const name = document.getElementById('username-input').value.trim();
+            if (name) {
+                localStorage.setItem('app_user', name);
+                init();
+            }
+        };
+
+        // 登出邏輯
+        document.getElementById('logout-btn').onclick = () => {
+            if(confirm("確定要登出並切換使用者嗎？")) {
+                localStorage.removeItem('app_user');
+                init();
+            }
+        };
+
+        // 啟動子 App
+        function launchApp(appId) {
+            const user = localStorage.getItem('app_user');
+            if (appId === 'matching') {
+                // 如果你決定用 iframe 整合，可以動態設定 src
+                // 或者直接將原本 Matching Game 的 HTML 貼到這層
+                // 下面是以 iframe 為例，你可以將兩份 HTML 合併在同一個檔案中避免 iframe
+                document.getElementById('matching-frame').src = "matching_game_content.html?user=" + encodeURIComponent(user);
+                showView('matching-container');
+            } else {
+                document.getElementById('writing-frame').src = "writing_cloud_content.html?user=" + encodeURIComponent(user);
+                showView('writing-container');
+            }
+        }
+
+        function backToMenu() {
+            showView('menu-view');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
