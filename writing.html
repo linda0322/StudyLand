@@ -398,9 +398,9 @@
             const itemCat = (item.categories && item.categories.length > 0) ? item.categories[0] : "未分類";
             
             const matchesChar = item.char.includes(searchTerm);
-            const matchesEnglish = item.English ? item.English.toLowerCase().includes(searchTerm) : false;
+            const matchesEnglish = item.en ? String(item.en).toLowerCase().includes(searchTerm) : false;
             const matchesSearch = matchesChar || matchesEnglish;
-            // ----------------------------------
+            // ------------------------------------
     
             const matchesCategory = categoryTerm === 'all' || itemCat === categoryTerm;
     
@@ -413,9 +413,10 @@
                 
                 card.innerHTML = `
                     <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
-                    <span class="text-[8px] font-cubic text-slate-400 mt-1 truncate w-full px-1 text-center">${item.English || ''}</span>
+                    <span class="text-[9px] font-cubic text-slate-400 mt-1 truncate w-full px-1 text-center">${item.en || ''}</span>
                     <span class="text-[8px] font-cubic text-slate-300">${item.strokes} 劃</span>
                 `;
+                
                 card.onclick = () => {
                     currentIndex = index;
                     clearCanvas();
