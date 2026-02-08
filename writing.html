@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>寫字練習</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Iansui';
+            src: url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@9d9a8e68bf1e138dd91e562eeff28d95bca33196/fonts/ttf/Iansui-Regular.ttf') format('truetype');
+            font-display: swap;
+        }
+         @font-face {
+            font-family: 'Cubic11';
+            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            touch-action: none; 
+            -webkit-user-select: none;
+            overflow: hidden; 
+            background-image: url('https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Sky.png');
+            background-size: cover;
+            background-position: center;
+            background-color: #38C0FF;
+        }
+        .chinese-font { font-family: 'Iansui', "BiauKai", "DFKai-SB", "標楷體", serif; }
+        .canvas-container { position: relative; background-color: white; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        #drawing-canvas { position: absolute; top: 0; left: 0; z-index: 10; touch-action: none; }
+        #ref-canvas { position: absolute; top: 0; left: 0; z-index: 5; opacity: 0; pointer-events: none; }
+        #watermark-layer { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center; font-size: min(70vw, 300px); color: rgba(0,0,0,0.05); pointer-events: none; }
+        
+        #success-tick {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 30;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+        #success-tick.show { transform: translate(-50%, -50%) scale(1.5); }
+
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        .step-btn.active { background-color: #38C0FF; color: white; border-color: white; }
+        .step-btn.completed::after { content: '✓'; position: absolute; top: -2px; right: -2px; background: #10B981; color: white; width: 14px; height: 14px; border-radius: 50%; font-size: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid white; }
+
+        .progress-bar-container {
+            position: relative;
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            margin-bottom: 25px;
+            margin-top: 15px;
+        }
+        #progress-fill {
+            height: 100%;
+            background-color: #10B981;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 5px;
+        }
+        #progress-character {
+            position: absolute;
+            bottom: 8px;
+            left: 0%;
+            width: 40px;
+            height: 40px;
+            transform: translateX(-50%);
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+
+        #sync-status { transition: opacity 0.3s; opacity: 0; }
+        #sync-status.show { opacity: 1; }
+
+        button:active { transform: scale(0.95); transition: transform 0.1s; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+        .char-card {
+            transition: all 0.2s;
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .char-card:hover { transform: translateY(-2px); background-color: #F2F2F2; }
+        .char-card.exists { opacity: 0.5; cursor: default; }
+        .font-cubic { font-family: 'Cubic11', sans-serif; }
+        .text-border {
+            -webkit-text-stroke: 1px currentColor;
+            paint-order: stroke fill;
+        }
+        .name-border {
+            -webkit-text-stroke: 0.5px currentColor;
+            paint-order: stroke fill;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div id="sync-status" class="fixed top-6 right-6 z-[100] glass-panel px-4 py-2 rounded-full shadow-lg flex items-center gap-2 pointer-events-none">
+        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+        <span id="sync-text" class="text-xs font-bold text-slate-600">同步中...</span>
+    </div>
+
+    <main class="w-full max-w-md min-h-screen flex flex-col mt-10 pb-20">
+        <!--學生資訊-->
+        <div class="mb-4 px-1 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="glass-panel px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
+                    <span class="text-[10px] text-slate-500 font-cubic name-border tracking-wider">學生</span>
+                    <span id="display-username" class="text-sm font-cubic name-border text-slate-700">載入中...</span>
+                </div>
+                <button id="logout-btn" class="p-2 glass-panel rounded-full text-red-500 hover:bg-white/50 active:scale-90 transition-all shadow-lg" title="登出">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
+            </div>
+            <button onclick="location.reload()" class="p-2 glass-panel rounded-full text-slate-500 shadow-lg hover:bg-white/50">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
+        </div>
+
+        <!--操作欄-->
+        <div class="flex justify-between items-center mb-6 px-1">
+            <div class="flex items-center gap-3 glass-panel px-4 py-2 rounded-full shadow-lg">
+                <span class="text-[10px] text-slate-500 font-cubic name-border uppercase tracking-wider">筆劃</span>
+                <span id="stroke-count" class="text-2xl font-cubic name-border text-slate-700">0</span>
+                <span id="target-stroke" class="text-xs px-2 py-0.5 bg-slate-100 font-cubic name-border text-slate-400 rounded-full">/ 0</span>
+            </div>
+            <div class="flex gap-2">
+                <button id="gallery-trigger-btn" class="p-2 glass-panel text-slate-600 rounded-full hover:bg-white transition-colors shadow-lg active:scale-95" title="字庫">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg>
+                </button>
+                <button id="custom-trigger-btn" class="p-2 glass-panel text-slate-600 rounded-full hover:bg-white transition-colors shadow-lg active:scale-95" title="增字">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M15 10H9"/><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></svg>
+                </button>
+                <button id="undo-btn" class="p-2 glass-panel text-slate-600 rounded-full hover:bg-white transition-colors shadow-lg active:scale-95" title="還原">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                </button>
+                <button id="clear-btn" class="px-4 py-2 glass-panel text-slate-600 rounded-full hover:bg-white transition-colors font-cubic name-border text-xs shadow-lg active:scale-95">重寫</button>
+            </div>
+        </div>
+
+        <!--畫布-->
+        <div class="canvas-container aspect-square w-full rounded-3xl overflow-hidden mb-8 border-2 border-white/50">
+            <div id="success-tick">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" fill="#10B981"/>
+                    <path d="M8 12L11 15L16 9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div id="watermark-layer" class="chinese-font"></div>
+            <canvas id="drawing-canvas"></canvas>
+            <canvas id="ref-canvas"></canvas>
+        </div>
+
+        <!--底部面板-->
+        <div class="glass-panel p-5 rounded-3xl shadow-xl">
+            <div id="progress-text" class="text-[11px] text-slate-500 font-cubic name-border mb-2 text-center">準備中...</div>
+            <div class="progress-bar-container">
+                <div id="progress-fill"></div>
+                <img id="progress-character" src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Character.gif" alt="角色動畫">
+            </div>
+            <div id="step-container" class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide"></div>
+        </div>
+    </main>
+
+    <!--登入彈窗-->
+    <div id="user-modal" class="modal-overlay">
+        <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
+            <img src="https://raw.githubusercontent.com/linda0322/writingcloud/refs/heads/main/Robot.gif" alt="機器人" class="w-24 h-24 mb-6">
+            <h2 class="text-xl font-cubic text-border text-slate-700 mb-4">登入</h2>
+            <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl px-4 py-4 text-center font-cubic name-border mb-6 outline-none focus:border-[#38C0FF]">
+            <button id="confirm-user" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl font-cubic name-border shadow-lg shadow-[#38C0FF]/10">開始練習</button>
+        </div>
+    </div>
+
+    <!--增字彈窗-->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="bg-white p-8 rounded-[35px] shadow-2xl w-full max-w-xs text-center">
+            <h3 class="font-cubic text-border text-slate-700 mb-4">加入新字</h3>
+            <div class="space-y-4">
+                <div class="flex flex-col gap-2 mb-4">
+                    <div class="flex justify-center gap-2">
+                        <input type="text" id="custom-char-input" maxlength="1" placeholder="字" class="w-20 border-2 border-slate-100 rounded-xl px-4 py-3 text-center font-cubic name-border outline-none focus:border-blue-400 placeholder:text-sm">
+                        <input type="number" id="custom-stroke-input" placeholder="筆劃" class="w-20 border-2 border-slate-100 rounded-xl px-4 py-3 text-center font-cubic name-border outline-none focus:border-blue-400 placeholder:text-sm">
+                    </div>
+                    <input type="text" id="custom-en-input" placeholder="英文關鍵字 (選填)" class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 text-center font-cubic name-border outline-none focus:border-blue-400 placeholder:text-xs">
+                </div>
+                <div class="flex gap-2">
+                    <button id="cancel-custom" class="flex-1 py-3 bg-slate-100 text-slate-500 rounded-xl font-cubic name-border">取消</button>
+                    <button id="save-custom" class="flex-1 py-3 bg-[#38C0FF] text-white rounded-xl font-cubic name-border shadow-[#38C0FF]/10">加入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--字庫彈窗-->
+    <div id="gallery-modal" class="modal-overlay">
+        <div class="bg-white p-6 rounded-[40px] shadow-2xl w-full max-w-md h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg>
+                    </div>
+                    <h3 class="font-cubic text-border text-slate-700 text-xl">字庫</h3>
+                </div>
+                <button id="close-gallery" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <div class="flex gap-2 mb-6">
+                <div class="relative flex-1">
+                    <input type="text" id="gallery-search" placeholder="搜尋" class="w-full bg-slate-100 border-none rounded-2xl px-4 py-3 pl-10 text-sm font-cubic name-border outline-none focus:ring-2 focus:ring-amber-200">
+                    <svg class="absolute left-3 top-3.5 text-slate-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
+                </div>
+                <select id="gallery-category-filter" class="bg-slate-100 border-none rounded-2xl px-4 text-sm font-cubic name-border text-slate-400 outline-none min-w-[170px]">
+                    <option value="all">所有主題</option>
+                </select>
+            </div>
+
+            <div id="gallery-grid" class="grid grid-cols-4 gap-3 overflow-y-auto pr-1 scrollbar-hide"></div>
+            <div class="mt-6 text-center text-[12px] text-slate-400 font-cubic name-border uppercase tracking-widest">點擊字卡練習</div>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzJnjgmToB2wH9jgri2IP04l34k_cqLGad6EqKHjKVq6w3_bx7dxZz88c7nOZt_2oQZ/exec"; 
+        
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d', { desynchronized: true });
+        const refCanvas = document.getElementById('ref-canvas');
+        const refCtx = refCanvas.getContext('2d');
+        const watermark = document.getElementById('watermark-layer');
+        const stepContainer = document.getElementById('step-container');
+        const displayUsername = document.getElementById('display-username');
+        const syncStatus = document.getElementById('sync-status');
+        const progressFill = document.getElementById('progress-fill');
+        const progressChar = document.getElementById('progress-character');
+        const progressText = document.getElementById('progress-text');
+        const successTick = document.getElementById('success-tick');
+
+        /* 字卡 */
+        const defaultCharacters = [
+        ];
+
+        let masterLibrary = [
+            { char: "吧", strokes: 7, categories: ["口部", "語氣"], en: "ba" },
+            { char: "呀", strokes: 7, categories: ["口部", "語氣"], en: "ah" },
+            { char: "啦", strokes: 11, categories: ["口部", "語氣"], en: "la" },
+            { char: "吠", strokes: 7, categories: ["口部"], en: "bark" },
+            { char: "哭", strokes: 10, categories: ["口部", "情感"], en: "cry" },
+            { char: "哈", strokes: 9, categories: ["口部", "情感"], en: "ha laughter" },
+            { char: "嗚", strokes: 13, categories: ["口部", "語氣"], en: "wu" },
+            { char: "呼", strokes: 8, categories: ["口部"], en: "exhale breathe" },
+            { char: "吸", strokes: 6, categories: ["口部"], en: "inhale breathe suck" },
+            { char: "吹", strokes: 7, categories: ["口部"], en: "blow" },
+            { char: "咬", strokes: 9, categories: ["口部"], en: "bite" },
+            { char: "吞", strokes: 7, categories: ["口部"], en: "swallow" },
+            { char: "嘔", strokes: 14, categories: ["口部"], en: "vomit" },
+            { char: "吐", strokes: 6, categories: ["口部"], en: "vomit spit" },
+            { char: "品", strokes: 9, categories: ["口部"], en: "taste product quality" },
+            { char: "味", strokes: 8, categories: ["口部"], en: "taste flavor flavour" },
+            { char: "咖", strokes: 8, categories: ["口部", "飲食"], en: "curry coffee" },
+            { char: "喱", strokes: 12, categories: ["口部", "飲食"], en: "curry" },
+            { char: "啡", strokes: 11, categories: ["口部", "飲食"], en: "coffee" },
+            { char: "唱", strokes: 11, categories: ["口部"], en: "sing" },
+            { char: "吵", strokes: 7, categories: ["口部"], en: "noisy noise quarrel" },
+            { char: "噪", strokes: 16, categories: ["口部"], en: "noise" },
+            { char: "喝", strokes: 12, categories: ["口部"], en: "drink" },
+            { char: "喊", strokes: 12, categories: ["口部"], en: "shout scream" } 
+        ];
+
+        let characters = [...defaultCharacters];
+        let currentIndex = 0;
+        let isDrawing = false;
+        let paths = []; 
+
+        async function cloudAction(action, payload = null) {
+            const userId = localStorage.getItem('writing_username');
+            if (!userId || !GAS_URL.startsWith("http")) return null;
+            syncStatus.classList.add('show');
+            try {
+                const response = await fetch(GAS_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify({ action, userId, payload }) 
+                });
+                const result = await response.text();
+                syncStatus.classList.remove('show');
+                return result;
+            } catch (e) { 
+                syncStatus.classList.remove('show');
+                return null;
+            }
+        }
+
+        async function saveProgress() {
+            localStorage.setItem('writing_characters', JSON.stringify(characters));
+            localStorage.setItem('writing_current_index', currentIndex);
+            await cloudAction("save", { characters, currentIndex });
+        }
+
+        async function initApp() {
+            const savedName = localStorage.getItem('writing_username');
+            if (!savedName) {
+                document.getElementById('user-modal').classList.add('active');
+            } else {
+                displayUsername.innerText = savedName;
+                
+                const savedCustomLibrary = localStorage.getItem('writing_custom_library');
+                if (savedCustomLibrary) {
+                    try {
+                        const customLib = JSON.parse(savedCustomLibrary);
+                        customLib.forEach(item => {
+                            if (!masterLibrary.some(libItem => libItem.char === item.char)) {
+                                masterLibrary.push(item);
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                const cloudDataStr = await cloudAction("load");
+                if (cloudDataStr && cloudDataStr !== "NoData" && cloudDataStr !== "Error") {
+                    try {
+                        const cloudData = JSON.parse(cloudDataStr);
+                        characters = cloudData.characters;
+                        currentIndex = cloudData.currentIndex;
+                    } catch(e) {}
+                } else {
+                    const localChars = localStorage.getItem('writing_characters');
+                    const localIndex = localStorage.getItem('writing_current_index');
+                    if (localChars) characters = JSON.parse(localChars);
+                    if (localIndex) currentIndex = parseInt(localIndex);
+                }
+                updateCategoryFilter();
+                renderSteps();
+                setupCanvasSize();
+                renderGallery();
+            }
+        }
+
+        function renderSteps() {
+            stepContainer.innerHTML = '';
+            let completedCount = 0;
+            characters.forEach((item, i) => {
+                const btn = document.createElement('button');
+                btn.className = `step-btn relative flex-none w-12 h-12 rounded-2xl bg-white chinese-font name-border text-xl shadow-sm border-2 transition-all ${i === currentIndex ? 'active border-blue-200' : 'text-slate-400 border-transparent'}`;
+                if (item.completed) { btn.classList.add('completed'); completedCount++; }
+                btn.innerText = item.char;
+                btn.onclick = () => { currentIndex = i; clearCanvas(); renderSteps(); };
+                stepContainer.appendChild(btn);
+            });
+            const progressPercent = (completedCount / characters.length) * 100;
+            progressFill.style.width = `${progressPercent}%`;
+            progressChar.style.left = `${progressPercent}%`;
+            progressText.innerText = `學習進度：${completedCount}`;
+            watermark.innerText = characters[currentIndex].char;
+            document.getElementById('target-stroke').innerText = "/ " + characters[currentIndex].strokes;
+            document.getElementById('stroke-count').innerText = paths.length;
+            updateReference();
+        }
+
+        function updateReference() {
+            const size = canvas.width;
+            if (size <= 0) return;
+            document.fonts.load(`1em "Iansui"`).then(() => {
+                refCtx.clearRect(0,0,size,size);
+                refCtx.fillStyle = "black";
+                refCtx.font = `${size*0.75}px "Iansui", "BiauKai", "DFKai-SB", "標楷體"`; 
+                refCtx.textAlign = 'center';
+                refCtx.textBaseline = 'middle';
+                refCtx.fillText(characters[currentIndex].char, size/2, size/2);
+            });
+        }
+
+        function setupCanvasSize() {
+            const size = canvas.parentElement.clientWidth;
+            if (size <= 0) return;
+            canvas.width = canvas.height = refCanvas.width = refCanvas.height = size;
+            ctx.lineCap = ctx.lineJoin = 'round';
+            ctx.lineWidth = size * 0.045; 
+            ctx.strokeStyle = '#1e293b';
+            redrawCanvas();
+            updateReference();
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX; clientY = e.clientY;
+            }
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        function handleStart(e) {
+            isDrawing = true;
+            const pos = getPos(e);
+            paths.push([pos]);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function handleMove(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            paths[paths.length - 1].push(pos);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function handleEnd() {
+            if (!isDrawing) return;
+            isDrawing = false;
+            document.getElementById('stroke-count').innerText = paths.length;
+            checkCompletion();
+        }
+
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleEnd);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleStart(e); }, { passive: false });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); }, { passive: false });
+        canvas.addEventListener('touchend', handleEnd);
+
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            paths.forEach(path => {
+                if (path.length < 1) return;
+                ctx.beginPath(); ctx.moveTo(path[0].x, path[0].y);
+                for (let i = 1; i < path.length; i++) ctx.lineTo(path[i].x, path[i].y);
+                ctx.stroke();
+            });
+        }
+
+        function checkCompletion() {
+            const target = characters[currentIndex].strokes;
+            const currentStrokeCount = paths.length;
+            const size = canvas.width;
+            const drawData = ctx.getImageData(0, 0, size, size).data;
+            const referenceData = refCtx.getImageData(0, 0, size, size).data;
+            let refPixels = 0, matchedPixels = 0, wrongPixels = 0;
+            for (let i = 3; i < drawData.length; i += 16) {
+                const isDrawn = drawData[i] > 30; 
+                const isRef = referenceData[i] > 30;   
+                if (isRef) refPixels++;
+                if (isDrawn && isRef) matchedPixels++;
+                if (isDrawn && !isRef) wrongPixels++;
+            }
+            const completion = (matchedPixels / (refPixels || 1)) * 100;
+            const internalScore = (completion * 3.5) - ((wrongPixels / (refPixels || 1)) * 8);
+            if (currentStrokeCount === target && internalScore >= 35) {
+                characters[currentIndex].completed = true;
+                successTick.classList.add('show');
+                saveProgress();
+                renderSteps();
+                setTimeout(() => {
+                    successTick.classList.remove('show');
+                    const next = characters.findIndex((c, i) => !c.completed && i > currentIndex);
+                    const first = characters.findIndex(c => !c.completed);
+                    if (next !== -1) currentIndex = next;
+                    else if (first !== -1) currentIndex = first;
+                    clearCanvas();
+                    renderSteps();
+                }, 1200);
+            }
+        }
+
+        function clearCanvas() { paths = []; ctx.clearRect(0, 0, canvas.width, canvas.height); document.getElementById('stroke-count').innerText = "0"; }
+        function undo() { 
+            if (paths.length > 0) { 
+                paths.pop(); redrawCanvas(); 
+                document.getElementById('stroke-count').innerText = paths.length; 
+                if (characters[currentIndex].completed) { characters[currentIndex].completed = false; saveProgress(); renderSteps(); } 
+            } 
+        }
+
+        function updateCategoryFilter() {
+            const filterSelect = document.getElementById('gallery-category-filter');
+            const allCats = masterLibrary.flatMap(item => item.categories || ["未分類"]);
+            const uniqueCats = [...new Set(allCats)].sort();
+            filterSelect.innerHTML = '<option value="all">所有主題</option>';
+            uniqueCats.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat; opt.innerText = cat;
+                filterSelect.appendChild(opt);
+            });
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('gallery-grid');
+            const search = document.getElementById('gallery-search').value.trim().toLowerCase();
+            const filter = document.getElementById('gallery-category-filter').value;
+            grid.innerHTML = '';
+
+            const filtered = masterLibrary.filter(item => {
+                const matchChar = item.char.includes(search);
+                const matchEn = item.en ? item.en.toLowerCase().includes(search) : false;
+                
+                const matchSearch = !search || matchChar || matchEn;
+                
+                let matchFilter = true;
+                if (filter !== 'all') {
+                    const itemCats = item.categories || ["未分類"];
+                    matchFilter = itemCats.includes(filter);
+                }
+                return matchSearch && matchFilter;
+            });
+
+            filtered.forEach(item => {
+                const alreadyHas = characters.some(c => c.char === item.char);
+                const div = document.createElement('div');
+                div.className = `char-card rounded-2xl p-2 ${alreadyHas ? 'exists' : 'hover:shadow-md'}`; 
+                div.style.backgroundColor = "#F2F2F2";
+                div.innerHTML = `
+                    <span class="chinese-font name-border text-2xl text-slate-700">${item.char}</span>
+                    <span class="text-[9px] text-slate-400 font-bold mt-1">${item.strokes} 劃</span>
+                `;
+                if (!alreadyHas) {
+                    div.onclick = () => {
+                        characters.push({ ...item, completed: false });
+                        currentIndex = characters.length - 1;
+                        document.getElementById('gallery-modal').classList.remove('active');
+                        clearCanvas();
+                        renderSteps();
+                        saveProgress();
+                        renderGallery();
+                    };
+                }
+                grid.appendChild(div);
+            });
+        }
+
+        document.getElementById('gallery-trigger-btn').onclick = () => {
+            updateCategoryFilter();
+            renderGallery();
+            document.getElementById('gallery-modal').classList.add('active');
+        };
+        document.getElementById('close-gallery').onclick = () => document.getElementById('gallery-modal').classList.remove('active');
+        document.getElementById('gallery-search').oninput = renderGallery;
+        document.getElementById('gallery-category-filter').onchange = renderGallery;
+
+        document.getElementById('logout-btn').onclick = () => { if(confirm("確定要登出嗎？")) { localStorage.clear(); location.reload(); } };
+        document.getElementById('custom-trigger-btn').onclick = () => document.getElementById('custom-modal').classList.add('active');
+        document.getElementById('cancel-custom').onclick = () => document.getElementById('custom-modal').classList.remove('active');
+        
+        document.getElementById('save-custom').onclick = () => {
+            const char = document.getElementById('custom-char-input').value.trim();
+            const stroke = parseInt(document.getElementById('custom-stroke-input').value);
+            const enKey = document.getElementById('custom-en-input').value.trim(); // 獲取英文注釋
+            
+            if (!char) return;
+
+            const existingIndex = characters.findIndex(item => item.char === char);
+            if (existingIndex !== -1) {
+                currentIndex = existingIndex;
+                document.getElementById('custom-modal').classList.remove('active');
+                clearInputs();
+                clearCanvas();
+                renderSteps();
+                return;
+            }
+
+            if (char && stroke > 0) {
+                const newCharObj = { char, strokes: stroke, completed: false, categories: ["未分類"], en: enKey };
+                characters.push(newCharObj);
+                currentIndex = characters.length - 1;
+                
+                if (!masterLibrary.some(item => item.char === char)) {
+                    masterLibrary.push({ char, strokes: stroke, categories: ["未分類"], en: enKey });
+                    localStorage.setItem('writing_custom_library', JSON.stringify(masterLibrary));
+                }
+
+                document.getElementById('custom-modal').classList.remove('active');
+                clearInputs();
+                clearCanvas(); 
+                renderSteps(); 
+                saveProgress();
+                updateCategoryFilter();
+                renderGallery();
+            }
+        };
+
+        function clearInputs() {
+            document.getElementById('custom-char-input').value = "";
+            document.getElementById('custom-stroke-input').value = "";
+            document.getElementById('custom-en-input').value = "";
+        }
+
+        document.getElementById('clear-btn').onclick = clearCanvas;
+        document.getElementById('undo-btn').onclick = undo;
+        document.getElementById('confirm-user').onclick = () => {
+            const name = document.getElementById('username-input').value.trim();
+            if (name) { localStorage.setItem('writing_username', name); location.reload(); }
+        };
+
+        window.onload = initApp;
+        window.onresize = setupCanvasSize;
+    </script>
+</body>
+</html>
