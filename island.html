@@ -180,9 +180,9 @@
             card.style.backgroundImage = `url('${firstAsset.islandBG}')`;
             card.onclick = () => enterIsland(no);
 
-            // 建立標題
+            // 島嶼標題 ISLAND TITLE
             const title = document.createElement('div');
-            title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[10px] font-cubic text-center py-1 backdrop-blur-sm';
+            title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[14px] font-cubic thin-border text-center py-2 backdrop-blur-md tracking-wide';
             title.innerText = firstAsset.islandName || `島嶼 ${no}`;
             card.appendChild(title);
 
