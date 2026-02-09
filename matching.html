@@ -188,9 +188,10 @@
             const list = document.getElementById('levels-list');
             list.innerHTML = '';
             levels.forEach(level => {
-                const starCount = level.stars || 0;
-                const starsHtml = Array(3).fill(0).map((_, i) =>  
-                    `<div class="${i < starCount ? 'star-active' : 'star-inactive'}"></div>`).join('');
+                const starCount = level.stars || level.userStars || 0;
+                const starsHtml = Array(3).fill(0).map((_, i) =>
+                    `<div class="${i < starCount ? 'star-active' : 'star-inactive'}"></div>`
+                    ).join('');
                 const card = document.createElement('div');
                 card.className = 'level-card bg-gray-100 cursor-pointer hover:bg-white/40 shadow-sm mb-2';
                 card.innerHTML = `
