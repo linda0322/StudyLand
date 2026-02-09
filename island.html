@@ -126,6 +126,11 @@
     <div id="assetLayer"></div>
   </div>
 
+  <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[999] px-6 py-3 rounded-2xl glass-panel shadow-2xl transition-all duration-500 ease-out opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
+    <div id="toast-icon" class="text-xl"></div>
+    <span id="toast-msg" class="font-cubic thin-border text-slate-700"></span>
+  </div>
+
 <script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbzNtUuKszXLM6buRfV4Fe8XSgF69dqYwy4eAZ8qOEdbRuQjsaR1dZ7Cz-9U1wLhGu3v/exec';
     
@@ -250,8 +255,7 @@
             x: el.style.left, 
             y: el.style.top 
         }));
-      
-        try {
+    try {
             const response = await fetch(GAS_URL, { 
                 method: "POST", 
                 body: JSON.stringify({ 
@@ -262,11 +266,15 @@
                 }) 
             });
             const result = await response.json();
+            
             if (result.result === "success") {
-                alert("✨ 佈置已存入雲端！");
+                // 使用自定義 Toast 代替 alert
+                showToast("佈置完畢！島嶼已儲存"); 
+            } else {
+                showToast("儲存失敗，請重試", "error");
             }
         } catch (e) { 
-            alert("儲存失敗"); 
+            showToast("網路連線錯誤", "error"); 
         } finally {
             showLoading(false);
         }
@@ -275,12 +283,37 @@
     function backToLobby() {
         document.getElementById('islandView').style.display = 'none';
         document.getElementById('lobby').style.display = 'flex';
-        // 重新抓取資料以更新大廳縮圖
+        // 更新大廳縮圖
         fetchIslands();
     }
 
     function showLoading(show) {
         document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-msg');
+        const toastIcon = document.getElementById('toast-icon');
+        
+        toastMsg.textContent = message;
+        toastIcon.textContent = type === 'success' ? '✨' : '⚠️';
+        
+        if (type === 'error') {
+            toast.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+            toastMsg.classList.add('text-red-600');
+        } else {
+            toast.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            toastMsg.classList.remove('text-red-600');
+        }
+    
+        toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+        toast.classList.add('opacity-100', 'translate-y-0');
+    
+        setTimeout(() => {
+            toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+            toast.classList.remove('opacity-100', 'translate-y-0');
+        }, 2500);
     }
 
     function makeDraggable(el) {
