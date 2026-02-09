@@ -127,12 +127,12 @@
     .btn-back:hover { background: #455a64; }
 
     /* 載入中動畫 */
-    #loadingOverlay {
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      background: rgba(0,0,0,0.5); color:white;
-      display:none; flex-direction:column; justify-content:center; align-items:center;
-      z-index: 2000;
-    }
+    #loadingOverlay {position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.5); color:white;
+        display:none; flex-direction:column; justify-content:center; align-items:center;
+        z-index: 2000;}
+
+        
   </style>
 </head>
 <body>
@@ -144,7 +144,10 @@
   <!-- 大廳 LOBBY -->
   <div id="lobby">
     <div class="font-cubic text-white thick-border text-2xl mt-12 mb-4 tracking-wider drop-shadow-lg">進入島嶼</div>
-    <div id="islandContainer" class="island-grid"><span class="text-sm text-white font-cubic thin-border opacity-80">載入中...</span></div>
+    <div id="islandContainer" class="island-grid">
+        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+        <span class="font-cubic text-xs thin-border text-slate-600">載入中...</span>
+    </div>
   </div>
 
   <div id="islandView">
