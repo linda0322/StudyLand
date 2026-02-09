@@ -27,7 +27,7 @@
         }
 
         a, button, [role="button"], .level-card, .card {
-        cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
         }
         
         .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
@@ -37,9 +37,17 @@
         .font-sans { font-family: 'Noto Sans TC', sans-serif; }
         
         .gallery-container { display: flex; flex-direction: column; gap: 16px; padding: 10px 4px 60px 4px; overflow-y: auto; height: 100%; }
-        .level-card { width: 100%; border-radius: 24px; overflow: hidden; transition: transform 0.2s; display: flex; flex-direction: row; height: 120px; align-items: center; flex-shrink: 0; }
+        .level-card { width: 100%; border-radius: 24px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: row; height: 120px; align-items: center; flex-shrink: 0; }
         .level-card:active { transform: scale(0.98); }
         .level-thumb { width: 80px; height: 100%; object-fit: contain; padding: 12px; margin-left: 10px; }
+        
+        /* 網格模式樣式修正 */
+        .gallery-container.grid-mode { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .level-card.grid-item { flex-direction: column; height: auto; padding: 10px 0; border-radius: 20px; }
+        .level-card.grid-item .level-thumb { width: 100%; height: 70px; margin-left: 0; padding: 8px; }
+        .level-card.grid-item .level-stars-display { justify-content: center; margin-top: 4px; }
+        .grid-item .star-active, .grid-item .star-inactive { width: 14px; height: 14px; }
+
         .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 8px; }
         .card { aspect-ratio: 3/4; perspective: 1000px; cursor: pointer; }
         .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 12px; }
@@ -59,11 +67,8 @@
 
         .level-stars-display .star-active { opacity: 1 !important; }
         .level-stars-display .star-inactive { opacity: 0.3; }
-        
         .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
-
-    
 </head>
 <body class="flex flex-col items-center p-4">
 
@@ -83,7 +88,6 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 </a>
 
-                <!-- 計時器 TIMER -->
                 <div id="game-timer-panel" class="hidden bg-transparent px-1.5 py-2 flex items-center justify-start gap-3">
                     <div id="live-stars" class="flex gap-1 relative -top-[2px]">
                         <div class="star-active !w-8 !h-8"></div>
@@ -94,30 +98,24 @@
                 </div>   
             </div>
 
-                
             <div class="flex gap-2 items-center">
-                 <button id="reload-btn" onclick="location.reload()" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white/50 active:scale-90 transition-all shadow-lg" title="重新整理">
+                <button id="view-toggle-btn" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white/50 active:scale-90 transition-all shadow-lg" onclick="toggleViewMode()">
+                    <svg id="view-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                </button>
+                <button id="reload-btn" onclick="location.reload()" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white/50 active:scale-90 transition-all shadow-lg" title="重新整理">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
                 </button>
-                 <button id="back-to-gallery" class="hidden p-2 glass-panel rounded-full text-slate-500 shadow-lg hover:bg-white/50" onclick="showGallery()">
+                <button id="back-to-gallery" class="hidden p-2 glass-panel rounded-full text-slate-500 shadow-lg hover:bg-white/50" onclick="showGallery()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 </button>
                 <button id="reset-btn" class="hidden px-4 py-2 glass-panel text-slate-600 rounded-full hover:bg-white transition-colors font-cubic thin-border text-xs shadow-lg active:scale-95" onclick="resetGame()">重玩</button>
             </div>
         </nav>
 
-        <!-- 遊戲關卡 LEVEL GALLERY -->
         <div id="gallery-view" class="hidden flex flex-col flex-1 overflow-hidden">
             <div class="gallery-container scrollbar-hide" id="levels-list"></div>
         </div>
         <div id="game-view" class="hidden flex flex-col flex-1 overflow-hidden">
-            <div class="hidden justify-between items-center mb-4">
-                <div class="flex items-center gap-3 glass-panel px-4 py-2 rounded-full shadow-lg">
-                    <span id="level-title" class="text-[10px] text-blue-500 font-bold uppercase">關卡</span>
-                    <span id="match-count" class="text-xl font-black text-slate-700">0</span>
-                    <span id="total-pairs" class="text-xs text-slate-400">/ 10</span>
-                </div>
-            </div>
             <div id="game-container" class="game-grid scrollbar-hide flex-1"></div>
         </div>
     </main>
@@ -139,43 +137,97 @@
         let matchedPairs = 0;
         let startTime = null;
         let timerInterval = null;
-    
+        let viewMode = 'list'; 
+
         async function initApp() {
             const username = localStorage.getItem('studyLandUser');
-            if (!username) { 
-                window.location.href = 'index.html'; 
-                return; 
-            }
+            if (!username) { window.location.href = 'index.html'; return; }
             document.getElementById('display-username').innerText = username;
             await fetchLevelsFromGAS();
             showGallery();
         }
-    
+
         async function fetchLevelsFromGAS() {
             const syncStatus = document.getElementById('sync-status');
-            const syncText = document.getElementById('sync-text');
             syncStatus.style.opacity = '1';
-            syncText.innerText = "同步中...";
-            
             try {
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ 
-                        action: 'fetchLevels',
-                        username: localStorage.getItem('studyLandUser')
-                    })
+                    body: JSON.stringify({ action: 'fetchLevels', username: localStorage.getItem('studyLandUser') })
                 });
                 levels = await response.json();
-            } catch (e) {
-                console.error("載入失敗", e);
-            } finally {
-                syncStatus.style.opacity = '0';
-            }
+            } catch (e) { console.error("載入失敗", e); }
+            finally { syncStatus.style.opacity = '0'; }
         }
-    
+
+        function toggleViewMode() {
+            viewMode = (viewMode === 'list') ? 'grid' : 'list';
+            const icon = document.getElementById('view-icon');
+            // 切換圖示：Grid 模式顯示「條列圖示」，List 模式顯示「方格圖示」
+            if (viewMode === 'grid') {
+                icon.innerHTML = '<line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>';
+            } else {
+                icon.innerHTML = '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>';
+            }
+            renderLevels();
+        }
+
+        function renderLevels() {
+            const list = document.getElementById('levels-list');
+            list.innerHTML = '';
+            
+            if (viewMode === 'grid') {
+                list.classList.add('grid-mode');
+            } else {
+                list.classList.remove('grid-mode');
+            }
+        
+            levels.forEach((level, index) => {
+                const starCount = parseInt(level.stars) || 0;
+                const starsHtml = Array(3).fill(0).map((_, i) =>
+                    `<div class="${i < starCount ? 'star-active' : 'star-inactive'}"></div>`
+                ).join('');
+        
+                const card = document.createElement('div');
+                const levelNum = index + 1; // 關卡編號
+                
+                if (viewMode === 'list') {
+                    const bestTimeStr = formatTime(level.bestTime ? parseInt(level.bestTime) : null);
+                    card.className = 'level-card bg-white cursor-pointer hover:bg-white/40 shadow-sm mb-2';
+                    card.innerHTML = `
+                        <img src="${level.thumbnail}" class="level-thumb">
+                        <div class="flex-1 p-4 flex justify-between items-center">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] bg-blue-100 text-blue-500 px-1.5 rounded font-bold">${levelNum}</span>
+                                    <h3 class="font-cubic thick-border text-slate-700 text-xl">${level.name}</h3>
+                                </div>
+                                <div class="level-stars-display flex gap-1 mt-1">${starsHtml}</div>
+                            </div>
+                            <div class="text-right flex flex-col gap-2">
+                                <p class="text-[12px] text-slate-400 font-cubic uppercase leading-none mb-1 tracking-wider">Best</p>
+                                <p class="text-lg font-cubic thin-border text-slate-500 leading-none">${bestTimeStr}</p>
+                            </div>
+                        </div>`;
+                } else {
+                    card.className = 'level-card grid-item bg-white cursor-pointer hover:bg-white/40 shadow-sm relative';
+                    card.innerHTML = `
+                        <div class="absolute top-2 left-2 text-[9px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded-full font-bold z-10">
+                            ${levelNum}
+                        </div>
+                        <img src="${level.thumbnail}" class="level-thumb">
+                        <div class="level-stars-display flex gap-0.5">${starsHtml}</div>`;
+                }
+                
+                card.onclick = () => startLevel(level);
+                list.appendChild(card);
+            });
+        }
+
         function showGallery() {
             document.getElementById('user-info-panel').classList.remove('hidden');
             document.getElementById('reload-btn').classList.remove('hidden');
+            document.getElementById('view-toggle-btn').classList.remove('hidden');
             document.getElementById('logout-btn').classList.remove('hidden');
             document.getElementById('gallery-view').classList.remove('hidden');
             document.getElementById('game-view').classList.add('hidden');
@@ -185,56 +237,22 @@
             document.getElementById('result-modal').classList.remove('active');
             renderLevels();
         }
-    
-        function renderLevels() {
-            const list = document.getElementById('levels-list');
-            list.innerHTML = '';
-            levels.forEach(level => {
-                const starCount = parseInt(level.stars) || 0;
-                const bestTimeSec = level.bestTime ? parseInt(level.bestTime) : null;
-                
-                const starsHtml = Array(3).fill(0).map((_, i) =>
-                    `<div class="${i < starCount ? 'star-active' : 'star-inactive'}"></div>`
-                ).join('');
-    
-                const card = document.createElement('div');
-                const bestTimeStr = formatTime(bestTimeSec);
-                
-                card.className = 'level-card bg-white cursor-pointer hover:bg-white/40 shadow-sm mb-2';
-                card.innerHTML = `
-                    <img src="${level.thumbnail}" class="level-thumb">
-                    <div class="flex-1 p-4 flex justify-between items-center">
-                        <div>
-                            <h3 class="font-cubic thick-border text-slate-700 text-xl">${level.name}</h3>
-                            <div class="level-stars-display flex gap-1 mt-1">${starsHtml}</div>
-                        </div>
-                        <div class="text-right flex flex-col gap-2">
-                            <p class="text-[12px] text-slate-400 font-cubic uppercase leading-none mb-1 tracking-wider">Best</p>
-                            <p class="text-lg font-cubic thin-border text-slate-500 leading-none">${bestTimeStr}</p>
-                        </div>
-                    </div>
-                `;
-                card.onclick = () => startLevel(level);
-                list.appendChild(card);
-            });
-        }
-    
+
         function formatTime(s) {
             if (!s || s === 9999) return "--:--";
             const min = Math.floor(s / 60).toString().padStart(2, '0');
             const sec = (s % 60).toString().padStart(2, '0');
             return `${min}:${sec}`;
         }
-    
+
         async function startLevel(level) {
             currentLevel = level;
             matchedPairs = 0;
             flippedCards = [];
-            
             const syncStatus = document.getElementById('sync-status');
             syncStatus.style.opacity = '1';
             document.getElementById('sync-text').innerText = "載入中...";
-    
+
             const cards = [];
             const imageUrls = [];
             level.pairs.forEach(pair => {
@@ -242,22 +260,19 @@
                 cards.push({ type: 'img', content: pair.img, matchId: pair.zh });
                 imageUrls.push(pair.img);
             });
-    
-            // 預載圖片
+
             try {
                 await Promise.all(imageUrls.map(url => {
                     return new Promise((resolve) => {
                         const img = new Image();
-                        img.src = url;
-                        img.onload = resolve;
-                        img.onerror = resolve;
+                        img.src = url; img.onload = resolve; img.onerror = resolve;
                     });
                 }));
             } catch (e) { console.error("圖片載入失敗", e); }
-    
-            // UI 切換
+
             document.getElementById('user-info-panel').classList.add('hidden');
             document.getElementById('reload-btn').classList.add('hidden');
+            document.getElementById('view-toggle-btn').classList.add('hidden');
             document.getElementById('logout-btn').classList.add('hidden');
             document.getElementById('gallery-view').classList.add('hidden');
             document.getElementById('game-view').classList.remove('hidden');
@@ -265,51 +280,45 @@
             document.getElementById('back-to-gallery').classList.remove('hidden');
             document.getElementById('reset-btn').classList.remove('hidden');
             syncStatus.style.opacity = '0';
-    
+
             const gameContainer = document.getElementById('game-container');
             gameContainer.innerHTML = '';
             cards.sort(() => Math.random() - 0.5);
-    
+
             cards.forEach(data => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-inner">
-                        <div class="card-back text-4xl">${level.backEmoji || '❓'}</div>
-                        <div class="card-front">
-                            ${data.type === 'text' ? `<span class="font-sans text-xl font-bold px-2">${data.content}</span>` : `<img src="${data.content}" class="card-img">`}
-                        </div>
-                    </div>`;
+                card.innerHTML = `<div class="card-inner">
+                    <div class="card-back text-4xl">${level.backEmoji || '❓'}</div>
+                    <div class="card-front">
+                        ${data.type === 'text' ? `<span class="font-sans text-xl font-bold px-2">${data.content}</span>` : `<img src="${data.content}" class="card-img">`}
+                    </div>
+                </div>`;
                 card.onclick = () => flipCard(card, data);
                 gameContainer.appendChild(card);
             });
-    
             startTimer();
         }
-    
+
         function flipCard(card, data) {
             if (flippedCards.length === 2 || card.classList.contains('flipped') || card.classList.contains('matched')) return;
             card.classList.add('flipped');
             flippedCards.push({ card, data });
-            if (flippedCards.length === 2) {
-                setTimeout(checkMatch, 600);
-            }
+            if (flippedCards.length === 2) setTimeout(checkMatch, 600);
         }
-    
+
         function checkMatch() {
             const [c1, c2] = flippedCards;
             if (c1.data.matchId === c2.data.matchId) {
-                c1.card.classList.add('matched');
-                c2.card.classList.add('matched');
+                c1.card.classList.add('matched'); c2.card.classList.add('matched');
                 matchedPairs++;
                 if (matchedPairs === currentLevel.pairs.length) endGame();
             } else {
-                c1.card.classList.remove('flipped');
-                c2.card.classList.remove('flipped');
+                c1.card.classList.remove('flipped'); c2.card.classList.remove('flipped');
             }
             flippedCards = [];
         }
-    
+
         function startTimer() {
             startTime = Date.now();
             clearInterval(timerInterval);
@@ -317,16 +326,13 @@
             updateLiveStars(3);
             timerInterval = setInterval(() => {
                 const sec = Math.floor((Date.now() - startTime) / 1000);
-                const minStr = String(Math.floor(sec / 60)).padStart(2, '0');
-                const secStr = String(sec % 60).padStart(2, '0');
-                timerElement.innerText = `${minStr}:${secStr}`;
-                
+                timerElement.innerText = formatTime(sec);
                 if (sec >= 100) updateLiveStars(1);
                 else if (sec >= 60) updateLiveStars(2);
                 else updateLiveStars(3);
             }, 1000);
         }
-    
+
         function updateLiveStars(count) {
             const container = document.getElementById('live-stars');
             if (!container) return;
@@ -334,54 +340,34 @@
                 `<div class="${i < count ? 'star-active' : 'star-inactive'} !w-8 !h-8"></div>`
             ).join('');
         }
-    
+
         async function endGame() {
             clearInterval(timerInterval);
             const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
             const timeStr = document.getElementById('timer').innerText;
-            
             const syncStatus = document.getElementById('sync-status');
             syncStatus.style.opacity = '1';
-            document.getElementById('sync-text').innerText = "同步中...";
-    
+
             try {
                 const response = await fetch(GAS_URL, { 
                     method: 'POST', 
-                    body: JSON.stringify({ 
-                        action: 'saveProgress',
-                        username: localStorage.getItem('studyLandUser'), 
-                        levelId: currentLevel.id, 
-                        duration: durationSeconds 
-                    }) 
+                    body: JSON.stringify({ action: 'saveProgress', username: localStorage.getItem('studyLandUser'), levelId: currentLevel.id, duration: durationSeconds }) 
                 });
-    
                 const result = await response.json();
-                const stars = result.stars;
-                const duration = result.duration;
-    
                 const targetLevel = levels.find(l => String(l.id) === String(currentLevel.id));
                 if (targetLevel) {
-                    targetLevel.stars = Math.max(targetLevel.stars || 0, stars);
-                    if (!targetLevel.bestTime || duration < targetLevel.bestTime) {
-                        targetLevel.bestTime = duration;
-                    }
+                    targetLevel.stars = Math.max(targetLevel.stars || 0, result.stars);
+                    if (!targetLevel.bestTime || durationSeconds < targetLevel.bestTime) targetLevel.bestTime = durationSeconds;
                 }
-                renderLevels();
-    
                 document.getElementById('result-stars').innerHTML = Array(3).fill(0).map((_, i) => 
-                    `<div class="${i < stars ? 'star-active' : 'star-inactive'}"></div>`
+                    `<div class="${i < result.stars ? 'star-active' : 'star-inactive'}"></div>`
                 ).join('');
                 document.getElementById('result-time').innerText = `完成時間 ${timeStr}`;
                 document.getElementById('result-modal').classList.add('active');
-                
-            } catch(e) {
-                console.error("儲存失敗", e);
-                document.getElementById('result-modal').classList.add('active');
-            } finally {
-                setTimeout(() => syncStatus.style.opacity = '0', 1000);
-            }
+            } catch(e) { console.error("儲存失敗", e); document.getElementById('result-modal').classList.add('active'); }
+            finally { setTimeout(() => syncStatus.style.opacity = '0', 1000); }
         }
-    
+
         function resetGame() { if(currentLevel) startLevel(currentLevel); }
         window.onload = initApp;
     </script>
