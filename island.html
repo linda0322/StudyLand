@@ -61,6 +61,7 @@
           body: JSON.stringify({ action: "fetchIslands", username: USERNAME })
         });
         allAssets = await response.json();
+        console.log("從後端抓到的資產：", allAssets);
         renderLobby();
       } catch (e) {
         document.getElementById('islandContainer').innerHTML = "載入失敗，請重新整理頁面。";
