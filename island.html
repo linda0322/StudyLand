@@ -167,7 +167,7 @@
     /**
      * --- 1. 初始化與身份驗證 ---
      */
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwp5gItIw-NJhLolDfYtrFAU-5imfU6dsU8mSMTNMWdgXSz8WbqDfKHgeLVV9rNC45C/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwp5gItIw-NJhLolDfYtrFAU-5imfU6dsU8mSMTNMWdgXSz8WbqDfKHgeLVV9rNC45C/exec';
     
     let USERNAME = "";
     let allAssets = []; 
@@ -204,7 +204,7 @@
     // 取得所有資產
     async function fetchIslands() {
         try {
-            const response = await fetch(SCRIPT_URL, {
+            const response = await fetch(GAS_URL, {
                 method: "POST",
                 body: JSON.stringify({ action: "fetchIslands", username: USERNAME })
             });
@@ -236,7 +236,7 @@
         // 抓取雲端座標存檔
         let savedPositions = null;
         try {
-            const resp = await fetch(SCRIPT_URL, {
+            const resp = await fetch(GAS_URL, {
                 method: "POST",
                 body: JSON.stringify({ action: "fetchLastPosition", username: USERNAME, islandNo: no })
             });
@@ -294,7 +294,7 @@
         };
       
         try {
-            const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+            const response = await fetch(GAS_URL, { method: "POST", body: JSON.stringify(payload) });
             const result = await response.json();
             if (result.result === "success") alert("✨ 佈置已存入雲端！");
         } catch (e) { alert("儲存失敗"); }
