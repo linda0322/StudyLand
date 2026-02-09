@@ -173,11 +173,11 @@
             list.innerHTML = '';
             levels.forEach(level => {
                 const card = document.createElement('div');
-                card.className = 'level-card glass-panel cursor-pointer hover:bg-white/40 shadow-sm mb-2';
+                card.className = 'level-card bg-gray-100 cursor-pointer hover:bg-white/40 shadow-sm mb-2';
                 card.innerHTML = `
                     <img src="${level.thumbnail}" class="level-thumb">
                     <div class="flex-1 p-4">
-                        <h3 class="font-cubic thin-border text-slate-700 text-lg">${level.name}</h3>
+                        <h3 class="font-cubic thick-border text-slate-700 text-xl">${level.name}</h3>
                         <p class="text-xs text-slate-500 font-cubic">配對挑戰</p>
                     </div>
                 `;
