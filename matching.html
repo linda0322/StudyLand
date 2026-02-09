@@ -159,6 +159,7 @@
 
         function showGallery() {
             document.getElementById('user-info-panel').classList.remove('hidden');
+            document.getElementById('reload-btn').classList.remove('hidden');
             document.getElementById('logout-btn').classList.remove('hidden');
             document.getElementById('gallery-view').classList.remove('hidden');
             document.getElementById('game-view').classList.add('hidden');
@@ -214,6 +215,7 @@
                 } catch (e) {console.error("載入失敗", e);
                   }
             document.getElementById('user-info-panel').classList.add('hidden');
+            document.getElementById('reload-btn').classList.add('hidden');
             document.getElementById('logout-btn').classList.add('hidden');
             document.getElementById('gallery-view').classList.add('hidden');
             document.getElementById('game-view').classList.remove('hidden');
