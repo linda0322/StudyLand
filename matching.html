@@ -44,29 +44,28 @@
         .gallery-container.grid-mode { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            column-gap: 12px; 
-            row-gap: 16px;    /* 控制上下排之間的距離 */
+            column-gap: 16px; 
+            row-gap: 16px;
             padding: 20px 12px; 
-            align-content: start; /* 關鍵：讓所有 Grid 項目往頂部靠攏，不均分高度 */
+            align-content: start;
             height: auto;
             overflow-y: visible;
         }
         
         .level-card.grid-item { 
             flex-direction: column; 
-            height: 120px;    /* 稍微拉高一點點，讓星星有呼吸空間 */
+            height: 120px;
             padding: 10px 4px;
             border-radius: 20px; 
-            justify-content: flex-end; /* 讓內容往底部對齊，騰出上方空間給圖片 */
+            justify-content: center;
             align-items: center;
             gap: 4px;
             position: relative;
         }
         
-        /* 3. 圖片微調 */
         .level-card.grid-item .level-thumb { 
-            width: 60px;      /* 調整圖片大小 */
-            height: 60px;
+            width: 50px;
+            height: 50px;
             margin-bottom: 6px;
             padding: 0;
             object-fit: contain;
