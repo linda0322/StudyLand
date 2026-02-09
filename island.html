@@ -24,8 +24,8 @@
         body.in-lobby {
             background-color: #1dc5fd;
             background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
-            background-repeat: no-repeat;
-            background-size: cover;
+            background-repeat: repeat-x;
+            background-size: auto 100%;
             background-position: center bottom;
             background-attachment: fixed;
         }
@@ -49,6 +49,13 @@
         @media (max-width: 768px) {
             body { background-position: center 60%; background-size: auto 100%; }
             .toolbar { top: 15px; left: 15px; right: 15px; }
+        }
+
+        @media (min-width: 1200px) {
+            body.in-lobby {
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
         }
 
         /* 關鍵：修正直屏下物件過大的問題 */
