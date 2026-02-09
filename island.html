@@ -17,7 +17,7 @@
         /* 基礎設定 */
         html {
             height: 100%;
-            transition: background 0.5s ease; /* 加入轉場動畫，切換時更平滑 */
+            transition: background 0.5s ease;
         }
         
         /* 大廳專用的藍天背景 */
@@ -45,11 +45,19 @@
             background: transparent;
         }
         
-        /* 行動裝置 */
+        /* 行動裝置優化 */
         @media (max-width: 768px) {
             body { background-position: center 60%; background-size: auto 100%; }
-            .asset { width: 65px !important; }
-            .toolbar { top: 10px; left: 10px; right: 10px; }
+            .toolbar { top: 15px; left: 15px; right: 15px; }
+        }
+
+        /* 關鍵：修正直屏下物件過大的問題 */
+        @media (max-aspect-ratio: 1/1) {
+            .asset { 
+                width: 12% !important; /* 直向時比例微調 */
+                max-width: 55px !important; /* 強制鎖定最大寬度，防止過大 */
+                min-width: 35px !important;
+            }
         }
         
         a, button, [role="button"], .island-card {
@@ -65,14 +73,14 @@
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: flex-start; /* 載入頂部 */
+            justify-content: flex-start; 
             position: relative; 
             width: 100%;
             min-height: 100vh;
             background-color: rgba(0, 0, 0, 0.4); 
             backdrop-filter: blur(8px);
             z-index: 100; 
-            padding: 3rem 1rem; /* 頂部間距 */
+            padding: 3rem 1rem; 
         }
 
         .island-grid { 
@@ -94,7 +102,12 @@
         }
         .island-card:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
 
-        #islandView { display: none; width: 100vw; height: 100vh; position: relative; background-color: #transparent; overflow: hidden; display: flex; align-items: center; justify-content: center;}
+        #islandView { 
+            display: none; width: 100vw; height: 100vh; position: fixed; 
+            top: 0; left: 0; background-color: transparent; overflow: hidden; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        
         #islandStage {
             position: relative;
             width: 100%;
@@ -118,16 +131,14 @@
             touch-action: none; 
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
             z-index: 10;
+            transition: transform 0.2s, opacity 0.3s;
          }
 
         .toolbar { position: fixed; top: 25px; left: 25px; z-index: 5000; display: flex; gap: 15px; }
-        .btn { padding: 10px 20px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s; }
-        .btn-save { background: #ff9800; color: white; }
-        .btn-back { background: #607d8b; color: white; }
-
+        
         #loadingOverlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6); color:white;
-            display:none; flex-direction:column; justify-content:center; align-items:center; z-index: 2000;
+            display:none; flex-direction:column; justify-content:center; align-items:center; z-index: 6000;
         }
     </style>
 </head>
@@ -166,7 +177,6 @@
       <div id="islandStage"><div id="assetLayer"></div></div>
   </div>
 
-  <!-- 儲存通知 TOAST -->  
   <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[999] px-6 py-3 rounded-2xl glass-panel shadow-2xl transition-all duration-500 ease-out opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
     <div id="toast-icon" class="text-xl"></div>
     <span id="toast-msg" class="font-cubic thin-border text-slate-700"></span>
@@ -186,7 +196,6 @@
         fetchIslands();
     };
 
-    // 獲取島嶼資訊
     async function fetchIslands() {
         showLoading(true);
         try {
@@ -203,50 +212,38 @@
         }
     }
 
-    // 渲染大廳卡片（含縮圖）
     function renderLobby() {
         const container = document.getElementById('islandContainer');
         container.innerHTML = "";
-
-        // 取得所有不重複的島嶼編號
         const islandIds = [...new Set(allAssets.map(a => a.islandNo))];
 
         islandIds.forEach(no => {
             const islandAssets = allAssets.filter(a => a.islandNo == no);
             const firstAsset = islandAssets[0];
-
-            // 建立卡片外殼
             const card = document.createElement('div');
             card.className = 'island-card';
             card.style.backgroundImage = `url('${firstAsset.islandBG}')`;
             card.onclick = () => enterIsland(no);
 
-            // 島嶼標題 ISLAND TITLE
             const title = document.createElement('div');
             title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[14px] font-cubic thin-border text-center py-2 backdrop-blur-md tracking-wide';
             title.innerText = firstAsset.islandName || `島嶼 ${no}`;
             card.appendChild(title);
 
-            // 建立縮圖物件層
-            const thumbScale = 0.24; // 縮放比例（卡片 240px / 實際畫面 1000px）
-            
+            const thumbScale = 0.24; 
             islandAssets.forEach(asset => {
                 if (asset.lastX && asset.lastY) {
                     const miniImg = document.createElement('img');
                     miniImg.src = asset.assetUrl;
                     miniImg.style.position = 'absolute';
-                    
-                    // 直接使用百分比，它會自動相對於 .island-card (240px) 進行定位
                     miniImg.style.left = asset.lastX;
                     miniImg.style.top = asset.lastY;
-                    
                     const w = 90 * thumbScale; 
                     miniImg.style.width = w + 'px';
                     miniImg.style.pointerEvents = 'none';
                     card.appendChild(miniImg);
                 }
             });
-
             container.appendChild(card);
         });
     }
@@ -258,38 +255,26 @@
         const stage = document.getElementById('islandStage');
         const layer = document.getElementById('assetLayer');
         
-        // 1. 隱藏大廳，顯示視窗
         document.getElementById('lobby').style.display = 'none';
         document.body.classList.remove('in-lobby');
         document.body.classList.add('in-island');
         view.style.display = 'flex';        
         
-        // 2. 渲染舞台背景
         if (islandAssets.length > 0) {
             stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
         }
-        
         layer.innerHTML = ""; 
-    
-        // 關鍵修正：在移動端需要更確保佈局已經完成計算
-        // 使用 requestAnimationFrame 或稍微長一點的延遲
+
         setTimeout(() => {
-            // 確保 stage 已經有實際尺寸
-            const stageW = stage.offsetWidth;
-            const stageH = stage.offsetHeight;
-    
             islandAssets.forEach((asset, index) => {
                 const img = document.createElement('img');
                 img.src = asset.assetUrl;
                 img.className = 'asset';
                 img.dataset.assetName = asset.assetName; 
-                
-                // 強制設定初始隱藏，等到計算完位置再顯示，防止手機版閃爍
                 img.style.opacity = "0";
                     
                 img.onload = () => {
                     if (asset.lastX && asset.lastY) {
-                        // 現在資料庫存的是 "50.55%" 這種字串，直接丟給 style 即可
                         img.style.left = asset.lastX;
                         img.style.top = asset.lastY;
                     } else {
@@ -299,33 +284,24 @@
                     img.style.opacity = "1";
                     makeDraggable(img);
                 };
-                
                 layer.appendChild(img);
             });
-    
             document.getElementById('btn-back').classList.remove('hidden');
             document.getElementById('btn-save').classList.remove('hidden');
-        }, 150); // 手機端建議給予 150ms 緩衝
+        }, 150);
     }
     
-    // 儲存佈置
     async function savePositions() {
         showLoading(true);
         const stage = document.getElementById('islandStage');
         const stageW = stage.offsetWidth;
         const stageH = stage.offsetHeight;
-        
         const assetsInView = document.querySelectorAll('.asset');
+        
         const positions = Array.from(assetsInView).map(el => {
-            // 計算百分比座標：(當前px / 總寬度) * 100
             const xPercent = (parseFloat(el.style.left) / stageW * 100).toFixed(2) + '%';
             const yPercent = (parseFloat(el.style.top) / stageH * 100).toFixed(2) + '%';
-            
-            return {
-                name: el.dataset.assetName, 
-                x: xPercent, 
-                y: yPercent 
-            };
+            return { name: el.dataset.assetName, x: xPercent, y: yPercent };
         });
     
         try {
@@ -365,10 +341,8 @@
         const toast = document.getElementById('toast');
         const toastMsg = document.getElementById('toast-msg');
         const toastIcon = document.getElementById('toast-icon');
-        
         toastMsg.textContent = message;
         toastIcon.textContent = type === 'success' ? '✨' : '⚠️';
-        
         if (type === 'error') {
             toast.style.borderColor = 'rgba(239, 68, 68, 0.5)';
             toastMsg.classList.add('text-red-600');
@@ -376,10 +350,8 @@
             toast.style.borderColor = 'rgba(255, 255, 255, 0.3)';
             toastMsg.classList.remove('text-red-600');
         }
-    
         toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
         toast.classList.add('opacity-100', 'translate-y-0');
-    
         setTimeout(() => {
             toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
             toast.classList.remove('opacity-100', 'translate-y-0');
@@ -396,21 +368,26 @@
             el.style.zIndex = "1000";
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            offset.x = clientX - el.offsetLeft;
-            offset.y = clientY - el.offsetTop;
+            
+            // 使用 getBoundingClientRect 獲取更精準的相對於舞台的偏移
+            const rect = el.getBoundingClientRect();
+            offset.x = clientX - rect.left;
+            offset.y = clientY - rect.top;
+            
             el.style.transform = "scale(1.1)";
         };
 
         const move = (e) => {
             if (!isDragging) return;
             const stage = document.getElementById('islandStage');
-            const rect = stage.getBoundingClientRect(); // 取得舞台在螢幕上的位置
+            const stageRect = stage.getBoundingClientRect();
         
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         
-            let newX = clientX - offset.x;
-            let newY = clientY - offset.y;
+            // 計算相對於舞台內部的 px 座標
+            let newX = clientX - stageRect.left - offset.x;
+            let newY = clientY - stageRect.top - offset.y;
             
             newX = Math.max(0, Math.min(newX, stage.offsetWidth - el.offsetWidth));
             newY = Math.max(0, Math.min(newY, stage.offsetHeight - el.offsetHeight));
