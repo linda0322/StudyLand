@@ -57,7 +57,7 @@
         .star-active { background-image: url('https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/star.svg'); }
         .star-inactive { background-image: url('https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/star-empty.svg'); opacity: 0.5; }
 
-        .level-stars-display .star-active, .level-stars-display .star-inactive {width: 18px; height: 18px;}
+        .level-stars-display .star-active {opacity: 1 !important;}, .level-stars-display .star-inactive {opacity: 0.3;}
         
         .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
@@ -160,7 +160,9 @@
             try {
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'fetchLevels' })
+                    body: JSON.stringify({ 
+                        action: 'fetchLevels' 
+                        username: localStorage.getItem('studyLandUser')})
                 });
                 levels = await response.json();
             } catch (e) {
@@ -185,6 +187,7 @@
 
         //!-- 遊戲關卡 LEVEL GALLERY
         function renderLevels() {
+            console.log("從 GAS 接收到的資料第一筆：", levels[0]);
             const list = document.getElementById('levels-list');
             list.innerHTML = '';
             levels.forEach(level => {
@@ -332,6 +335,8 @@
                 
                 const result = await response.json();
                 const stars = result.stars || 1;
+                const targetLevel = levels.find(l => l.id === currentLevel.id);
+                if (targetLevel) {targetLevel.stars = stars;}
                 
                 document.getElementById('result-stars').innerHTML = Array(3).fill(0).map((_, i) => 
                     `<div class="${i < stars ? 'star-active' : 'star-inactive'}"></div>`
