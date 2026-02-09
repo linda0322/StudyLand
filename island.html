@@ -236,17 +236,13 @@
                     miniImg.src = asset.assetUrl;
                     miniImg.style.position = 'absolute';
                     
-                    // 計算縮圖座標
-                    const x = parseFloat(asset.lastX) * thumbScale;
-                    const y = parseFloat(asset.lastY) * thumbScale;
-                    const w = 90 * thumbScale; 
-
-                    miniImg.style.left = x + 'px';
-                    miniImg.style.top = y + 'px';
-                    miniImg.style.width = w + 'px';
-                    miniImg.style.pointerEvents = 'none'; // 防止阻擋卡片點擊
-                    miniImg.style.filter = 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))';
+                    // 直接使用百分比，它會自動相對於 .island-card (240px) 進行定位
+                    miniImg.style.left = asset.lastX;
+                    miniImg.style.top = asset.lastY;
                     
+                    const w = 90 * thumbScale; 
+                    miniImg.style.width = w + 'px';
+                    miniImg.style.pointerEvents = 'none';
                     card.appendChild(miniImg);
                 }
             });
@@ -290,18 +286,17 @@
                 
                 // 強制設定初始隱藏，等到計算完位置再顯示，防止手機版閃爍
                 img.style.opacity = "0";
-    
+                    
                 img.onload = () => {
                     if (asset.lastX && asset.lastY) {
-                        // 如果有舊座標，直接套用
+                        // 現在資料庫存的是 "50.55%" 這種字串，直接丟給 style 即可
                         img.style.left = asset.lastX;
                         img.style.top = asset.lastY;
                     } else {
-                        // 初始分配（百分比法在手機版最安全）
                         img.style.left = (10 + (index % 5) * 15) + "%"; 
                         img.style.top = (20 + Math.floor(index / 5) * 20) + "%";
                     }
-                    img.style.opacity = "1"; // 座標計算完畢，顯示
+                    img.style.opacity = "1";
                     makeDraggable(img);
                 };
                 
@@ -316,13 +311,24 @@
     // 儲存佈置
     async function savePositions() {
         showLoading(true);
+        const stage = document.getElementById('islandStage');
+        const stageW = stage.offsetWidth;
+        const stageH = stage.offsetHeight;
+        
         const assetsInView = document.querySelectorAll('.asset');
-        const positions = Array.from(assetsInView).map(el => ({
-            name: el.dataset.assetName, 
-            x: el.style.left, 
-            y: el.style.top 
-        }));
-    try {
+        const positions = Array.from(assetsInView).map(el => {
+            // 計算百分比座標：(當前px / 總寬度) * 100
+            const xPercent = (parseFloat(el.style.left) / stageW * 100).toFixed(2) + '%';
+            const yPercent = (parseFloat(el.style.top) / stageH * 100).toFixed(2) + '%';
+            
+            return {
+                name: el.dataset.assetName, 
+                x: xPercent, 
+                y: yPercent 
+            };
+        });
+    
+        try {
             const response = await fetch(GAS_URL, { 
                 method: "POST", 
                 body: JSON.stringify({ 
@@ -333,19 +339,14 @@
                 }) 
             });
             const result = await response.json();
-            
-            if (result.result === "success") {
-                showToast("成功儲存"); 
-            } else {
-                showToast("請重試", "error");
-            }
+            if (result.result === "success") { showToast("成功儲存"); }
         } catch (e) { 
             showToast("連線錯誤", "error"); 
         } finally {
             showLoading(false);
         }
     }
-
+    
     function backToLobby() {
         document.getElementById('islandView').style.display = 'none';
         document.getElementById('lobby').style.display = 'flex';
