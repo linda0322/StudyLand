@@ -14,27 +14,37 @@
             font-display: swap;
         }
 
-        /* 核心背景方案：修復邊緣陰影 */
-        html, body {
+        html {
+            background-color: #1dc5fd; /* 墊底顏色 */
+        }
+
+        body {
             height: 100%; width: 100%; margin: 0; padding: 0;
-            background-color: #1dc5fd;
             overflow-x: hidden;
             font-family: 'Noto Sans TC', sans-serif;
             -webkit-user-select: none;
+            background: transparent; /* 讓 body 透明以顯示 ::before */
         }
 
         body.in-lobby::before {
             content: "";
             position: fixed;
-            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            top: 0; left: 0; right: 0; bottom: 0;
             background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
             background-size: cover;
             background-position: center bottom;
-            z-index: -1;
+            z-index: -1; /* 確保在內容之後 */
+            display: block !important;
         }
 
-        body.in-island { background-color: #2c3e50; }
-        body.in-island::before { display: none; }
+        body.in-island::before { 
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        body.in-island { 
+            background-color: #2c3e50; 
+        }
 
         /* 方向擋板 */
         #orientation-overlay {
@@ -45,8 +55,9 @@
             flex-direction: column; justify-content: center; align-items: center;
             color: white; text-align: center;
         }
+        
         body.in-island.is-portrait #orientation-overlay { display: flex; }
-
+        
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
         .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
@@ -57,7 +68,8 @@
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; width: 100%;
             padding: 3rem 1rem;
-            position: relative; z-index: 10;
+            position: relative; 
+            z-index: 10;
         }
 
         .island-grid { 
