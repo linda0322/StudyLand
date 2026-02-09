@@ -43,14 +43,28 @@
         .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
         
         #lobby {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);
-            z-index: 100; padding: 1rem; overflow-y: auto;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            /* justify-content: center;  <-- 刪除或註釋掉這一行 */
+            justify-content: flex-start; /* 改為從頂部開始 */
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(8px);
+            z-index: 100; 
+            padding: 2rem 1rem; /* 增加頂部間距，避免太貼邊 */
+            overflow-y: auto; /* 確保內容多時可以捲動 */
         }
 
         .island-grid { 
-            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; 
-            padding: 20px; max-width: 1000px;
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            justify-content: center; 
+            padding: 20px; 
+            max-width: 1000px;
+            width: 100%; /* 確保寬度撐滿 */
         }
         
         .island-card { 
