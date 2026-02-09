@@ -144,188 +144,209 @@
     <div id="assetLayer"></div>
   </div>
 
-  <script>
+<script>
     /**
-     * 自動識別使用者名稱邏輯：
-     * 1. 優先抓取網址參數 (?user=xxx)
-     * 2. 其次抓取 GAS 模板變數 (<?= username ?>)
-     * 3. 最後預設為 "testing"
+     * --- 1. 初始化與身份驗證 ---
      */
-    const getUsername = () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlUser = urlParams.get('user');
-      const gasUser = "<?= username ?>";
-      
-      if (urlUser) return urlUser;
-      if (gasUser && !gasUser.includes("?")) return gasUser;
-      return "testing"; 
-    };
-
-    const USERNAME = getUsername().trim();
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwp5gItIw-NJhLolDfYtrFAU-5imfU6dsU8mSMTNMWdgXSz8WbqDfKHgeLVV9rNC45C/exec";
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwp5gItIw-NJhLolDfYtrFAU-5imfU6dsU8mSMTNMWdgXSz8WbqDfKHgeLVV9rNC45C/exec';
     
+    let USERNAME = "";
     let allAssets = []; 
     let currentIslandNo = null;
 
-    window.onload = function() {
-      console.log("當前使用者:", USERNAME);
-      fetchIslands();
-    };
+    // 頁面載入後立即執行
+    window.onload = initApp;
 
-    // --- 1. 取得資產清單 ---
+    async function initApp() {
+        // 從 localStorage 取得用戶名
+        USERNAME = localStorage.getItem('studyLandUser');
+        
+        // 如果沒登入，踢回首頁
+        if (!USERNAME) { 
+            alert("請先登入！");
+            window.location.href = 'index.html'; 
+            return; 
+        }
+        
+        // 顯示用戶名
+        const displayEl = document.getElementById('display-username');
+        if (displayEl) displayEl.innerText = USERNAME;
+        
+        console.log("當前用戶:", USERNAME);
+        
+        // 開始抓取該用戶的島嶼資料
+        fetchIslands();
+    }
+
+    /**
+     * --- 2. 資料存取邏輯 (AJAX / POST) ---
+     */
+
+    // 取得所有資產
     async function fetchIslands() {
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "fetchIslands", username: USERNAME })
-        });
-        allAssets = await response.json();
-        
-        if (!allAssets || allAssets.length === 0) {
-          document.getElementById('islandContainer').innerHTML = 
-            `<div style='background:white; padding:20px; border-radius:10px;'>找不到屬於 <b>${USERNAME}</b> 的島嶼。<br>請檢查試算表 Island_Assets 是否已填妥。</div>`;
-        } else {
-          renderLobby();
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "fetchIslands", username: USERNAME })
+            });
+            allAssets = await response.json();
+            
+            if (!allAssets || allAssets.length === 0) {
+                document.getElementById('islandContainer').innerHTML = "目前沒有島嶼資料，請檢查試算表。";
+            } else {
+                renderLobby();
+            }
+        } catch (e) {
+            console.error("抓取失敗:", e);
         }
-      } catch (e) {
-        document.getElementById('islandContainer').innerHTML = "連線失敗，請檢查 GAS 部署權限是否設為「所有人」。";
-      }
     }
 
-    // --- 2. 顯示大廳 ---
-    function renderLobby() {
-      const container = document.getElementById('islandContainer');
-      container.innerHTML = "";
-      
-      const groups = {};
-      allAssets.forEach(a => {
-        if (!groups[a.islandNo]) groups[a.islandNo] = { name: a.islandName, bg: a.islandBG };
-      });
-
-      Object.keys(groups).forEach(no => {
-        const item = groups[no];
-        const card = document.createElement('div');
-        card.className = 'island-card';
-        card.style.backgroundImage = `url('${item.bg}')`;
-        card.onclick = () => enterIsland(no);
-        card.innerHTML = `<div>${item.name}</div>`;
-        container.appendChild(card);
-      });
-    }
-
-    // --- 3. 進入島嶼內部與讀取存檔 ---
+    // 進入島嶼並加載座標
     async function enterIsland(no) {
-      currentIslandNo = no;
-      showLoading(true);
+        currentIslandNo = no;
+        showLoading(true);
+        
+        const islandData = allAssets.find(a => a.islandNo == no);
+        const view = document.getElementById('islandView');
+        const layer = document.getElementById('assetLayer');
+        
+        document.getElementById('lobby').style.display = 'none';
+        view.style.display = 'block';
+        view.style.backgroundImage = `url('${islandData.islandBG}')`;
+        
+        // 抓取雲端座標存檔
+        let savedPositions = null;
+        try {
+            const resp = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "fetchLastPosition", username: USERNAME, islandNo: no })
+            });
+            const result = await resp.json();
+            if (result.positionData) {
+                savedPositions = JSON.parse(result.positionData);
+            }
+        } catch (e) { console.log("無存檔記錄，使用預設位置"); }
       
-      const islandData = allAssets.find(a => a.islandNo == no);
-      const view = document.getElementById('islandView');
-      const layer = document.getElementById('assetLayer');
+        layer.innerHTML = ""; 
       
-      document.getElementById('lobby').style.display = 'none';
-      view.style.display = 'block';
-      view.style.backgroundImage = `url('${islandData.islandBG}')`;
-      
-      let savedPositions = null;
-      try {
-        const resp = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "fetchLastPosition", username: USERNAME, islandNo: no })
+        // 渲染該島嶼的所有資產
+        allAssets.filter(a => a.islandNo == no).forEach((asset, index) => {
+            const img = document.createElement('img');
+            img.src = asset.assetUrl;
+            img.className = 'asset';
+            img.dataset.assetName = asset.assetName; 
+            
+            // 判斷位置：有存檔用存檔，沒存檔則排排站
+            let savedPos = savedPositions ? savedPositions.find(p => p.name === asset.assetName) : null;
+            if (savedPos) {
+                img.style.left = savedPos.x;
+                img.style.top = savedPos.y;
+            } else {
+                img.style.left = (100 + index * 120) + "px"; 
+                img.style.top = "200px";
+            }
+            
+            makeDraggable(img);
+            layer.appendChild(img);
         });
-        const result = await resp.json();
-        if (result.positionData) savedPositions = JSON.parse(result.positionData);
-      } catch (e) { console.log("第一次進入，無歷史存檔"); }
-    
-      layer.innerHTML = ""; 
-    
-      allAssets.filter(a => a.islandNo == no).forEach((asset, index) => {
-        const img = document.createElement('img');
-        img.src = asset.assetUrl;
-        img.className = 'asset';
-        img.dataset.assetName = asset.assetName; 
-    
-        let savedPos = savedPositions ? savedPositions.find(p => p.name === asset.assetName) : null;
         
-        if (savedPos) {
-          img.style.left = savedPos.x;
-          img.style.top = savedPos.y;
-        } else {
-          img.style.left = (100 + index * 120) + "px"; 
-          img.style.top = "250px";
-        }
-        
-        makeDraggable(img);
-        layer.appendChild(img);
-      });
-      
-      showLoading(false);
+        showLoading(false);
     }
 
-    // --- 4. 儲存座標 ---
+    // 儲存目前佈置
     async function savePositions() {
-      showLoading(true);
-      const assetsInView = document.querySelectorAll('.asset');
-      let positions = [];
-      assetsInView.forEach(el => {
-        positions.push({ name: el.dataset.assetName, x: el.style.left, y: el.style.top });
-      });
-    
-      const payload = {
-        action: "saveIslandUpdate",
-        username: USERNAME,
-        islandNo: currentIslandNo,
-        positionData: JSON.stringify(positions)
-      };
-    
-      try {
-        const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-        const result = await response.json();
-        if (result.result === "success") {
-          alert("✨ 佈置已成功儲存至雲端！");
-        }
-      } catch (e) { alert("儲存失敗，請檢查連線"); }
-      showLoading(false);
+        showLoading(true);
+        const assetsInView = document.querySelectorAll('.asset');
+        let positions = [];
+        
+        assetsInView.forEach(el => {
+            positions.push({ 
+                name: el.dataset.assetName, 
+                x: el.style.left, 
+                y: el.style.top 
+            });
+        });
+      
+        const payload = {
+            action: "saveIslandUpdate",
+            username: USERNAME,
+            islandNo: currentIslandNo,
+            positionData: JSON.stringify(positions)
+        };
+      
+        try {
+            const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+            const result = await response.json();
+            if (result.result === "success") alert("✨ 佈置已存入雲端！");
+        } catch (e) { alert("儲存失敗"); }
+        showLoading(false);
+    }
+
+    /**
+     * --- 3. UI 渲染與互動功能 ---
+     */
+
+    function renderLobby() {
+        const container = document.getElementById('islandContainer');
+        container.innerHTML = "";
+        
+        const groups = {};
+        allAssets.forEach(a => {
+            if (!groups[a.islandNo]) groups[a.islandNo] = { name: a.islandName, bg: a.islandBG };
+        });
+
+        Object.keys(groups).forEach(no => {
+            const item = groups[no];
+            const card = document.createElement('div');
+            card.className = 'island-card';
+            card.style.backgroundImage = `url('${item.bg}')`;
+            card.onclick = () => enterIsland(no);
+            card.innerHTML = `<div>${item.name}</div>`;
+            container.appendChild(card);
+        });
     }
 
     function backToLobby() {
-      document.getElementById('islandView').style.display = 'none';
-      document.getElementById('lobby').style.display = 'block';
+        document.getElementById('islandView').style.display = 'none';
+        document.getElementById('lobby').style.display = 'block';
     }
 
     function showLoading(show) {
-      document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        const loader = document.getElementById('loadingOverlay');
+        if (loader) loader.style.display = show ? 'flex' : 'none';
     }
 
-    // --- 5. 拖拽邏輯 ---
+    // 拖拽功能邏輯
     function makeDraggable(el) {
-      let isDragging = false;
-      let offset = { x: 0, y: 0 };
+        let isDragging = false;
+        let offset = { x: 0, y: 0 };
 
-      const start = (e) => {
-        isDragging = true;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        offset.x = clientX - el.offsetLeft;
-        offset.y = clientY - el.offsetTop;
-      };
+        const start = (e) => {
+            isDragging = true;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            offset.x = clientX - el.offsetLeft;
+            offset.y = clientY - el.offsetTop;
+        };
 
-      const move = (e) => {
-        if (!isDragging) return;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        el.style.left = (clientX - offset.x) + "px";
-        el.style.top = (clientY - offset.y) + "px";
-      };
+        const move = (e) => {
+            if (!isDragging) return;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            el.style.left = (clientX - offset.x) + "px";
+            el.style.top = (clientY - offset.y) + "px";
+        };
 
-      const stop = () => isDragging = false;
+        const stop = () => isDragging = false;
 
-      el.onmousedown = start;
-      document.onmousemove = move;
-      document.onmouseup = stop;
-      el.ontouchstart = start;
-      document.ontouchmove = move;
-      document.ontouchend = stop;
+        el.onmousedown = start;
+        document.addEventListener('mousemove', move);
+        document.addEventListener('mouseup', stop);
+        el.ontouchstart = start;
+        document.addEventListener('touchmove', move, { passive: false });
+        document.addEventListener('touchend', stop);
     }
-  </script>
+</script>
+  
 </body>
 </html>
