@@ -17,7 +17,7 @@
         /* 核心背景方案：修復邊緣陰影 */
         html, body {
             height: 100%; width: 100%; margin: 0; padding: 0;
-            background-color: #0c4f65;
+            background-color: #1dc5fd;
             overflow-x: hidden;
             font-family: 'Noto Sans TC', sans-serif;
             -webkit-user-select: none;
@@ -26,10 +26,9 @@
         body.in-lobby::before {
             content: "";
             position: fixed;
-            top: -5px; left: -5px; right: -5px; bottom: -5px;
-            background-size: cover;
-            background-position: center bottom;
-            z-index: -1;
+            top: 0px; left: 0px; right: 0px; bottom: 0px;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
         }
 
         body.in-island { background-color: #2c3e50; }
