@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>我的島嶼 - 完美整合版</title>
+    <title>我的島嶼</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/picture.svg">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
@@ -78,16 +78,34 @@
         .island-card:hover { transform: translateY(-5px) scale(1.03); }
 
         /* 島嶼舞台 */
-        #islandView { 
-            display: none; width: 100vw; height: 100vh; position: fixed; 
-            top: 0; left: 0; align-items: center; justify-content: center; z-index: 500;
+       #islandView { 
+            display: none; 
+            width: 100vw; 
+            height: 100vh; 
+            height: -webkit-fill-available; /* 修正行動裝置瀏覽器高度計算 */
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 500;
+            background-color: #2c3e50; /* 確保背景填滿 */
+            overflow: hidden;
         }
         
-        #islandStage {
-            position: relative; width: 100%; aspect-ratio: 16 / 9;
-            max-height: 100vh; max-width: calc(100vh * 16 / 9);
-            background-size: 100% 100%; background-repeat: no-repeat;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5); overflow: hidden;
+       #islandStage {
+            position: relative; 
+            /* 核心邏輯：確保舞台始終完整顯示在螢幕內 */
+            width: 100vw;
+            height: 56.25vw; /* 16:9 的高度比例 */
+            max-height: 100vh;
+            max-height: -webkit-fill-available;
+            max-width: 177.78vh; /* 16:9 的寬度比例 (100 * 16 / 9) */
+            
+            background-size: 100% 100%; 
+            background-repeat: no-repeat;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+            overflow: hidden;
         }
 
         .asset { 
@@ -96,8 +114,16 @@
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
         }
 
-        .toolbar { position: fixed; top: 25px; left: 25px; z-index: 5000; display: flex; gap: 15px; }
-        
+        .toolbar { 
+            position: fixed; 
+            top: env(safe-area-inset-top, 15px); 
+            left: env(safe-area-inset-left, 15px); 
+            z-index: 5000; 
+            display: flex; 
+            gap: 10px; 
+            transform: scale(0.9); /* 橫屏時稍微縮小按鈕避免擁擠 */
+        }
+                
         #loadingOverlay { 
             position: fixed; inset: 0; background: rgba(0,0,0,0.7); 
             color:white; display:none; flex-direction:column; 
