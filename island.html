@@ -316,9 +316,13 @@
             card.style.backgroundImage = `url('${item.bg}')`;
             card.onclick = () => enterIsland(no);
 
-            // LOBBY CARDS 大廳島嶼卡片樣式
-            card.innerHTML = `<div class="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-transparent transition-colors duration-300 rounded-[15px] font-cubic text-white text-xl thin-border pointer-events-none">
-                ${item.name}</div>`;
+            // LOBBY CARDS OVERLAY 大廳島嶼卡片遮罩
+            card.innerHTML = `
+                <div class="absolute inset-x-0 bottom-0 h-1/2 flex items-center justify-center bg-gradient-to-t from-black/60 to-transparent 
+                    hover:transparent transition-all duration-300 
+                    rounded-b-[15px] font-cubic text-white text-xl thin-border pointer-events-none">
+                ${item.name}
+                </div>`;
             container.appendChild(card);
         });
     }
