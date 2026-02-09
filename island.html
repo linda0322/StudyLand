@@ -76,13 +76,30 @@
         }
         .island-card:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
 
-        #islandView { display: none; width: 100vw; height: 100vh; position: relative; background-size: cover; background-position: center; }
-        
+        #islandView { display: none; width: 100vw; height: 100vh; position: relative; background-color: #0ea5e9; overflow: hidden; display: flex; align-items: center; justify-content: center;}
+        #islandStage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 100vh;
+            max-width: calc(100vh * 16 / 9);
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+         }
+
         .asset { 
-            position: absolute; cursor: move; width: 90px; 
-            user-select: none; touch-action: none; 
+            position: absolute; 
+            cursor: move; 
+            width: 8%;
+            min-width: 40px;
+            user-select: none; 
+            touch-action: none; 
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-        }
+            z-index: 10;
+         }
 
         .toolbar { position: fixed; top: 20px; left: 20px; z-index: 1000; display: flex; gap: 15px; }
         .btn { padding: 10px 20px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s; }
@@ -119,11 +136,17 @@
   </div>
 
   <div id="islandView">
-    <div class="toolbar">
-      <button class="btn btn-back" onclick="backToLobby()">⬅ 返回大廳</button>
-      <button class="btn btn-save" onclick="savePositions()">💾 儲存佈置</button>
-    </div>
-    <div id="assetLayer"></div>
+      <div class="toolbar">
+        <button id="btn btn-back" class="hidden p-2 glass-panel rounded-full text-slate-500 shadow-lg hover:bg-white/50" onclick="backToLobby()" title="返回">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+        <button id="btn btn-save" class="hidden p-2 glass-panel rounded-full text-slate-500 shadow-lg hover:bg-white/50" onclick="savePositions()" title="儲存">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+        </button>
+      </div>
+      <div id="islandStage">
+          <div id="assetLayer"></div>
+      </div>
   </div>
 
   <!-- 儲存通知 TOAST -->  
@@ -219,27 +242,29 @@
         currentIslandNo = no;
         const islandAssets = allAssets.filter(a => a.islandNo == no);
         const view = document.getElementById('islandView');
+        const stage = document.getElementById('islandStage'); // 取得舞台
         const layer = document.getElementById('assetLayer');
         
         document.getElementById('lobby').style.display = 'none';
-        view.style.display = 'block';
-        view.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
+        view.style.display = 'flex'; // 改為 flex 以便置中舞台
+        
+        // 背景套用在舞台上
+        stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
         layer.innerHTML = ""; 
-
+    
         islandAssets.forEach((asset, index) => {
             const img = document.createElement('img');
             img.src = asset.assetUrl;
             img.className = 'asset';
             img.dataset.assetName = asset.assetName; 
             
-            // 使用 GAS 傳回來的最後座標
+            // 座標處理：建議存取時改用百分比，但若目前是 PX，先維持
             if (asset.lastX && asset.lastY) {
                 img.style.left = asset.lastX;
                 img.style.top = asset.lastY;
             } else {
-                // 若無座標則初始排隊
-                img.style.left = (50 + (index % 5) * 110) + "px"; 
-                img.style.top = (150 + Math.floor(index / 5) * 100) + "px";
+                img.style.left = (10 + (index % 5) * 15) + "%"; 
+                img.style.top = (20 + Math.floor(index / 5) * 20) + "%";
             }
             
             makeDraggable(img);
@@ -333,20 +358,23 @@
 
         const move = (e) => {
             if (!isDragging) return;
+            const stage = document.getElementById('islandStage');
+            const rect = stage.getBoundingClientRect(); // 取得舞台在螢幕上的位置
+        
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        
             let newX = clientX - offset.x;
             let newY = clientY - offset.y;
             
-            // 限制不超出畫面
-            newX = Math.max(0, Math.min(newX, window.innerWidth - el.offsetWidth));
-            newY = Math.max(0, Math.min(newY, window.innerHeight - el.offsetHeight));
-
+            newX = Math.max(0, Math.min(newX, stage.offsetWidth - el.offsetWidth));
+            newY = Math.max(0, Math.min(newY, stage.offsetHeight - el.offsetHeight));
+        
             el.style.left = newX + "px";
             el.style.top = newY + "px";
             if (e.cancelable) e.preventDefault();
         };
-
+        
         const stop = () => {
             if (isDragging) {
                 isDragging = false;
