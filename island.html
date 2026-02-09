@@ -77,18 +77,6 @@
       transform: translateY(-10px) scale(1.02); 
       box-shadow: 0 15px 30px rgba(0,0,0,0.3);
     }
-    .island-card div { 
-      position: absolute; 
-      bottom: 0; 
-      width: 100%; 
-      background: rgba(0,0,0,0.65); 
-      color: white; 
-      font-size: 16px; 
-      font-weight: bold;
-      padding: 10px 0; 
-      border-bottom-left-radius: 15px; 
-      border-bottom-right-radius: 15px; 
-    }
 
     /* 島嶼內部視圖 */
     #islandView { 
@@ -324,7 +312,10 @@
             card.className = 'island-card';
             card.style.backgroundImage = `url('${item.bg}')`;
             card.onclick = () => enterIsland(no);
-            card.innerHTML = `<div>${item.name}</div>`;
+
+            //** LOBBY CARDS 大廳島嶼卡片樣式
+            card.innerHTML = `<div class="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-colors duration-300 rounded-[15px] font-cubic text-white text-xl thick-border">
+                ${item.name}</div>`;
             container.appendChild(card);
         });
     }
