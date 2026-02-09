@@ -61,10 +61,19 @@
           body: JSON.stringify({ action: "fetchIslands", username: USERNAME })
         });
         allAssets = await response.json();
-        console.log("從後端抓到的資產：", allAssets);
-        renderLobby();
+        
+        // --- 加入這行 ---
+        console.log("後端回傳資產數量:", allAssets.length);
+        console.log("資產內容:", allAssets);
+        
+        if (allAssets.length === 0) {
+          document.getElementById('islandContainer').innerHTML = "找不到屬於 " + USERNAME + " 的島嶼。";
+        } else {
+          renderLobby();
+        }
       } catch (e) {
-        document.getElementById('islandContainer').innerHTML = "載入失敗，請重新整理頁面。";
+        console.error("Fetch 錯誤:", e);
+        document.getElementById('islandContainer').innerHTML = "連線失敗。";
       }
     }
 
