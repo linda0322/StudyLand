@@ -17,22 +17,7 @@
         /* 基礎設定 */
         html {
             height: 100%;
-            transition: background 0.5s ease;
-        }
-        
-        /* 大廳專用的藍天背景 */
-        body.in-lobby {
-            background-color: #1dc5fd;
-            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
-            background-repeat: repeat-x;
-            background-size: auto 100%;
-            background-position: center bottom;
-            background-attachment: fixed;
-        }
-
-        body.in-island {
-            background-image: none;
-            background-color: #2c3e50;
+            background-color: #1dc5fd; /* 預設底色與天空一致 */
         }
         
         body {
@@ -42,27 +27,36 @@
             padding: 0; 
             width: 100%; 
             min-height: 100vh;
-            background: transparent;
+            background-color: transparent;
+        }
+
+        /* 大廳背景修正：強制鋪滿並取消可能產生陰影的 position */
+        body.in-lobby {
+            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
+            background-repeat: no-repeat;
+            background-size: 100% 100%; /* 強制填滿寬高，消除側邊 */
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        body.in-island {
+            background-image: none;
+            background-color: #2c3e50;
         }
         
-        /* 行動裝置優化 */
+        /* 行動裝置微調 */
         @media (max-width: 768px) {
-            body { background-position: center 60%; background-size: auto 100%; }
+            body.in-lobby { 
+                background-size: cover; /* 手機端建議用 cover 避免變形 */
+                background-position: center;
+            }
             .toolbar { top: 15px; left: 15px; right: 15px; }
         }
 
-        @media (min-width: 1200px) {
-            body.in-lobby {
-                background-size: cover;
-                background-repeat: no-repeat;
-            }
-        }
-
-        /* 關鍵：修正直屏下物件過大的問題 */
         @media (max-aspect-ratio: 1/1) {
             .asset { 
-                width: 12% !important; /* 直向時比例微調 */
-                max-width: 55px !important; /* 強制鎖定最大寬度，防止過大 */
+                width: 12% !important; 
+                max-width: 55px !important; 
                 min-width: 35px !important;
             }
         }
@@ -84,8 +78,8 @@
             position: relative; 
             width: 100%;
             min-height: 100vh;
-            background-color: rgba(0, 0, 0, 0.4); 
-            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.2); /* 稍微調淺遮罩，讓天空更亮 */
+            backdrop-filter: blur(4px);
             z-index: 100; 
             padding: 3rem 1rem; 
         }
@@ -120,7 +114,6 @@
             width: 100%;
             aspect-ratio: 16 / 9;
             max-height: 100vh;
-            min-height: 200px;
             max-width: calc(100vh * 16 / 9);
             background-size: 100% 100%;
             background-position: center;
@@ -375,12 +368,9 @@
             el.style.zIndex = "1000";
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            
-            // 使用 getBoundingClientRect 獲取更精準的相對於舞台的偏移
             const rect = el.getBoundingClientRect();
             offset.x = clientX - rect.left;
             offset.y = clientY - rect.top;
-            
             el.style.transform = "scale(1.1)";
         };
 
@@ -388,17 +378,12 @@
             if (!isDragging) return;
             const stage = document.getElementById('islandStage');
             const stageRect = stage.getBoundingClientRect();
-        
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        
-            // 計算相對於舞台內部的 px 座標
             let newX = clientX - stageRect.left - offset.x;
             let newY = clientY - stageRect.top - offset.y;
-            
             newX = Math.max(0, Math.min(newX, stage.offsetWidth - el.offsetWidth));
             newY = Math.max(0, Math.min(newY, stage.offsetHeight - el.offsetHeight));
-        
             el.style.left = newX + "px";
             el.style.top = newY + "px";
             if (e.cancelable) e.preventDefault();
