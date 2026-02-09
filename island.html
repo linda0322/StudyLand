@@ -90,6 +90,7 @@
             width: 100%;
             aspect-ratio: 16 / 9;
             max-height: 100vh;
+            min-height: 200px;
             max-width: calc(100vh * 16 / 9);
             background-size: 100% 100%;
             background-position: center;
@@ -243,55 +244,62 @@
         });
     }
 
-    function enterIsland(no) {
+    async function enterIsland(no) {
         currentIslandNo = no;
         const islandAssets = allAssets.filter(a => a.islandNo == no);
         const view = document.getElementById('islandView');
         const stage = document.getElementById('islandStage');
         const layer = document.getElementById('assetLayer');
         
-        // 1. 隱藏大廳
+        // 1. 隱藏大廳，顯示視窗
         document.getElementById('lobby').style.display = 'none';
-        
-        // 2. 顯示視窗並強制重繪
         view.style.display = 'flex'; 
-    
-        // 3. 渲染背景
+        
+        // 2. 渲染舞台背景
         if (islandAssets.length > 0) {
             stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
-            stage.style.backgroundSize = "cover"; // 改用 cover 確保鋪滿舞台
         }
         
-        // 4. 清空舊物件
         layer.innerHTML = ""; 
     
-        // 5. 使用 setTimeout 確保 stage 的尺寸已經被瀏覽器計算出來
+        // 關鍵修正：在移動端需要更確保佈局已經完成計算
+        // 使用 requestAnimationFrame 或稍微長一點的延遲
         setTimeout(() => {
+            // 確保 stage 已經有實際尺寸
+            const stageW = stage.offsetWidth;
+            const stageH = stage.offsetHeight;
+    
             islandAssets.forEach((asset, index) => {
                 const img = document.createElement('img');
                 img.src = asset.assetUrl;
                 img.className = 'asset';
                 img.dataset.assetName = asset.assetName; 
                 
-                // 座標邏輯
-                if (asset.lastX && asset.lastY) {
-                    img.style.left = asset.lastX;
-                    img.style.top = asset.lastY;
-                } else {
-                    img.style.left = (10 + (index % 5) * 15) + "%"; 
-                    img.style.top = (20 + Math.floor(index / 5) * 20) + "%";
-                }
+                // 強制設定初始隱藏，等到計算完位置再顯示，防止手機版閃爍
+                img.style.opacity = "0";
+    
+                img.onload = () => {
+                    if (asset.lastX && asset.lastY) {
+                        // 如果有舊座標，直接套用
+                        img.style.left = asset.lastX;
+                        img.style.top = asset.lastY;
+                    } else {
+                        // 初始分配（百分比法在手機版最安全）
+                        img.style.left = (10 + (index % 5) * 15) + "%"; 
+                        img.style.top = (20 + Math.floor(index / 5) * 20) + "%";
+                    }
+                    img.style.opacity = "1"; // 座標計算完畢，顯示
+                    makeDraggable(img);
+                };
                 
-                makeDraggable(img);
                 layer.appendChild(img);
             });
     
-            // 最後才顯示按鈕，避免按鈕比島嶼先跳出來
             document.getElementById('btn-back').classList.remove('hidden');
             document.getElementById('btn-save').classList.remove('hidden');
-        }, 50); // 延遲 50ms 確保 DOM 已渲染
+        }, 150); // 手機端建議給予 150ms 緩衝
     }
-
+    
     // 儲存佈置
     async function savePositions() {
         showLoading(true);
