@@ -121,9 +121,15 @@
         }
 
         .asset { 
-            position: absolute; cursor: move; width: 8%; min-width: 40px;
-            z-index: 10; touch-action: none;
+            position: absolute; 
+            cursor: move; 
+            width: 8%; /* 這是相對於 islandStage 的寬度 */
+            min-width: 40px;
+            touch-action: none; 
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+            z-index: 10;
+            /* 移除任何可能的 transition，否則拖拽會慢半拍 */
+            transition: transform 0.2s, opacity 0.3s; 
         }
 
         .toolbar { 
@@ -301,35 +307,44 @@
     function makeDraggable(el) {
         let isDragging = false;
         let offset = { x: 0, y: 0 };
-        el.ondragstart = () => false;
-
+    
         const start = (e) => {
             isDragging = true;
             el.style.zIndex = "1000";
-            const c = e.touches ? e.touches[0] : e;
-            offset.x = c.clientX - el.offsetLeft;
-            offset.y = c.clientY - el.offsetTop;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            // 取得物件相對於視窗的位置
+            const rect = el.getBoundingClientRect();
+            offset.x = clientX - rect.left;
+            offset.y = clientY - rect.top;
+            
             el.style.transform = "scale(1.1)";
-            el.style.transition = "transform 0.2s";
+            el.style.transition = "transform 0.2s"; // 加入平滑縮放
         };
-
+    
         const move = (e) => {
             if (!isDragging) return;
             const stage = document.getElementById('islandStage');
-            const c = e.touches ? e.touches[0] : e;
+            const stageRect = stage.getBoundingClientRect();
             
-            let newX = c.clientX - offset.x;
-            let newY = c.clientY - offset.y;
-            
-            // 邊界限制
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+            // 計算相對於 stage 的座標
+            let newX = clientX - stageRect.left - offset.x;
+            let newY = clientY - stageRect.top - offset.y;
+    
+            // 嚴格邊界限制
             newX = Math.max(0, Math.min(newX, stage.offsetWidth - el.offsetWidth));
             newY = Math.max(0, Math.min(newY, stage.offsetHeight - el.offsetHeight));
-            
+    
             el.style.left = newX + "px";
             el.style.top = newY + "px";
+            
             if (e.cancelable) e.preventDefault();
         };
-        
+    
         const stop = () => {
             if (isDragging) {
                 isDragging = false;
@@ -337,9 +352,10 @@
                 el.style.zIndex = "100";
             }
         };
-
+    
         el.onmousedown = start;
         el.ontouchstart = start;
+        // 建議將 mousemove 掛在 window 上避免拖太快斷掉
         window.addEventListener('mousemove', move, { passive: false });
         window.addEventListener('mouseup', stop);
         window.addEventListener('touchmove', move, { passive: false });
@@ -349,22 +365,43 @@
     async function savePositions() {
         showLoading(true);
         const stage = document.getElementById('islandStage');
-        const assets = document.querySelectorAll('.asset');
-        const positions = Array.from(assets).map(el => ({
-            name: el.dataset.assetName,
-            x: (parseFloat(el.style.left) / stage.offsetWidth * 100).toFixed(2) + '%',
-            y: (parseFloat(el.style.top) / stage.offsetHeight * 100).toFixed(2) + '%'
-        }));
-
+        const stageW = stage.offsetWidth;
+        const stageH = stage.offsetHeight;
+        
+        const assetsInView = document.querySelectorAll('.asset');
+        const positions = Array.from(assetsInView).map(el => {
+            // 使用 parseFloat 確保拿到的是純數字
+            const currentLeft = parseFloat(el.style.left);
+            const currentTop = parseFloat(el.style.top);
+    
+            // 儲存為相對於舞台寬高精確到小數點兩位的百分比
+            const xPercent = ((currentLeft / stageW) * 100).toFixed(2) + '%';
+            const yPercent = ((currentTop / stageH) * 100).toFixed(2) + '%';
+            
+            return {
+                name: el.dataset.assetName, 
+                x: xPercent, 
+                y: yPercent 
+            };
+        });
+    
         try {
-            const res = await fetch(GAS_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: "saveIslandUpdate", username: USERNAME, islandNo: currentIslandNo, positionData: JSON.stringify(positions) })
+            const response = await fetch(GAS_URL, { 
+                method: "POST", 
+                body: JSON.stringify({ 
+                    action: "saveIslandUpdate", 
+                    username: USERNAME, 
+                    islandNo: currentIslandNo, 
+                    positionData: JSON.stringify(positions) 
+                }) 
             });
-            const result = await res.json();
-            if (result.result === "success") showToast("成功儲存佈置");
-        } catch (e) { showToast("連線錯誤", "error"); }
-        finally { showLoading(false); }
+            const result = await response.json();
+            if (result.result === "success") { showToast("成功儲存佈置"); }
+        } catch (e) { 
+            showToast("連線錯誤", "error"); 
+        } finally {
+            showLoading(false);
+        }
     }
 
     function backToLobby() {
