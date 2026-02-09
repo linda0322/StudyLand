@@ -41,12 +41,11 @@
         .level-card:active { transform: scale(0.98); }
         .level-thumb { width: 80px; height: 100%; object-fit: contain; padding: 12px; margin-left: 10px; }
         
-        /* 網格模式樣式修正 */
         .gallery-container.grid-mode { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .level-card.grid-item { flex-direction: column; height: auto; padding: 10px 0; border-radius: 20px; }
-        .level-card.grid-item .level-thumb { width: 100%; height: 70px; margin-left: 0; padding: 8px; }
-        .level-card.grid-item .level-stars-display { justify-content: center; margin-top: 4px; }
-        .grid-item .star-active, .grid-item .star-inactive { width: 14px; height: 14px; }
+        .level-card.grid-item { flex-direction: column; aspect-ratio: 1 / 1; height: auto; padding: 10px 0; border-radius: 24px; justify-content: center; }
+        .level-card.grid-item .level-thumb { width: 100%; height: 55%; margin-left: 0; padding: 4px; object-fit: contain;}
+        .level-card.grid-item .level-stars-display { justify-content: center; margin-top: 6px; gap: 4px; }
+        .grid-item .star-active, .grid-item .star-inactive { width: 20px; height: 20px; }
 
         .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 8px; }
         .card { aspect-ratio: 3/4; perspective: 1000px; cursor: pointer; }
@@ -100,7 +99,7 @@
 
             <div class="flex gap-2 items-center">
                 <button id="view-toggle-btn" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white/50 active:scale-90 transition-all shadow-lg" onclick="toggleViewMode()">
-                    <svg id="view-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid-icon lucide-layout-grid"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                 </button>
                 <button id="reload-btn" onclick="location.reload()" class="p-2 glass-panel rounded-full text-slate-500 hover:bg-white/50 active:scale-90 transition-all shadow-lg" title="重新整理">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -163,11 +162,10 @@
         function toggleViewMode() {
             viewMode = (viewMode === 'list') ? 'grid' : 'list';
             const icon = document.getElementById('view-icon');
-            // 切換圖示：Grid 模式顯示「條列圖示」，List 模式顯示「方格圖示」
             if (viewMode === 'grid') {
-                icon.innerHTML = '<line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>';
+                icon.innerHTML = '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M21 9H3"/><path d="M21 15H3"/>';
             } else {
-                icon.innerHTML = '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>';
+                icon.innerHTML = '<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>';
             }
             renderLevels();
         }
@@ -189,7 +187,7 @@
                 ).join('');
         
                 const card = document.createElement('div');
-                const levelNum = index + 1; // 關卡編號
+                const levelNum = index + 1;
                 
                 if (viewMode === 'list') {
                     const bestTimeStr = formatTime(level.bestTime ? parseInt(level.bestTime) : null);
@@ -198,10 +196,7 @@
                         <img src="${level.thumbnail}" class="level-thumb">
                         <div class="flex-1 p-4 flex justify-between items-center">
                             <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[10px] bg-blue-100 text-blue-500 px-1.5 rounded font-bold">${levelNum}</span>
-                                    <h3 class="font-cubic thick-border text-slate-700 text-xl">${level.name}</h3>
-                                </div>
+                                <h3 class="font-cubic thick-border text-slate-700 text-xl">${level.name}</h3>
                                 <div class="level-stars-display flex gap-1 mt-1">${starsHtml}</div>
                             </div>
                             <div class="text-right flex flex-col gap-2">
@@ -210,13 +205,14 @@
                             </div>
                         </div>`;
                 } else {
+                    // 方格模式 GRID MODE
                     card.className = 'level-card grid-item bg-white cursor-pointer hover:bg-white/40 shadow-sm relative';
                     card.innerHTML = `
-                        <div class="absolute top-2 left-2 text-[9px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded-full font-bold z-10">
+                        <div class="absolute top-2 left-2 text-[9px] bg-white backdrop-blur-sm text-slate-500 px-1.5 py-0.5 rounded-full font-bold z-10 shadow-sm">
                             ${levelNum}
                         </div>
                         <img src="${level.thumbnail}" class="level-thumb">
-                        <div class="level-stars-display flex gap-0.5">${starsHtml}</div>`;
+                        <div class="level-stars-display flex gap-1">${starsHtml}</div>`;
                 }
                 
                 card.onclick = () => startLevel(level);
