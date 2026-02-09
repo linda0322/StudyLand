@@ -45,6 +45,7 @@
 
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
         .font-cubic { font-family: 'Cubic11', sans-serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
         
         #lobby {
             display: flex;        
@@ -148,6 +149,7 @@
 
     <div class="font-cubic text-white thick-border text-2xl mb-6 tracking-wider drop-shadow-lg">進入島嶼</div>
     <div id="islandContainer" class="island-grid">
+        <div class="w-8 h-8 border-4 border-white/50 border-t-transparent rounded-full animate-spin"></div>
         </div>
 </div>
 
