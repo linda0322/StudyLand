@@ -126,7 +126,6 @@
     .btn-back { background: #607d8b; color: white; }
     .btn-back:hover { background: #455a64; }
 
-    /* 載入中動畫 */
     #loadingOverlay {position: fixed; top:0; left:0; width:100%; height:100%;
         background: rgba(0,0,0,0.5); color:white;
         display:none; flex-direction:column; justify-content:center; align-items:center;
@@ -145,8 +144,7 @@
   <div id="lobby">
     <div class="font-cubic text-white thick-border text-2xl mt-12 mb-4 tracking-wider drop-shadow-lg">進入島嶼</div>
     <div id="islandContainer" class="island-grid">
-        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-        <span class="font-cubic text-xs thin-border text-slate-600">載入中...</span>
+        <div class="w-6 h-6 border-4 border-white/50 border-t-transparent rounded-full shadow-sm animate-spin"></div>
     </div>
   </div>
 
@@ -338,35 +336,56 @@
     }
 
     // 拖拽功能邏輯
-    function makeDraggable(el) {
-        let isDragging = false;
-        let offset = { x: 0, y: 0 };
+ function makeDraggable(el) {
+    let isDragging = false;
+    let offset = { x: 0, y: 0 };
 
-        const start = (e) => {
-            isDragging = true;
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            offset.x = clientX - el.offsetLeft;
-            offset.y = clientY - el.offsetTop;
-        };
+    el.ondragstart = () => false;
 
-        const move = (e) => {
-            if (!isDragging) return;
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            el.style.left = (clientX - offset.x) + "px";
-            el.style.top = (clientY - offset.y) + "px";
-        };
+    const start = (e) => {
+        isDragging = true;
+        // 確保點擊時這張圖片在最前面
+        el.style.zIndex = "9999";
+        
+        if (e.cancelable) e.preventDefault(); 
 
-        const stop = () => isDragging = false;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        offset.x = clientX - el.offsetLeft;
+        offset.y = clientY - el.offsetTop;
+        
+        el.style.transform = "scale(1.1)";
+        el.style.transition = "transform 0.1s, z-index 0s"; 
+    };
 
-        el.onmousedown = start;
-        document.addEventListener('mousemove', move);
-        document.addEventListener('mouseup', stop);
-        el.ontouchstart = start;
-        document.addEventListener('touchmove', move, { passive: false });
-        document.addEventListener('touchend', stop);
-    }
+    const move = (e) => {
+        if (!isDragging) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        // 使用 window 寬高限制，防止物件被拖出螢幕外消失
+        let newX = clientX - offset.x;
+        let newY = clientY - offset.y;
+        
+        el.style.left = newX + "px";
+        el.style.top = newY + "px";
+    };
+
+    const stop = () => {
+        if (isDragging) {
+            isDragging = false;
+            el.style.transform = "scale(1)";
+            el.style.zIndex = "100"; 
+        }
+    };
+
+    el.onmousedown = start;
+    el.ontouchstart = start;
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', stop);
+    window.addEventListener('touchmove', move, { passive: false });
+    window.addEventListener('touchend', stop);
+}
 </script>
   
 </body>
