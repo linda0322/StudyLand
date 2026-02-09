@@ -31,14 +31,19 @@
             overflow: hidden;
         }
 
-        /* 手機版優化 */
-        @media (max-width: 768px) {
-            body { background-position: center 60%; background-size: auto 100%; }
-            .island-card { width: 140px !important; height: 100px !important; border-width: 3px !important; }
-            .asset { width: 65px !important; }
-            .toolbar { top: 10px; left: 10px; right: 10px; justify-content: space-between; gap: 8px; }
-            .btn { padding: 8px 12px; font-size: 12px; }
-        }
+        @media (max-width: 1024px) {
+            .island-grid {
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 15px;
+                padding: 20px;
+                max-width: 600px; 
+            }
+            .island-card {
+                width: 100% !important; 
+                height: auto;
+                aspect-ratio: 4 / 3; 
+            }
+         }
 
         a, button, [role="button"], .island-card {
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
@@ -61,31 +66,22 @@
             z-index: 100;
         }
 
-        .island-grid { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 20px; 
-            justify-content: center; 
-            padding: 20px;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
+        .island-grid { display: grid; grid-template-columns: repeat(auto-fit, 240px); gap: 30px; justify-content: center; padding: 40px; max-height: 80vh; overflow-y: auto; width: 100%;}
         
         .island-card { 
-            width: 240px; 
-            height: 180px; 
             background: white; 
             border-radius: 15px; 
             border: 5px solid white; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.25);
             background-size: cover; 
             background-position: center;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
             flex-shrink: 0;
+            margin-bottom: 10px; 
         }
         .island-card:hover { 
-            transform: translateY(-5px) scale(1.03); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
         }
 
         #islandView { 
@@ -197,7 +193,6 @@
             card.className = 'island-card';
             card.style.backgroundImage = `url('${item.bg}')`;
             card.onclick = () => enterIsland(no);
-            card.innerHTML = ""; 
             container.appendChild(card);
         });
     }
