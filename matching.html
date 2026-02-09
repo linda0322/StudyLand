@@ -51,12 +51,18 @@
         .card-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; padding: 6px; }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
         .modal-overlay.active { display: flex; }
+        
         .star-active, .star-inactive { display: inline-block; width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; vertical-align: middle; }
         #result-stars .star-active, #result-stars .star-inactive { width: 80px; height: 80px; }
         .star-active { background-image: url('https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/star.svg'); }
         .star-inactive { background-image: url('https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/star-empty.svg'); opacity: 0.5; }
+
+        .level-stars-display .star-active, .level-stars-display .star-inactive {width: 18px; height: 18px;}
+        
         .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
+
+    
 </head>
 <body class="flex flex-col items-center p-4">
 
@@ -182,19 +188,22 @@
             const list = document.getElementById('levels-list');
             list.innerHTML = '';
             levels.forEach(level => {
+                const starCount = level.stars || 0;
+                const starsHtml = Array(3).fill(0).map((_, i) =>  
+                    `<div class="${i < starCount ? 'star-active' : 'star-inactive'}"></div>`).join('');
                 const card = document.createElement('div');
                 card.className = 'level-card bg-gray-100 cursor-pointer hover:bg-white/40 shadow-sm mb-2';
                 card.innerHTML = `
                     <img src="${level.thumbnail}" class="level-thumb">
                     <div class="flex-1 p-4">
                         <h3 class="font-cubic thick-border text-slate-700 text-xl">${level.name}</h3>
-                        <p class="text-xs text-slate-500 font-cubic">配對挑戰</p>
+                        <div class="level-stars-display flex gap-1 mt-1">${starsHtml}</div>
                     </div>
                 `;
                 card.onclick = () => startLevel(level);
                 list.appendChild(card);
-            });
-        }
+              });
+            }
 
         //!-- 關卡頁面 GAME PAGE
         async function startLevel(level) {
