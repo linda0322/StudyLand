@@ -41,7 +41,6 @@
         .level-card:active { transform: scale(0.98); }
         .level-thumb { width: 80px; height: 100%; object-fit: contain; padding: 12px; margin-left: 10px; }
         
-        /* 1. 調整 Grid 容器，確保它從頂部開始排列，不留垂直多餘空間 */
         .gallery-container.grid-mode { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -53,7 +52,6 @@
             overflow-y: visible;
         }
         
-        /* 2. 讓卡片高度固定且更精緻 */
         .level-card.grid-item { 
             flex-direction: column; 
             height: 120px;    /* 稍微拉高一點點，讓星星有呼吸空間 */
@@ -69,18 +67,16 @@
         .level-card.grid-item .level-thumb { 
             width: 60px;      /* 調整圖片大小 */
             height: 60px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             padding: 0;
             object-fit: contain;
         }
         
-        /* 4. 數字標籤位置最佳化 */
         .level-number-label {
             position: absolute;
             top: 8px;
             left: 10px;
             font-size: 11px;
-            background: rgba(0,0,0,0.05); /* 加個極淡底色更有質感 */
             padding: 2px 6px;
             border-radius: 8px;
             color: #94a3b8;
