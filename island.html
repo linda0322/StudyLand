@@ -14,10 +14,13 @@
             font-display: swap;
         }
 
-        /* 基礎設定 */
+        /* 基礎設定 - 統一所有背景底色 */
         html {
             height: 100%;
-            background-color: #1dc5fd; /* 預設底色與天空一致 */
+            background-color: #1dc5fd; 
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* 防止溢出抖動 */
         }
         
         body {
@@ -27,27 +30,28 @@
             padding: 0; 
             width: 100%; 
             min-height: 100vh;
-            background-color: transparent;
+            background-color: #1dc5fd; /* 確保底色一致 */
         }
 
-        /* 大廳背景修正：強制鋪滿並取消可能產生陰影的 position */
+        /* 大廳背景修正：使用溢出補償法 */
         body.in-lobby {
             background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
             background-repeat: no-repeat;
-            background-size: 100% 100%; /* 強制填滿寬高，消除側邊 */
-            background-position: center;
+            /* 關鍵：設定為 101% 寬高並偏移 -0.5%，確保圖片超出邊界覆蓋縫隙 */
+            background-size: 101% 101%; 
+            background-position: center center;
             background-attachment: fixed;
         }
 
         body.in-island {
-            background-image: none;
+            background-image: none !important;
             background-color: #2c3e50;
         }
         
         /* 行動裝置微調 */
         @media (max-width: 768px) {
             body.in-lobby { 
-                background-size: cover; /* 手機端建議用 cover 避免變形 */
+                background-size: cover; 
                 background-position: center;
             }
             .toolbar { top: 15px; left: 15px; right: 15px; }
@@ -78,8 +82,9 @@
             position: relative; 
             width: 100%;
             min-height: 100vh;
-            background-color: rgba(0, 0, 0, 0.2); /* 稍微調淺遮罩，讓天空更亮 */
-            backdrop-filter: blur(4px);
+            /* 將背景半透明遮罩改為更淡的顏色，避免邊緣暗影感 */
+            background: linear-gradient(to bottom, rgba(29, 197, 253, 0.2), rgba(0, 0, 0, 0.1));
+            backdrop-filter: blur(2px);
             z-index: 100; 
             padding: 3rem 1rem; 
         }
@@ -105,8 +110,9 @@
 
         #islandView { 
             display: none; width: 100vw; height: 100vh; position: fixed; 
-            top: 0; left: 0; background-color: transparent; overflow: hidden; 
+            top: 0; left: 0; background-color: #2c3e50; overflow: hidden; 
             display: flex; align-items: center; justify-content: center;
+            z-index: 500;
         }
         
         #islandStage {
