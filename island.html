@@ -44,10 +44,16 @@
             }
 
             .island-card { 
-                width: 100% !important; 
-                height: auto !important; 
-                aspect-ratio: 4/3; 
-                border-width: 3px !important; 
+                width: 240px; 
+                height: 180px; 
+                position: relative; 
+                overflow: hidden; 
+                background-size: cover; 
+                background-position: center;
+                border-radius: 15px; 
+                border: 5px solid white; 
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+                transition: transform 0.3s, box-shadow 0.3s;
             }
 
             .asset { width: 65px !important; }
@@ -187,7 +193,7 @@
   </div>
 
 <script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwp5gItIw-NJhLolDfYtrFAU-5imfU6dsU8mSMTNMWdgXSz8WbqDfKHgeLVV9rNC45C/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyHqAKoa-9IXX4twvFNCQu_-RCQL2tG66I5XkLlDccpq_CWxLLJfyo-FI5HBMR9Cgb1/exec';
     
     let USERNAME = localStorage.getItem('studyLandUser');
     let allAssets = []; 
@@ -221,57 +227,77 @@
     }
 
     function renderLobby() {
-        const container = document.getElementById('islandContainer');
-        container.innerHTML = "";
-        const groups = {};
-        allAssets.forEach(a => {
-            if (!groups[a.islandNo]) groups[a.islandNo] = { bg: a.islandBG };
+    const container = document.getElementById('islandContainer');
+    container.innerHTML = "";
+
+    // 1. 根據 islandNo 分組
+    const islandIds = [...new Set(allAssets.map(a => a.islandNo))];
+
+    islandIds.forEach(no => {
+        const islandAssets = allAssets.filter(a => a.islandNo == no);
+        const bgUrl = islandAssets[0].islandBG;
+
+        // 建立卡片
+        const card = document.createElement('div');
+        card.className = 'island-card';
+        card.style.backgroundImage = `url('${bgUrl}')`;
+        card.onclick = () => enterIsland(no);
+
+        // 2. 建立縮圖圖層
+        // 假設原始畫面寬度約 1000px，卡片寬度 240px，比例大約是 0.24
+        const thumbScale = 0.24; 
+
+        islandAssets.forEach(asset => {
+            if (asset.lastX && asset.lastY) {
+                const miniImg = document.createElement('img');
+                miniImg.src = asset.assetUrl;
+                miniImg.style.position = 'absolute';
+                
+                // 將 "200.5px" 轉為數字並縮放
+                const x = parseFloat(asset.lastX) * thumbScale;
+                const y = parseFloat(asset.lastY) * thumbScale;
+                const w = 90 * thumbScale; // 原始寬度是 90px
+
+                miniImg.style.left = x + 'px';
+                miniImg.style.top = y + 'px';
+                miniImg.style.width = w + 'px';
+                miniImg.style.pointerEvents = 'none'; // 縮圖不能被點擊，否則會擋住卡片點擊
+                miniImg.style.filter = 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))';
+                
+                card.appendChild(miniImg);
+            }
         });
-        Object.keys(groups).forEach(no => {
-            const item = groups[no];
-            const card = document.createElement('div');
-            card.className = 'island-card';
-            card.style.backgroundImage = `url('${item.bg}')`;
-            card.onclick = () => enterIsland(no);
-            card.innerHTML = ""; 
-            container.appendChild(card);
-        });
-    }
+
+        container.appendChild(card);
+    });
+}
 
     async function enterIsland(no) {
         currentIslandNo = no;
         showLoading(true);
         
-        const islandData = allAssets.find(a => a.islandNo == no);
+        const islandAssets = allAssets.filter(a => a.islandNo == no);
         const view = document.getElementById('islandView');
         const layer = document.getElementById('assetLayer');
         
         document.getElementById('lobby').style.display = 'none';
         view.style.display = 'block';
-        view.style.backgroundImage = `url('${islandData.islandBG}')`;
+        view.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
         
-        let savedPositions = null;
-        try {
-            const resp = await fetch(GAS_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: "fetchLastPosition", username: USERNAME, islandNo: no })
-            });
-            const result = await resp.json();
-            if (result.positionData) savedPositions = JSON.parse(result.positionData);
-        } catch (e) { console.log("使用預設位置"); }
-      
         layer.innerHTML = ""; 
-        allAssets.filter(a => a.islandNo == no).forEach((asset, index) => {
+    
+        islandAssets.forEach((asset, index) => {
             const img = document.createElement('img');
             img.src = asset.assetUrl;
             img.className = 'asset';
             img.dataset.assetName = asset.assetName; 
             
-            let savedPos = savedPositions ? savedPositions.find(p => p.name === asset.assetName) : null;
-            if (savedPos) {
-                img.style.left = savedPos.x;
-                img.style.top = savedPos.y;
+            // 直接使用 fetchIslands 帶回來的座標
+            if (asset.lastX && asset.lastY) {
+                img.style.left = asset.lastX;
+                img.style.top = asset.lastY;
             } else {
+                // 如果沒座標（新島嶼），就隨便排一排
                 img.style.left = (50 + index * 100) + "px"; 
                 img.style.top = "150px";
             }
@@ -279,9 +305,11 @@
             makeDraggable(img);
             layer.appendChild(img);
         });
+    
         showLoading(false);
     }
 
+    
     async function savePositions() {
         showLoading(true);
         const assetsInView = document.querySelectorAll('.asset');
