@@ -287,18 +287,33 @@
         let isDragging = false;
         let offset = { x: 0, y: 0 };
 
+        // --- 關鍵修正：禁用瀏覽器預設的圖片拖動行為 ---
+        el.ondragstart = () => false;
+
         const start = (e) => {
+            // 排除右鍵點擊
+            if (e.button !== undefined && e.button !== 0) return;
+
             isDragging = true;
             el.style.zIndex = "9999";
+            
+            // 取得座標 (支援觸控與滑鼠)
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
             offset.x = clientX - el.offsetLeft;
             offset.y = clientY - el.offsetTop;
+            
             el.style.transform = "scale(1.1)";
+            el.style.transition = "transform 0.1s"; // 讓縮放順一點
+            
+            // 防止拖動時選取到背景文字
+            document.body.style.userSelect = "none";
         };
 
         const move = (e) => {
             if (!isDragging) return;
+
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
             
@@ -311,6 +326,8 @@
 
             el.style.left = newX + "px";
             el.style.top = newY + "px";
+
+            // 防止捲動頁面
             if (e.cancelable) e.preventDefault();
         };
 
@@ -318,13 +335,17 @@
             if (isDragging) {
                 isDragging = false;
                 el.style.transform = "scale(1)";
-                el.style.zIndex = "100"; 
+                el.style.zIndex = "100";
+                document.body.style.userSelect = "auto";
             }
         };
 
+        // 綁定事件
         el.onmousedown = start;
         el.ontouchstart = start;
-        window.addEventListener('mousemove', move);
+
+        // 全域監聽，保證滑鼠移出元素外也能繼續拖動
+        window.addEventListener('mousemove', move, { passive: false });
         window.addEventListener('mouseup', stop);
         window.addEventListener('touchmove', move, { passive: false });
         window.addEventListener('touchend', stop);
