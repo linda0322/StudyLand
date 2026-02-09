@@ -3,37 +3,137 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
+  <title>Study Land - 我的島嶼</title>
   <style>
     :root { --primary: #4db6ac; }
-    body { font-family: sans-serif; margin: 0; overflow: hidden; background: #222; }
     
-    /* 大廳樣式 */
-    #lobby { padding: 20px; text-align: center; color: white; background: #f4f7f6; height: 100vh; overflow-y: auto; }
-    .island-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 20px; }
-    .island-card { 
-      width: 200px; height: 150px; background: white; border-radius: 15px; 
-      cursor: pointer; position: relative; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      background-size: cover; background-position: center;
+    body { 
+      font-family: 'Microsoft JhengHei', sans-serif; 
+      margin: 0; 
+      overflow: hidden; 
+      /* 設定 GitHub 上的 Sky.png 為全網頁背景 */
+      background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-color: #add8e6; 
     }
-    .island-card div { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; font-size: 14px; padding: 8px 0; border-bottom-left-radius: 11px; border-bottom-right-radius: 11px; }
+    
+    /* 大廳樣式 - 使用磨砂玻璃效果 */
+    #lobby { 
+      padding: 20px; 
+      text-align: center; 
+      height: 100vh; 
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.2); 
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .island-grid { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 30px; 
+      justify-content: center; 
+      padding: 40px 20px; 
+    }
+    
+    .island-card { 
+      width: 240px; 
+      height: 180px; 
+      background: white; 
+      border-radius: 20px; 
+      cursor: pointer; 
+      position: relative; 
+      border: 5px solid white; 
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      background-size: cover; 
+      background-position: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .island-card:hover { 
+      transform: translateY(-10px) scale(1.02); 
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+    .island-card div { 
+      position: absolute; 
+      bottom: 0; 
+      width: 100%; 
+      background: rgba(0,0,0,0.65); 
+      color: white; 
+      font-size: 16px; 
+      font-weight: bold;
+      padding: 10px 0; 
+      border-bottom-left-radius: 15px; 
+      border-bottom-right-radius: 15px; 
+    }
 
     /* 島嶼內部視圖 */
-    #islandView { display: none; width: 100vw; height: 100vh; position: relative; background-size: cover; background-position: center; }
-    .asset { position: absolute; cursor: move; width: 80px; transition: transform 0.1s; user-select: none; touch-action: none; }
-    .asset:active { transform: scale(1.1); z-index: 1000; }
+    #islandView { 
+      display: none; 
+      width: 100vw; 
+      height: 100vh; 
+      position: relative; 
+      background-size: cover; 
+      background-position: center; 
+    }
+    
+    .asset { 
+      position: absolute; 
+      cursor: move; 
+      width: 90px; 
+      transition: transform 0.1s; 
+      user-select: none; 
+      touch-action: none; 
+      filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+    }
+    .asset:active { 
+      transform: scale(1.15); 
+      z-index: 9999; 
+    }
     
     /* 工具列 */
-    .toolbar { position: fixed; top: 10px; left: 10px; z-index: 100; display: flex; gap: 10px; }
-    .btn { padding: 10px 20px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .toolbar { 
+      position: fixed; 
+      top: 20px; 
+      left: 20px; 
+      z-index: 1000; 
+      display: flex; 
+      gap: 15px; 
+    }
+    .btn { 
+      padding: 12px 25px; 
+      border-radius: 30px; 
+      border: none; 
+      cursor: pointer; 
+      font-weight: bold; 
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: background 0.2s;
+    }
     .btn-save { background: #ff9800; color: white; }
+    .btn-save:hover { background: #f57c00; }
     .btn-back { background: #607d8b; color: white; }
+    .btn-back:hover { background: #455a64; }
+
+    /* 載入中動畫 */
+    #loadingOverlay {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.5); color:white;
+      display:none; flex-direction:column; justify-content:center; align-items:center;
+      z-index: 2000;
+    }
   </style>
 </head>
 <body>
 
+  <div id="loadingOverlay">
+    <div style="font-size: 20px; margin-bottom:10px;">☁️ 正在與雲端同步...</div>
+  </div>
+
   <div id="lobby">
-    <h1 style="color: #333;">我的島嶼群</h1>
-    <div id="islandContainer" class="island-grid">正在載入雲端島嶼...</div>
+    <h1 style="color: #004d40; text-shadow: 2px 2px 4px rgba(255,255,255,0.8); font-size: 32px; margin-top: 40px;">🏝️ 我的島嶼世界</h1>
+    <div id="islandContainer" class="island-grid">正在開啟雲端地圖...</div>
   </div>
 
   <div id="islandView">
@@ -45,42 +145,50 @@
   </div>
 
   <script>
-    const USERNAME = "<?= username ?>";
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwp5gItIw-NJhLolDfYtrFAU-5imfU6dsU8mSMTNMWdgXSz8WbqDfKHgeLVV9rNC45C/exec?p=island&user=testing";
+    /**
+     * 自動識別使用者名稱邏輯：
+     * 1. 優先抓取網址參數 (?user=xxx)
+     * 2. 其次抓取 GAS 模板變數 (<?= username ?>)
+     * 3. 最後預設為 "testing"
+     */
+    const getUsername = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlUser = urlParams.get('user');
+      const gasUser = "<?= username ?>";
+      
+      if (urlUser) return urlUser;
+      if (gasUser && !gasUser.includes("?")) return gasUser;
+      return "testing"; 
+    };
+
+    const USERNAME = getUsername().trim();
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwp5gItIw-NJhLolDfYtrFAU-5imfU6dsU8mSMTNMWdgXSz8WbqDfKHgeLVV9rNC45C/exec";
     
     let allAssets = []; 
     let currentIslandNo = null;
 
-    window.onload = fetchIslands;
+    window.onload = function() {
+      console.log("當前使用者:", USERNAME);
+      fetchIslands();
+    };
 
     // --- 1. 取得資產清單 ---
     async function fetchIslands() {
-      // 檢查名字是否正確抓到
-      console.log("目前的用戶名 (USERNAME):", USERNAME);
-      
-      if (!USERNAME || USERNAME === "<?= username ?>") {
-        document.getElementById('islandContainer').innerHTML = 
-          "<b style='color:red;'>錯誤：網址沒有攜帶使用者名稱！<br>請使用：網址?p=island&user=testing</b>";
-        return;
-      }
-    
       try {
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify({ action: "fetchIslands", username: USERNAME })
         });
-        
         allAssets = await response.json();
-        console.log("從後端抓到的原始資料:", allAssets);
-    
-        if (!Array.isArray(allAssets) || allAssets.length === 0) {
-          document.getElementById('islandContainer').innerHTML = "找不到屬於 " + USERNAME + " 的島嶼資料，請檢查試算表。";
+        
+        if (!allAssets || allAssets.length === 0) {
+          document.getElementById('islandContainer').innerHTML = 
+            `<div style='background:white; padding:20px; border-radius:10px;'>找不到屬於 <b>${USERNAME}</b> 的島嶼。<br>請檢查試算表 Island_Assets 是否已填妥。</div>`;
         } else {
           renderLobby();
         }
       } catch (e) {
-        console.error("Fetch 失敗:", e);
-        document.getElementById('islandContainer').innerHTML = "連線後端失敗。";
+        document.getElementById('islandContainer').innerHTML = "連線失敗，請檢查 GAS 部署權限是否設為「所有人」。";
       }
     }
 
@@ -105,9 +213,11 @@
       });
     }
 
-    // --- 3. 進入島嶼並載入座標 ---
+    // --- 3. 進入島嶼內部與讀取存檔 ---
     async function enterIsland(no) {
       currentIslandNo = no;
+      showLoading(true);
+      
       const islandData = allAssets.find(a => a.islandNo == no);
       const view = document.getElementById('islandView');
       const layer = document.getElementById('assetLayer');
@@ -115,8 +225,7 @@
       document.getElementById('lobby').style.display = 'none';
       view.style.display = 'block';
       view.style.backgroundImage = `url('${islandData.islandBG}')`;
-      layer.innerHTML = "<div style='color:white; padding:50px;'>載入座標中...</div>";
-    
+      
       let savedPositions = null;
       try {
         const resp = await fetch(SCRIPT_URL, {
@@ -124,10 +233,8 @@
           body: JSON.stringify({ action: "fetchLastPosition", username: USERNAME, islandNo: no })
         });
         const result = await resp.json();
-        if (result.positionData) {
-          savedPositions = JSON.parse(result.positionData);
-        }
-      } catch (e) { console.log("無歷史存檔或讀取失敗"); }
+        if (result.positionData) savedPositions = JSON.parse(result.positionData);
+      } catch (e) { console.log("第一次進入，無歷史存檔"); }
     
       layer.innerHTML = ""; 
     
@@ -137,33 +244,30 @@
         img.className = 'asset';
         img.dataset.assetName = asset.assetName; 
     
-        // 對應座標邏輯
         let savedPos = savedPositions ? savedPositions.find(p => p.name === asset.assetName) : null;
         
         if (savedPos) {
           img.style.left = savedPos.x;
           img.style.top = savedPos.y;
         } else {
-          img.style.left = (50 + index * 110) + "px"; 
-          img.style.top = "200px";
+          img.style.left = (100 + index * 120) + "px"; 
+          img.style.top = "250px";
         }
         
         makeDraggable(img);
         layer.appendChild(img);
       });
+      
+      showLoading(false);
     }
 
     // --- 4. 儲存座標 ---
     async function savePositions() {
+      showLoading(true);
       const assetsInView = document.querySelectorAll('.asset');
       let positions = [];
-      
       assetsInView.forEach(el => {
-        positions.push({
-          name: el.dataset.assetName, 
-          x: el.style.left,
-          y: el.style.top
-        });
+        positions.push({ name: el.dataset.assetName, x: el.style.left, y: el.style.top });
       });
     
       const payload = {
@@ -176,10 +280,11 @@
       try {
         const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
         const result = await response.json();
-        if (result.result === "success") alert("配置已成功存入雲端！");
-      } catch (e) {
-        alert("儲存失敗，請檢查網路連線。");
-      }
+        if (result.result === "success") {
+          alert("✨ 佈置已成功儲存至雲端！");
+        }
+      } catch (e) { alert("儲存失敗，請檢查連線"); }
+      showLoading(false);
     }
 
     function backToLobby() {
@@ -187,7 +292,11 @@
       document.getElementById('lobby').style.display = 'block';
     }
 
-    // --- 5. 拖拽邏輯 (支援滑鼠與觸控) ---
+    function showLoading(show) {
+      document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    // --- 5. 拖拽邏輯 ---
     function makeDraggable(el) {
       let isDragging = false;
       let offset = { x: 0, y: 0 };
@@ -208,12 +317,11 @@
         el.style.top = (clientY - offset.y) + "px";
       };
 
-      const stop = () => { isDragging = false; };
+      const stop = () => isDragging = false;
 
       el.onmousedown = start;
       document.onmousemove = move;
       document.onmouseup = stop;
-
       el.ontouchstart = start;
       document.ontouchmove = move;
       document.ontouchend = stop;
