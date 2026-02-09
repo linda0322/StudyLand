@@ -55,25 +55,32 @@
 
     // --- 1. 取得資產清單 ---
     async function fetchIslands() {
+      // 檢查名字是否正確抓到
+      console.log("目前的用戶名 (USERNAME):", USERNAME);
+      
+      if (!USERNAME || USERNAME === "<?= username ?>") {
+        document.getElementById('islandContainer').innerHTML = 
+          "<b style='color:red;'>錯誤：網址沒有攜帶使用者名稱！<br>請使用：網址?p=island&user=testing</b>";
+        return;
+      }
+    
       try {
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify({ action: "fetchIslands", username: USERNAME })
         });
+        
         allAssets = await response.json();
-        
-        // --- 加入這行 ---
-        console.log("後端回傳資產數量:", allAssets.length);
-        console.log("資產內容:", allAssets);
-        
-        if (allAssets.length === 0) {
-          document.getElementById('islandContainer').innerHTML = "找不到屬於 " + USERNAME + " 的島嶼。";
+        console.log("從後端抓到的原始資料:", allAssets);
+    
+        if (!Array.isArray(allAssets) || allAssets.length === 0) {
+          document.getElementById('islandContainer').innerHTML = "找不到屬於 " + USERNAME + " 的島嶼資料，請檢查試算表。";
         } else {
           renderLobby();
         }
       } catch (e) {
-        console.error("Fetch 錯誤:", e);
-        document.getElementById('islandContainer').innerHTML = "連線失敗。";
+        console.error("Fetch 失敗:", e);
+        document.getElementById('islandContainer').innerHTML = "連線後端失敗。";
       }
     }
 
