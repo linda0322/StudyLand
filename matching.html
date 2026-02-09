@@ -78,7 +78,7 @@
 
                 <!-- 計時器 TIMER -->
                 <div id="game-timer-panel" class="hidden bg-transparent px-1.5 py-2 flex items-center justify-start gap-3">
-                    <div id="live-stars" class="flex gap-1 items-center bg-white/20 px-2 py-1 rounded-full">
+                    <div id="live-stars" class="flex gap-1">
                         <div class="star-active !w-8 !h-8"></div>
                         <div class="star-active !w-8 !h-8"></div>
                         <div class="star-active !w-8 !h-8"></div>
@@ -282,6 +282,8 @@
         function startTimer() {
             startTime = Date.now();
             clearInterval(timerInterval);
+            const timerElement = document.getElementById('timer');
+            timerElement.style.fontFamily = "'Cubic11', sans-serif";
             updateLiveStars(3);
                 timerInterval = setInterval(() => {
                     const sec = Math.floor((Date.now() - startTime) / 1000);
