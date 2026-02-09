@@ -14,89 +14,61 @@
             font-display: swap;
         }
 
-        /* 基礎設定 - 統一所有背景底色 */
-        html {
+        html, body {
             height: 100%;
-            background-color: #1dc5fd; 
+            width: 100%;
             margin: 0;
             padding: 0;
-            overflow-x: hidden; /* 防止溢出抖動 */
-        }
-        
-        body {
+            background-color: #1dc5fd; /* 核心背景色 */
+            overflow-x: hidden;
             font-family: 'Noto Sans TC', sans-serif;
             -webkit-user-select: none;
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            min-height: 100vh;
-            background-color: #1dc5fd; /* 確保底色一致 */
         }
 
-        /* 大廳背景修正：使用溢出補償法 */
-        body.in-lobby {
+        /* 穩定消滅陰影的背景方案 */
+        body.in-lobby::before {
+            content: "";
+            position: fixed;
+            top: -2px; left: -2px; right: -2px; bottom: -2px; /* 稍微溢出以消滅邊緣 */
             background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
-            background-repeat: no-repeat;
-            /* 關鍵：設定為 101% 寬高並偏移 -0.5%，確保圖片超出邊界覆蓋縫隙 */
-            background-size: 101% 101%; 
-            background-position: center center;
-            background-attachment: fixed;
+            background-size: cover;
+            background-position: center bottom;
+            z-index: -1;
         }
 
-        body.in-island {
-            background-image: none !important;
-            background-color: #2c3e50;
-        }
-        
-        /* 行動裝置微調 */
-        @media (max-width: 768px) {
-            body.in-lobby { 
-                background-size: cover; 
-                background-position: center;
-            }
-            .toolbar { top: 15px; left: 15px; right: 15px; }
-        }
+        body.in-island { background-color: #2c3e50; }
+        body.in-island::before { display: none; }
 
-        @media (max-aspect-ratio: 1/1) {
-            .asset { 
-                width: 12% !important; 
-                max-width: 55px !important; 
-                min-width: 35px !important;
-            }
+        /* 橫向模式擋板 */
+        #orientation-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(44, 62, 80, 0.95);
+            z-index: 9999;
+            flex-direction: column; justify-content: center; align-items: center;
+            color: white; text-align: center;
         }
-        
-        a, button, [role="button"], .island-card {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
-        }
+        /* 僅在島嶼模式且寬度 < 高度時觸發 */
+        body.in-island.is-portrait #orientation-overlay { display: flex; }
 
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
         .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
-        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
-        
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.3); }
+
         #lobby {
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: flex-start; 
-            position: relative; 
-            width: 100%;
-            min-height: 100vh;
-            /* 將背景半透明遮罩改為更淡的顏色，避免邊緣暗影感 */
-            background: linear-gradient(to bottom, rgba(29, 197, 253, 0.2), rgba(0, 0, 0, 0.1));
-            backdrop-filter: blur(2px);
-            z-index: 100; 
-            padding: 3rem 1rem; 
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; width: 100%;
+            background: linear-gradient(to bottom, rgba(29, 197, 253, 0.1), rgba(0, 0, 0, 0.1));
+            padding: 3rem 1rem;
+            position: relative;
+            z-index: 10;
         }
 
         .island-grid { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 20px; 
-            justify-content: center; 
-            padding: 20px; 
-            max-width: 1000px;
-            width: 100%;
+            display: flex; flex-wrap: wrap; gap: 20px; 
+            justify-content: center; padding: 20px; 
+            max-width: 1000px; width: 100%;
         }
         
         .island-card { 
@@ -104,103 +76,99 @@
             background-color: #fff; border-radius: 15px; border: 5px solid white; 
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             background-size: cover; background-position: center;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
         }
-        .island-card:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .island-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
 
         #islandView { 
             display: none; width: 100vw; height: 100vh; position: fixed; 
-            top: 0; left: 0; background-color: #2c3e50; overflow: hidden; 
-            display: flex; align-items: center; justify-content: center;
-            z-index: 500;
+            top: 0; left: 0; align-items: center; justify-content: center; z-index: 500;
         }
         
         #islandStage {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            max-height: 100vh;
-            max-width: calc(100vh * 16 / 9);
-            background-size: 100% 100%;
-            background-position: center;
-            background-repeat: no-repeat;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            overflow: hidden;
+            position: relative; width: 100%; aspect-ratio: 16 / 9;
+            max-height: 100vh; max-width: calc(100vh * 16 / 9);
+            background-size: 100% 100%; background-repeat: no-repeat;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5); overflow: hidden;
          }
 
         .asset { 
-            position: absolute; 
-            cursor: move; 
-            width: 8%;
-            min-width: 40px;
-            user-select: none; 
-            touch-action: none; 
-            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-            z-index: 10;
-            transition: transform 0.2s, opacity 0.3s;
+            position: absolute; cursor: move; width: 8%; min-width: 40px;
+            z-index: 10; transition: transform 0.2s;
          }
 
-        .toolbar { position: fixed; top: 25px; left: 25px; z-index: 5000; display: flex; gap: 15px; }
+        .toolbar { position: fixed; top: 20px; left: 20px; z-index: 5000; display: flex; gap: 12px; }
+        #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); color:white; display:none; flex-direction:column; justify-content:center; align-items:center; z-index: 6000; }
         
-        #loadingOverlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); color:white;
-            display:none; flex-direction:column; justify-content:center; align-items:center; z-index: 6000;
-        }
+        .rotate-icon { font-size: 40px; animation: rotate-hint 2s infinite; margin-bottom: 10px; }
+        @keyframes rotate-hint { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
     </style>
 </head>
-<body>
+<body class="in-lobby">
 
-  <div id="loadingOverlay">
-    <div class="animate-bounce text-3xl mb-4">☁️</div>
-    <div class="font-cubic tracking-widest">飛行中</div>
-  </div>
+    <div id="orientation-overlay">
+        <div class="rotate-icon">📱🔄</div>
+        <div class="font-cubic text-lg">請將手機旋轉至橫向</div>
+        <div class="font-cubic text-xs mt-2 opacity-70">進入橫向模式以獲得最佳建設體驗</div>
+    </div>
 
-  <div id="lobby">
-    <div class="flex items-center gap-3 mb-6">
-        <div class="glass-panel px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
-            <span class="text-[10px] text-slate-500 thin-border font-cubic tracking-wider">探險家</span>
-            <span id="user-display-name" class="text-sm font-cubic thin-border text-slate-700">載入中...</span>
+    <div id="loadingOverlay">
+        <div class="animate-bounce text-3xl mb-4">☁️</div>
+        <div class="font-cubic tracking-widest">飛行中</div>
+    </div>
+
+    <div id="lobby">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="glass-panel px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
+                <span class="text-[10px] text-slate-500 font-cubic">探險家</span>
+                <span id="user-display-name" class="text-sm font-cubic text-slate-700">載入中...</span>
+            </div>
+            <a href="index.html" class="glass-panel flex items-center justify-center rounded-full text-slate-500 w-9 h-9 shadow hover:bg-white transition-all">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </a>
         </div>
-        <a href="index.html" class="glass-panel flex items-center justify-center rounded-full text-slate-500 w-9 h-9 shadow-lg hover:bg-slate-300/30 transition-colors action:scale-95 transition-all" title="主頁">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        </a>
+        <div class="font-cubic text-white thick-border text-2xl mb-6 tracking-wider drop-shadow-lg">我的島嶼地圖</div>
+        <div id="islandContainer" class="island-grid"></div>
     </div>
 
-    <div class="font-cubic text-white thick-border text-2xl mb-6 tracking-wider drop-shadow-lg">我的島嶼地圖</div>
-    <div id="islandContainer" class="island-grid">
+    <div id="islandView">
+        <div class="toolbar">
+            <button id="btn-back" class="p-3 glass-panel rounded-full text-slate-700 shadow-xl hover:bg-white active:scale-90 transition-all" onclick="backToLobby()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+            <button id="btn-save" class="p-3 glass-panel rounded-full text-orange-600 shadow-xl hover:bg-white active:scale-90 transition-all" onclick="savePositions()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+            </button>
+        </div>
+        <div id="islandStage"><div id="assetLayer"></div></div>
     </div>
-  </div>
 
-  <div id="islandView">
-      <div class="toolbar">
-          <button id="btn-back" class="hidden p-3 glass-panel rounded-full text-slate-700 shadow-xl hover:bg-white/90 active:scale-95 transition-all flex items-center justify-center" onclick="backToLobby()" title="返回">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          </button>
-          <button id="btn-save" class="hidden p-3 glass-panel rounded-full text-orange-600 shadow-xl hover:bg-white/90 active:scale-95 transition-all flex items-center justify-center" onclick="savePositions()" title="存儲">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-          </button>
-      </div>
-      <div id="islandStage"><div id="assetLayer"></div></div>
-  </div>
-
-  <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[999] px-6 py-3 rounded-2xl glass-panel shadow-2xl transition-all duration-500 ease-out opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
-    <div id="toast-icon" class="text-xl"></div>
-    <span id="toast-msg" class="font-cubic thin-border text-slate-700"></span>
-  </div>
+    <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[9999] px-6 py-3 rounded-2xl glass-panel shadow-2xl transition-all duration-500 opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
+        <div id="toast-icon"></div>
+        <span id="toast-msg" class="font-cubic text-slate-700"></span>
+    </div>
 
 <script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbzNtUuKszXLM6buRfV4Fe8XSgF69dqYwy4eAZ8qOEdbRuQjsaR1dZ7Cz-9U1wLhGu3v/exec';
-    
     let USERNAME = localStorage.getItem('studyLandUser');
     let allAssets = []; 
     let currentIslandNo = null;
 
     window.onload = () => {
         if (!USERNAME) { window.location.href = 'index.html'; return; }
-        document.body.classList.add('in-lobby');
         document.getElementById('user-display-name').innerText = USERNAME;
+        checkOrientation();
+        window.addEventListener('resize', checkOrientation);
         fetchIslands();
     };
+
+    function checkOrientation() {
+        if (window.innerWidth < window.innerHeight) {
+            document.body.classList.add('is-portrait');
+        } else {
+            document.body.classList.remove('is-portrait');
+        }
+    }
 
     async function fetchIslands() {
         showLoading(true);
@@ -211,45 +179,24 @@
             });
             allAssets = await response.json();
             renderLobby();
-        } catch (e) {
-            console.error("抓取失敗:", e);
-        } finally {
-            showLoading(false);
-        }
+        } catch (e) { console.error("抓取失敗:", e); }
+        finally { showLoading(false); }
     }
 
     function renderLobby() {
         const container = document.getElementById('islandContainer');
         container.innerHTML = "";
         const islandIds = [...new Set(allAssets.map(a => a.islandNo))];
-
         islandIds.forEach(no => {
             const islandAssets = allAssets.filter(a => a.islandNo == no);
-            const firstAsset = islandAssets[0];
             const card = document.createElement('div');
             card.className = 'island-card';
-            card.style.backgroundImage = `url('${firstAsset.islandBG}')`;
+            card.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
             card.onclick = () => enterIsland(no);
-
             const title = document.createElement('div');
-            title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[14px] font-cubic thin-border text-center py-2 backdrop-blur-md tracking-wide';
-            title.innerText = firstAsset.islandName || `島嶼 ${no}`;
+            title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[12px] font-cubic text-center py-2 backdrop-blur-md';
+            title.innerText = islandAssets[0].islandName || `島嶼 ${no}`;
             card.appendChild(title);
-
-            const thumbScale = 0.24; 
-            islandAssets.forEach(asset => {
-                if (asset.lastX && asset.lastY) {
-                    const miniImg = document.createElement('img');
-                    miniImg.src = asset.assetUrl;
-                    miniImg.style.position = 'absolute';
-                    miniImg.style.left = asset.lastX;
-                    miniImg.style.top = asset.lastY;
-                    const w = 90 * thumbScale; 
-                    miniImg.style.width = w + 'px';
-                    miniImg.style.pointerEvents = 'none';
-                    card.appendChild(miniImg);
-                }
-            });
             container.appendChild(card);
         });
     }
@@ -257,157 +204,98 @@
     async function enterIsland(no) {
         currentIslandNo = no;
         const islandAssets = allAssets.filter(a => a.islandNo == no);
-        const view = document.getElementById('islandView');
-        const stage = document.getElementById('islandStage');
-        const layer = document.getElementById('assetLayer');
-        
         document.getElementById('lobby').style.display = 'none';
-        document.body.classList.remove('in-lobby');
-        document.body.classList.add('in-island');
-        view.style.display = 'flex';        
+        document.body.classList.replace('in-lobby', 'in-island');
+        const view = document.getElementById('islandView');
+        view.style.display = 'flex';
         
-        if (islandAssets.length > 0) {
-            stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
-        }
-        layer.innerHTML = ""; 
-
-        setTimeout(() => {
-            islandAssets.forEach((asset, index) => {
-                const img = document.createElement('img');
-                img.src = asset.assetUrl;
-                img.className = 'asset';
-                img.dataset.assetName = asset.assetName; 
-                img.style.opacity = "0";
-                    
-                img.onload = () => {
-                    if (asset.lastX && asset.lastY) {
-                        img.style.left = asset.lastX;
-                        img.style.top = asset.lastY;
-                    } else {
-                        img.style.left = (10 + (index % 5) * 15) + "%"; 
-                        img.style.top = (20 + Math.floor(index / 5) * 20) + "%";
-                    }
-                    img.style.opacity = "1";
-                    makeDraggable(img);
-                };
-                layer.appendChild(img);
-            });
-            document.getElementById('btn-back').classList.remove('hidden');
-            document.getElementById('btn-save').classList.remove('hidden');
-        }, 150);
-    }
-    
-    async function savePositions() {
-        showLoading(true);
         const stage = document.getElementById('islandStage');
-        const stageW = stage.offsetWidth;
-        const stageH = stage.offsetHeight;
-        const assetsInView = document.querySelectorAll('.asset');
-        
-        const positions = Array.from(assetsInView).map(el => {
-            const xPercent = (parseFloat(el.style.left) / stageW * 100).toFixed(2) + '%';
-            const yPercent = (parseFloat(el.style.top) / stageH * 100).toFixed(2) + '%';
-            return { name: el.dataset.assetName, x: xPercent, y: yPercent };
+        stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
+        const layer = document.getElementById('assetLayer');
+        layer.innerHTML = "";
+
+        islandAssets.forEach((asset, index) => {
+            const img = document.createElement('img');
+            img.src = asset.assetUrl;
+            img.className = 'asset';
+            img.dataset.assetName = asset.assetName;
+            img.onload = () => {
+                img.style.left = asset.lastX || (10 + (index % 5) * 15) + "%";
+                img.style.top = asset.lastY || (20 + Math.floor(index / 5) * 20) + "%";
+                makeDraggable(img);
+            };
+            layer.appendChild(img);
         });
-    
-        try {
-            const response = await fetch(GAS_URL, { 
-                method: "POST", 
-                body: JSON.stringify({ 
-                    action: "saveIslandUpdate", 
-                    username: USERNAME, 
-                    islandNo: currentIslandNo, 
-                    positionData: JSON.stringify(positions) 
-                }) 
-            });
-            const result = await response.json();
-            if (result.result === "success") { showToast("成功儲存"); }
-        } catch (e) { 
-            showToast("連線錯誤", "error"); 
-        } finally {
-            showLoading(false);
-        }
     }
-    
+
     function backToLobby() {
         document.getElementById('islandView').style.display = 'none';
         document.getElementById('lobby').style.display = 'flex';
-        document.body.classList.remove('in-island');
-        document.body.classList.add('in-lobby');
-        document.getElementById('btn-back').classList.add('hidden');
-        document.getElementById('btn-save').classList.add('hidden');
+        document.body.classList.replace('in-island', 'in-lobby');
         fetchIslands();
     }
 
-    function showLoading(show) {
-        document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    async function savePositions() {
+        showLoading(true);
+        const stage = document.getElementById('islandStage');
+        const assets = document.querySelectorAll('.asset');
+        const positions = Array.from(assets).map(el => ({
+            name: el.dataset.assetName,
+            x: (parseFloat(el.style.left) / stage.offsetWidth * 100).toFixed(2) + '%',
+            y: (parseFloat(el.style.top) / stage.offsetHeight * 100).toFixed(2) + '%'
+        }));
+        try {
+            const res = await fetch(GAS_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "saveIslandUpdate", username: USERNAME, islandNo: currentIslandNo, positionData: JSON.stringify(positions) })
+            });
+            const result = await res.json();
+            if (result.result === "success") showToast("成功儲存");
+        } catch (e) { showToast("錯誤", "error"); }
+        finally { showLoading(false); }
     }
 
-    function showToast(message, type = 'success') {
+    function showLoading(s) { document.getElementById('loadingOverlay').style.display = s ? 'flex' : 'none'; }
+
+    function showToast(m, t = 'success') {
         const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toast-msg');
-        const toastIcon = document.getElementById('toast-icon');
-        toastMsg.textContent = message;
-        toastIcon.textContent = type === 'success' ? '✨' : '⚠️';
-        if (type === 'error') {
-            toast.style.borderColor = 'rgba(239, 68, 68, 0.5)';
-            toastMsg.classList.add('text-red-600');
-        } else {
-            toast.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-            toastMsg.classList.remove('text-red-600');
-        }
+        document.getElementById('toast-msg').innerText = m;
+        document.getElementById('toast-icon').innerText = t === 'success' ? '✨' : '⚠️';
         toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
         toast.classList.add('opacity-100', 'translate-y-0');
         setTimeout(() => {
             toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
             toast.classList.remove('opacity-100', 'translate-y-0');
-        }, 2500);
+        }, 2000);
     }
 
     function makeDraggable(el) {
-        let isDragging = false;
-        let offset = { x: 0, y: 0 };
-        el.ondragstart = () => false;
-
+        let isDragging = false, offset = { x: 0, y: 0 };
         const start = (e) => {
             isDragging = true;
-            el.style.zIndex = "1000";
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            const rect = el.getBoundingClientRect();
-            offset.x = clientX - rect.left;
-            offset.y = clientY - rect.top;
+            const c = e.touches ? e.touches[0] : e;
+            const r = el.getBoundingClientRect();
+            offset.x = c.clientX - r.left;
+            offset.y = c.clientY - r.top;
             el.style.transform = "scale(1.1)";
+            el.style.zIndex = "1000";
         };
-
         const move = (e) => {
             if (!isDragging) return;
-            const stage = document.getElementById('islandStage');
-            const stageRect = stage.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            let newX = clientX - stageRect.left - offset.x;
-            let newY = clientY - stageRect.top - offset.y;
-            newX = Math.max(0, Math.min(newX, stage.offsetWidth - el.offsetWidth));
-            newY = Math.max(0, Math.min(newY, stage.offsetHeight - el.offsetHeight));
-            el.style.left = newX + "px";
-            el.style.top = newY + "px";
+            const s = document.getElementById('islandStage');
+            const sr = s.getBoundingClientRect();
+            const c = e.touches ? e.touches[0] : e;
+            let x = c.clientX - sr.left - offset.x;
+            let y = c.clientY - sr.top - offset.y;
+            el.style.left = Math.max(0, Math.min(x, s.offsetWidth - el.offsetWidth)) + "px";
+            el.style.top = Math.max(0, Math.min(y, s.offsetHeight - el.offsetHeight)) + "px";
             if (e.cancelable) e.preventDefault();
         };
-        
-        const stop = () => {
-            if (isDragging) {
-                isDragging = false;
-                el.style.transform = "scale(1)";
-                el.style.zIndex = "100";
-            }
-        };
-
-        el.onmousedown = start;
-        el.ontouchstart = start;
-        window.addEventListener('mousemove', move, { passive: false });
-        window.addEventListener('mouseup', stop);
+        const stop = () => { isDragging = false; el.style.transform = "scale(1)"; el.style.zIndex = "10"; };
+        el.onmousedown = el.ontouchstart = start;
+        window.addEventListener('mousemove', move);
         window.addEventListener('touchmove', move, { passive: false });
+        window.addEventListener('mouseup', stop);
         window.addEventListener('touchend', stop);
     }
 </script>
