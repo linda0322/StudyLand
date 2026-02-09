@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>我的島嶼</title>
+    <title>我的島嶼 - 終極版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/picture.svg">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
@@ -15,70 +15,58 @@
         }
 
         html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #1dc5fd; /* 核心背景色 */
-            overflow-x: hidden;
+            height: 100%; width: 100%; margin: 0; padding: 0;
+            background-color: #1dc5fd; overflow-x: hidden;
             font-family: 'Noto Sans TC', sans-serif;
             -webkit-user-select: none;
         }
 
-        /* 穩定消滅陰影的背景方案 */
+        /* 完美背景修復方案 */
         body.in-lobby::before {
-            content: "";
-            position: fixed;
-            top: -2px; left: -2px; right: -2px; bottom: -2px; /* 稍微溢出以消滅邊緣 */
+            content: ""; position: fixed;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
             background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
-            background-size: cover;
-            background-position: center bottom;
+            background-size: cover; background-position: center bottom;
             z-index: -1;
         }
-
         body.in-island { background-color: #2c3e50; }
         body.in-island::before { display: none; }
 
         /* 橫向模式擋板 */
         #orientation-overlay {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(44, 62, 80, 0.95);
-            z-index: 9999;
+            display: none; position: fixed; inset: 0;
+            background: rgba(44, 62, 80, 0.98); z-index: 9999;
             flex-direction: column; justify-content: center; align-items: center;
             color: white; text-align: center;
         }
-        /* 僅在島嶼模式且寬度 < 高度時觸發 */
         body.in-island.is-portrait #orientation-overlay { display: flex; }
 
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
         .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
-        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.3); }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
 
         #lobby {
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; width: 100%;
-            background: linear-gradient(to bottom, rgba(29, 197, 253, 0.1), rgba(0, 0, 0, 0.1));
-            padding: 3rem 1rem;
-            position: relative;
-            z-index: 10;
+            min-height: 100vh; width: 100%; padding: 3rem 1rem;
+            position: relative; z-index: 10;
         }
 
         .island-grid { 
-            display: flex; flex-wrap: wrap; gap: 20px; 
+            display: flex; flex-wrap: wrap; gap: 24px; 
             justify-content: center; padding: 20px; 
-            max-width: 1000px; width: 100%;
+            max-width: 1100px; width: 100%;
         }
         
+        /* 島嶼卡片優化 */
         .island-card { 
             width: 240px; height: 180px; position: relative; overflow: hidden;
-            background-color: #fff; border-radius: 15px; border: 5px solid white; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background-color: #fff; border-radius: 18px; border: 6px solid white; 
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
             background-size: cover; background-position: center;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .island-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .island-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
 
         #islandView { 
             display: none; width: 100vw; height: 100vh; position: fixed; 
@@ -89,18 +77,19 @@
             position: relative; width: 100%; aspect-ratio: 16 / 9;
             max-height: 100vh; max-width: calc(100vh * 16 / 9);
             background-size: 100% 100%; background-repeat: no-repeat;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5); overflow: hidden;
-         }
+            box-shadow: 0 0 100px rgba(0,0,0,0.6); overflow: hidden;
+        }
 
         .asset { 
-            position: absolute; cursor: move; width: 8%; min-width: 40px;
-            z-index: 10; transition: transform 0.2s;
-         }
+            position: absolute; cursor: move; width: 8.5%; min-width: 45px;
+            z-index: 10; transition: transform 0.15s;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
 
         .toolbar { position: fixed; top: 20px; left: 20px; z-index: 5000; display: flex; gap: 12px; }
         #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); color:white; display:none; flex-direction:column; justify-content:center; align-items:center; z-index: 6000; }
         
-        .rotate-icon { font-size: 40px; animation: rotate-hint 2s infinite; margin-bottom: 10px; }
+        .rotate-icon { font-size: 48px; animation: rotate-hint 2s infinite; margin-bottom: 15px; }
         @keyframes rotate-hint { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
     </style>
 </head>
@@ -108,43 +97,43 @@
 
     <div id="orientation-overlay">
         <div class="rotate-icon">📱🔄</div>
-        <div class="font-cubic text-lg">請將手機旋轉至橫向</div>
-        <div class="font-cubic text-xs mt-2 opacity-70">進入橫向模式以獲得最佳建設體驗</div>
+        <div class="font-cubic text-xl mb-2">請旋轉手機至橫向</div>
+        <div class="font-cubic text-sm opacity-70">進入橫向模式以開始建設島嶼</div>
     </div>
 
     <div id="loadingOverlay">
-        <div class="animate-bounce text-3xl mb-4">☁️</div>
-        <div class="font-cubic tracking-widest">飛行中</div>
+        <div class="animate-bounce text-4xl mb-4">☁️</div>
+        <div class="font-cubic tracking-widest text-lg">傳送中...</div>
     </div>
 
     <div id="lobby">
-        <div class="flex items-center gap-3 mb-6">
-            <div class="glass-panel px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
-                <span class="text-[10px] text-slate-500 font-cubic">探險家</span>
-                <span id="user-display-name" class="text-sm font-cubic text-slate-700">載入中...</span>
+        <div class="flex items-center gap-3 mb-8">
+            <div class="glass-panel px-5 py-2 rounded-full shadow-lg flex items-center gap-2">
+                <span class="text-[10px] text-slate-500 font-cubic uppercase tracking-tighter">Explorer</span>
+                <span id="user-display-name" class="text-sm font-cubic text-slate-700">Loading...</span>
             </div>
-            <a href="index.html" class="glass-panel flex items-center justify-center rounded-full text-slate-500 w-9 h-9 shadow hover:bg-white transition-all">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <a href="index.html" class="glass-panel flex items-center justify-center rounded-full text-slate-500 w-10 h-10 shadow-lg hover:bg-white hover:text-blue-500 transition-all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             </a>
         </div>
-        <div class="font-cubic text-white thick-border text-2xl mb-6 tracking-wider drop-shadow-lg">我的島嶼地圖</div>
+        <div class="font-cubic text-white thick-border text-3xl mb-8 tracking-wider drop-shadow-xl">我的島嶼地圖</div>
         <div id="islandContainer" class="island-grid"></div>
     </div>
 
     <div id="islandView">
         <div class="toolbar">
-            <button id="btn-back" class="p-3 glass-panel rounded-full text-slate-700 shadow-xl hover:bg-white active:scale-90 transition-all" onclick="backToLobby()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <button id="btn-back" class="p-3.5 glass-panel rounded-full text-slate-700 shadow-2xl hover:bg-white active:scale-90 transition-all" onclick="backToLobby()" title="返回大廳">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </button>
-            <button id="btn-save" class="p-3 glass-panel rounded-full text-orange-600 shadow-xl hover:bg-white active:scale-90 transition-all" onclick="savePositions()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+            <button id="btn-save" class="p-3.5 glass-panel rounded-full text-orange-600 shadow-2xl hover:bg-white active:scale-90 transition-all" onclick="savePositions()" title="儲存佈置">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
             </button>
         </div>
         <div id="islandStage"><div id="assetLayer"></div></div>
     </div>
 
-    <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[9999] px-6 py-3 rounded-2xl glass-panel shadow-2xl transition-all duration-500 opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
-        <div id="toast-icon"></div>
+    <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[9999] px-8 py-3.5 rounded-2xl glass-panel shadow-2xl transition-all duration-500 opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
+        <div id="toast-icon" class="text-xl"></div>
         <span id="toast-msg" class="font-cubic text-slate-700"></span>
     </div>
 
@@ -183,20 +172,42 @@
         finally { showLoading(false); }
     }
 
+    // 移植：版本 A 的縮圖渲染功能
     function renderLobby() {
         const container = document.getElementById('islandContainer');
         container.innerHTML = "";
         const islandIds = [...new Set(allAssets.map(a => a.islandNo))];
+        
         islandIds.forEach(no => {
             const islandAssets = allAssets.filter(a => a.islandNo == no);
+            const first = islandAssets[0];
+
             const card = document.createElement('div');
             card.className = 'island-card';
-            card.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
+            card.style.backgroundImage = `url('${first.islandBG}')`;
             card.onclick = () => enterIsland(no);
+
+            // 渲染縮圖資產
+            const thumbScale = 0.24; 
+            islandAssets.forEach(asset => {
+                if (asset.lastX && asset.lastY) {
+                    const miniImg = document.createElement('img');
+                    miniImg.src = asset.assetUrl;
+                    miniImg.style.position = 'absolute';
+                    miniImg.style.left = asset.lastX;
+                    miniImg.style.top = asset.lastY;
+                    miniImg.style.width = (90 * thumbScale) + 'px';
+                    miniImg.style.pointerEvents = 'none';
+                    miniImg.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.2))";
+                    card.appendChild(miniImg);
+                }
+            });
+
             const title = document.createElement('div');
-            title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[12px] font-cubic text-center py-2 backdrop-blur-md';
-            title.innerText = islandAssets[0].islandName || `島嶼 ${no}`;
+            title.className = 'absolute bottom-0 w-full bg-black/50 text-white text-[13px] font-cubic text-center py-2.5 backdrop-blur-md tracking-wider';
+            title.innerText = first.islandName || `島嶼 ${no}`;
             card.appendChild(title);
+            
             container.appendChild(card);
         });
     }
@@ -214,18 +225,24 @@
         const layer = document.getElementById('assetLayer');
         layer.innerHTML = "";
 
-        islandAssets.forEach((asset, index) => {
-            const img = document.createElement('img');
-            img.src = asset.assetUrl;
-            img.className = 'asset';
-            img.dataset.assetName = asset.assetName;
-            img.onload = () => {
-                img.style.left = asset.lastX || (10 + (index % 5) * 15) + "%";
-                img.style.top = asset.lastY || (20 + Math.floor(index / 5) * 20) + "%";
-                makeDraggable(img);
-            };
-            layer.appendChild(img);
-        });
+        // 稍微延遲渲染以確保動畫順暢
+        setTimeout(() => {
+            islandAssets.forEach((asset, index) => {
+                const img = document.createElement('img');
+                img.src = asset.assetUrl;
+                img.className = 'asset';
+                img.dataset.assetName = asset.assetName;
+                img.style.opacity = "0";
+                
+                img.onload = () => {
+                    img.style.left = asset.lastX || (10 + (index % 5) * 15) + "%";
+                    img.style.top = asset.lastY || (20 + Math.floor(index / 5) * 20) + "%";
+                    img.style.opacity = "1";
+                    makeDraggable(img);
+                };
+                layer.appendChild(img);
+            });
+        }, 100);
     }
 
     function backToLobby() {
@@ -250,8 +267,8 @@
                 body: JSON.stringify({ action: "saveIslandUpdate", username: USERNAME, islandNo: currentIslandNo, positionData: JSON.stringify(positions) })
             });
             const result = await res.json();
-            if (result.result === "success") showToast("成功儲存");
-        } catch (e) { showToast("錯誤", "error"); }
+            if (result.result === "success") showToast("佈置已儲存至雲端");
+        } catch (e) { showToast("儲存失敗，請檢查網路", "error"); }
         finally { showLoading(false); }
     }
 
@@ -266,9 +283,10 @@
         setTimeout(() => {
             toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
             toast.classList.remove('opacity-100', 'translate-y-0');
-        }, 2000);
+        }, 2500);
     }
 
+    // 移植：版本 B 的高精準拖拽邏輯
     function makeDraggable(el) {
         let isDragging = false, offset = { x: 0, y: 0 };
         const start = (e) => {
@@ -277,7 +295,7 @@
             const r = el.getBoundingClientRect();
             offset.x = c.clientX - r.left;
             offset.y = c.clientY - r.top;
-            el.style.transform = "scale(1.1)";
+            el.style.transform = "scale(1.15)";
             el.style.zIndex = "1000";
         };
         const move = (e) => {
@@ -291,12 +309,17 @@
             el.style.top = Math.max(0, Math.min(y, s.offsetHeight - el.offsetHeight)) + "px";
             if (e.cancelable) e.preventDefault();
         };
-        const stop = () => { isDragging = false; el.style.transform = "scale(1)"; el.style.zIndex = "10"; };
-        el.onmousedown = el.ontouchstart = start;
-        window.addEventListener('mousemove', move);
+        const end = () => {
+            isDragging = false;
+            el.style.transform = "scale(1)";
+            el.style.zIndex = "100";
+        };
+        el.onmousedown = start;
+        el.ontouchstart = start;
+        window.addEventListener('mousemove', move, { passive: false });
         window.addEventListener('touchmove', move, { passive: false });
-        window.addEventListener('mouseup', stop);
-        window.addEventListener('touchend', stop);
+        window.addEventListener('mouseup', end);
+        window.addEventListener('touchend', end);
     }
 </script>
 </body>
