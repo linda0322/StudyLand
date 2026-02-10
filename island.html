@@ -187,13 +187,20 @@
             document.getElementById('background-img').src = config.bg;
             document.getElementById('island-title').innerText = config.name;
 
+            const startTime = Date.now();
             // 載入物件位置
             await loadIslandData();
-            
             // 載入切換清單
             loadIslandList();
-
+            // 綁定拖拽
             bindDraggable();
+            const elapsedTime = Date.now() - startTime;
+            const minimumWait = 1000; // 最少顯示1秒載入遮罩
+            const remainingWait = Math.max(0, minimumWait - elapsedTime)
+            setTimeout(() => {
+                const loader = document.getElementById('loading-screen');
+                loader.classList.add('fade-out');
+            }, remainingWait);
         }
 
         function toggleIslandMenu() {
