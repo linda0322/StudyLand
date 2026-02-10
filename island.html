@@ -142,11 +142,11 @@
         
     <!-- 島嶼選單 MENU -->
     <div id="island-menu" class="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-md hidden flex items-center justify-center">
-        <div class="glass-panel p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
-            <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-2xl thin-border text-slate-400 hover:text-slate-600">✕</button>
+        <div class="p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
+            <button onclick="toggleIslandMenu()" class="bg-white/80 absolute top-6 right-8 text-2xl thin-border text-slate-400 hover:text-slate-600">✕</button>
             <h2 class="font-cubic text-xl thick-border text-center mb-8 text-slate-600">想去哪裡？</h2>
             <div id="island-buttons-container" class="grid grid-cols-3 gap-6 w-full">
-                <p class="w-full col-span-2 text-center text-slate-400 font-cubic py-8 flex justify-center items-center">打開地圖中...</p>
+                <p class="w-full col-span-full text-center text-slate-400 font-cubic py-8 flex justify-center items-center">打開地圖中...</p>
             </div>
         </div>
     </div>
@@ -299,42 +299,46 @@
                     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
                     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
                     const rect = el.getBoundingClientRect();
+                    const stageRect = stage.getBoundingClientRect();
                     const shiftX = clientX - rect.left;
                     const shiftY = clientY - rect.top;
 
-                    const handleMove = (e) => {
-                        const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-                        const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-                        const stageRect = stage.getBoundingClientRect();
+                    el.style.left = (rect.left - stageRect.left) + 'px';
+                    el.style.top = (rect.top - stageRect.top) + 'px';
 
-                        let newL = moveX - stageRect.left - shiftX;
-                        let newT = moveY - stageRect.top - shiftY;
+                const handleMove = (e) => {
+                    const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                    const stageRect = stage.getBoundingClientRect();
 
-                        newL = Math.max(0, Math.min(newL, stageRect.width - rect.width));
-                        newT = Math.max(0, Math.min(newT, stageRect.height - rect.height));
+                    let newL = moveX - stageRect.left - shiftX;
+                    let newT = moveY - stageRect.top - shiftY;
 
-                        el.style.left = newL + 'px';
-                        el.style.top = newT + 'px';
-                    };
+                    newL = Math.max(0, Math.min(newL, stageRect.width - rect.width));
+                    newT = Math.max(0, Math.min(newT, stageRect.height - rect.height));
 
-                    const handleEnd = () => {
-                        const stageRect = stage.getBoundingClientRect();
-                        const lp = (parseFloat(el.style.left) / stageRect.width) * 100;
-                        const tp = (parseFloat(el.style.top) / stageRect.height) * 100;
-                        el.style.left = lp + '%';
-                        el.style.top = tp + '%';
-
-                        document.removeEventListener('mousemove', handleMove);
-                        document.removeEventListener('mouseup', handleEnd);
-                        document.removeEventListener('touchmove', handleMove);
-                        document.removeEventListener('touchend', handleEnd);
-                    };
-
-                    document.addEventListener('mousemove', handleMove);
-                    document.addEventListener('mouseup', handleEnd);
-                    document.addEventListener('touchmove', handleMove, { passive: false });
-                    document.addEventListener('touchend', handleEnd);
+                    el.style.left = newL + 'px';
+                    el.style.top = newT + 'px';
                 };
+
+                const handleEnd = () => {
+                    const stageRect = stage.getBoundingClientRect();
+                    const lp = (parseFloat(el.style.left) / stageRect.width) * 100;
+                    const tp = (parseFloat(el.style.top) / stageRect.height) * 100;
+                    el.style.left = lp + '%';
+                    el.style.top = tp + '%';
+
+                    document.removeEventListener('mousemove', handleMove);
+                    document.removeEventListener('mouseup', handleEnd);
+                    document.removeEventListener('touchmove', handleMove);
+                    document.removeEventListener('touchend', handleEnd);
+                };
+
+                document.addEventListener('mousemove', handleMove);
+                document.addEventListener('mouseup', handleEnd);
+                document.addEventListener('touchmove', handleMove, { passive: false });
+                document.addEventListener('touchend', handleEnd);
+            };
 
                 el.addEventListener('mousedown', handleStart);
                 el.addEventListener('touchstart', handleStart, { passive: false });
