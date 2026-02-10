@@ -76,6 +76,14 @@
             #orientation-warning { display: flex; }
             #game-stage { display: none; }
         }
+        
+        @keyframes wobble {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .wobble-img {animation: wobble 1s ease-in-out infinite;}
 
         /* 切換島嶼 */
         #island-menu { transition: opacity 0.3s ease; }
@@ -84,7 +92,7 @@
 <body>
 
     <div id="orientation-warning" class="font-cubic">
-        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4">
+        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4 wobble-img">
         <h2 class="text-xl thick-border">請旋轉至橫向模式</h2>
     </div>
 
