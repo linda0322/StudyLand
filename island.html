@@ -147,7 +147,7 @@
         
     <!-- 島嶼選單 MENU -->
     <div id="island-menu" class="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-md hidden flex items-center justify-center">
-        <div class="bg-white/80 p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
+        <div class="bg-white/80 backdrop-blur-md p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
             <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-2xl thin-border text-slate-400 hover:text-slate-600">✕</button>
             <h2 class="font-cubic text-xl thick-border text-center mb-8 text-slate-600">想去哪裡？</h2>
             <div id="island-buttons-container" class="grid grid-cols-3 gap-6 w-full">
@@ -191,6 +191,9 @@
             'npc': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif' },
             'house': { src: 'https://cdn-icons-png.flaticon.com/512/619/619153.png' },
             'tree': { src: 'https://cdn-icons-png.flaticon.com/512/489/489969.png' },
+
+            // 地磚 BRICKS
+            'brick1_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1.webp', isBottom: true }
         };
                 
         async function initApp() {
@@ -215,6 +218,9 @@
                     const div = document.createElement('div');
                     div.className = 'draggable';
                     div.id = `item_${assetId}`;
+                    const isBottom = assetLibrary[assetId].isBottom;
+                    div.style.zIndex = isBottom ? "1" : "10";
+                    if (isBottom) div.dataset.isBottom = "true";
                     div.style.left = '50%'; 
                     div.style.top = '50%';
                     div.innerHTML = `<img src="${assetLibrary[assetId].src}">`;
@@ -299,8 +305,15 @@
 
             draggables.forEach(el => {
                 const handleStart = (e) => {
-                    document.querySelectorAll('.draggable').forEach(d => d.style.zIndex = "10");
-                    el.style.zIndex = "100";
+                    const isBottom = el.dataset.isBottom === "true";
+                    if (!isBottom) {
+                        document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => {
+                            d.style.zIndex = "10";
+                        });
+                        el.style.zIndex = "100";
+                    } else {
+                        el.style.zIndex = "1";
+                    }
                     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
                     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
                     const rect = el.getBoundingClientRect();
