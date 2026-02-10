@@ -92,31 +92,31 @@
         #islandStage {
             position: relative;
             width: 100vw;
-            height: 56.25vw; /* 保持 16:9 */
+            height: 56.25vw;
+            min-height: 300px; /* 新增：防止在某些手機上高度變成 0 */
             max-width: 177.78vh;
             max-height: 100vh;
             background-color: #333; 
-            background-size: 100% 100%; /* 強制背景鋪滿 */
-            background-repeat: no-repeat;
+            background-size: cover; /* 改為 cover 確保背景一定鋪滿 */
+            background-position: center;
             margin: auto;
             overflow: hidden;
-            z-index: 1; /* 舞台基底 */
+            z-index: 1;
         }
         
         #assetLayer {
             position: absolute;
             inset: 0;
-            z-index: 50; /* 確保資產層在背景之上 */
-            /* 移除 pointer-events: none; 以免點不到物件 */
+            z-index: 10;
+            pointer-events: none; /* 這裡設為 none 是對的，防止擋住背景點擊 */
         }
         
         .asset {
             position: absolute;
             cursor: move;
-            z-index: 100; /* 物件本體在最前 */
-            transition: opacity 0.3s, transform 0.2s;
-            /* 防止圖片拖動時出現系統預設陰影 */
-            -webkit-user-drag: none; 
+            z-index: 100;
+            pointer-events: auto; /* 重要：讓圖片本身可以被點擊 */
+            -webkit-user-drag: none;
             touch-action: none;
         }
         
@@ -184,7 +184,7 @@
     </div>
 
 <script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbykW6BUJrI6z032UuNPMXm7tdeFjQqhXbTscNsvwsitZbNKUOQJt2_eR0c5sFVtb7CL/exec'; // 記得替換成新的部署網址
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbx1OmvGHSs0kyZw3Nt34FsvvM3NuGuGQvr4L1w2OXi_mxwLBbR2uo48PQjE7C54Q6PE/exec';
     let USERNAME = localStorage.getItem('studyLandUser');
     let allAssets = []; 
     let currentIslandNo = null;
@@ -268,58 +268,59 @@
     async function enterIsland(no) {
         currentIslandNo = no;
         const islandAssets = allAssets.filter(a => a.islandNo == no);
-        
         if (islandAssets.length === 0) return;
-
-        // 1. 切換介面
+    
         document.getElementById('lobby').style.display = 'none';
         document.body.classList.replace('in-lobby', 'in-island');
         document.getElementById('islandView').style.display = 'flex';
         
-        // 2. 設定舞台背景
         const stage = document.getElementById('islandStage');
         const layer = document.getElementById('assetLayer');
+        
+        // 設定背景
         stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
         layer.innerHTML = ""; 
-
-        // 3. 渲染物件
+    
         islandAssets.forEach((asset, index) => {
             const img = document.createElement('img');
-            img.src = asset.assetUrl;
             img.className = 'asset';
             img.dataset.assetName = asset.assetName;
             
-            // 處理尺寸 (防呆：確保有 % 單位)
+            // 處理尺寸
             let sizeVal = asset.assetSize ? asset.assetSize.toString() : '12%';
             if (!sizeVal.includes('%') && !sizeVal.includes('px')) sizeVal += '%';
             img.style.width = sizeVal;
+    
+            // 處理位置：先給預設值，避免 img.onload 沒觸發時完全看不到
+            let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
+            let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
+            if (!lx.includes('%') && !lx.includes('px')) lx += '%';
+            if (!ly.includes('%') && !ly.includes('px')) ly += '%';
             
-            // 初始設為透明，載入後才顯現
-            img.style.opacity = "0";
-
+            img.style.left = lx;
+            img.style.top = ly;
+    
+            // 先設定 src
+            img.src = asset.assetUrl;
+    
+            // 確保圖片顯示
+            img.style.opacity = "1"; 
+            
+            // 監聽載入
             img.onload = () => {
-                // 處理座標
-                let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
-                let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
-                
-                // 如果座標不含單位，補上 %
-                if (!lx.includes('%') && !lx.includes('px')) lx += '%';
-                if (!ly.includes('%') && !ly.includes('px')) ly += '%';
-
-                img.style.left = lx;
-                img.style.top = ly;
-                img.style.opacity = "1"; // 顯示圖片
                 makeDraggable(img);
+                console.log("載入成功:", asset.assetName);
             };
-
+    
             img.onerror = () => {
-                console.error("圖片載入失敗:", asset.assetUrl);
-                img.style.backgroundColor = "red"; // 如果圖片壞了，顯示紅塊提醒
-                img.style.width = "50px";
-                img.style.height = "50px";
-                img.style.opacity = "0.5";
+                console.error("載入失敗:", asset.assetUrl);
+                // 失敗時顯示一個佔位方塊，讓你知道它在那裡
+                img.style.border = "2px solid red";
+                img.style.minHeight = "50px";
+                img.style.minWidth = "50px";
+                img.style.backgroundColor = "rgba(255,0,0,0.3)";
             };
-
+    
             layer.appendChild(img);
         });
     }
