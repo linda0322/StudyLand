@@ -24,8 +24,10 @@
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
         .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.3); }
 
-        /* 16:9 */
+
+        /* 16:9 FRAME */
         #game-stage {
             position: relative;
             width: 100vw;
@@ -37,6 +39,7 @@
             overflow: hidden;
         }
 
+        /* 背景圖片 BACKGROUND */
         #background-layer {
             position: absolute;
             inset: 0;
@@ -49,6 +52,7 @@
             object-fit: fill; 
         }
 
+        /* 拖曳功能 DRAG */
         .draggable {
             position: absolute;
             width: 12%; 
@@ -59,7 +63,6 @@
         }
         .draggable img { width: 100%; pointer-events: none; }
 
-        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.3); }
         
         #save-btn {
             position: fixed; bottom: 20px; right: 20px;
@@ -87,10 +90,35 @@
         .wobble-img {animation: wobble 1s ease-in-out infinite;}
 
         #island-menu { transition: opacity 0.3s ease; }
-        
+
+        /* 載入遮罩 */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(15px);
+            z-index: 6000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #loading-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+                
     </style>
 </head>
 <body>
+
+    <!-- 載入遮罩 -->
+    <div id="loading-screen">
+        <div class="animate-bounce text-3xl mb-4">☁️</div>
+        <div class="font-cubic text-xl text-white thick-border tracking-widest">飛行中</div>
+    </div>
+    
     <!-- 手機旋轉提示 -->
     <div id="orientation-warning" class="font-cubic">
         <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4 wobble-img">
@@ -145,11 +173,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const currentIslandId = urlParams.get('id') || 'island_1';
 
-        // 島嶼背景圖片 ISLAND BACKGROUND
+        // 背景圖片 BACKGROUND
         const islandConfig = {
             'island_1': { name: '草地', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/first.webp', color: 'bg-lime-200', icon: '🌳' },
-            'island_2': { name: '海洋', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/second.webp', color: 'bg-sky-200', icon: '🌊' }
-            'island_3': { name: '沙漠', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/third.webp', color: 'bg-amber-200', icon: '🏜️' }
+            'island_2': { name: '海洋', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/second.webp', color: 'bg-sky-200', icon: '🌊' },
+            'island_3': { name: '沙漠', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/third.webp', color: 'bg-amber-200', icon: '🏜️' },
         };
 
         async function initApp() {
