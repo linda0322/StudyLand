@@ -146,13 +146,22 @@
     </button>  
         
     <!-- 島嶼選單 MENU -->
-    <div id="island-menu" class="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-md hidden flex items-center justify-center">
+    <!--<div id="island-menu" class="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-md hidden flex items-center justify-center">
         <div class="bg-white p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
             <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-2xl thin-border text-slate-400 hover:text-slate-600">✕</button>
             <h2 class="font-cubic text-xl thick-border text-center mb-8 text-slate-600">想去哪裡？</h2>
             <div id="island-buttons-container" class="grid grid-cols-3 gap-6 w-full">
                 <p class="w-full col-span-full text-center text-slate-400 font-cubic py-8 flex justify-center items-center">打開地圖中...</p>
             </div>
+        </div>
+    </div> -->>
+
+    <div id="island-menu" class="fixed inset-0 z-[2000] bg-black/40 backdrop-blur-md hidden flex items-center justify-center">
+        <div class="glass-panel p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl border-white/50">
+            <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-2xl thin-border text-slate-500 hover:text-slate-800 transition-colors">✕</button>
+            <h2 class="font-cubic text-xl thick-border text-center mb-8 text-slate-600 tracking-widest">想去哪裡？</h2>
+            <div id="island-buttons-container" class="grid grid-cols-3 gap-6 w-full">
+                </div>
         </div>
     </div>
 
@@ -198,7 +207,7 @@
             'brick1c_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1c.webp', isBottom: true },
             'brick1c_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1c.webp', isBottom: true },
 
-            'brick2b_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2b.webp', isBottom: true, width: '36%'},
+            'brick2b_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2b.webp', isBottom: true },
             
             'npc': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif' },
             
@@ -334,14 +343,13 @@
                     const shiftX = clientX - rect.left;
                     const shiftY = clientY - rect.top;
                     
-                    el.style.transform = 'none';
                     el.style.left = (rect.left - stageRect.left) + 'px';
                     el.style.top = (rect.top - stageRect.top) + 'px';
+                    el.style.transform = 'none';
 
                 const handleMove = (e) => {
                     const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
                     const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-                    const stageRect = stage.getBoundingClientRect();
 
                     let newL = moveX - stageRect.left - shiftX;
                     let newT = moveY - stageRect.top - shiftY;
