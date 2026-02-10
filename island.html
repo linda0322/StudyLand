@@ -2,140 +2,231 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的島嶼 - StudyLand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>我的島嶼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @font-face {
             font-family: 'Cubic11';
             src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
+            font-display: swap;
         }
-        body { font-family: 'Cubic11', sans-serif; background: #87CEEB; margin: 0; overflow: hidden; }
-        
-        /* 島嶼背景圖層 */
-        #island-map {
-            width: 2000px; height: 2000px; /* 大地圖 */
-            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png'); /* 這裡換成你的島嶼底圖 */
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1dc5fd;
+            overflow: hidden; /* 防止頁面捲動 */
+            height: 100vh;
+            width: 100vw;
+        }
+        .font-cubic { font-family: 'Cubic11', sans-serif; }
+        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
+        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
+
+        /* 橫向提示遮罩 */
+        #orientation-warning {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #1dc5fd;
+            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
             background-size: cover;
-            position: relative;
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
+        /* 當手機處於直向時顯示提示 */
+        @media screen and (orientation: portrait) {
+            #orientation-warning { display: flex; }
+            #game-container { display: none; }
+        }
+
+        /* 島嶼地圖容器 */
+        #island-map {
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 拖拽物件樣式 */
         .draggable {
             position: absolute;
+            width: 100px;
+            height: 100px;
             cursor: move;
-            width: 80px; height: 80px;
             z-index: 10;
-            touch-action: none; /* 防止手機瀏覽器干擾 */
+            touch-action: none; /* 重要：防止瀏覽器手勢干擾 */
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+            transition: transform 0.1s;
         }
-        .draggable img { width: 100%; pointer-events: none; }
+        .draggable:active { transform: scale(1.1); z-index: 50; }
+        .draggable img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
-        .ui-overlay {
-            position: fixed; top: 20px; left: 20px; z-index: 100;
-            background: rgba(255,255,255,0.8); padding: 10px 20px;
-            border-radius: 20px; backdrop-filter: blur(5px);
-        }
+        /* UI 介面 */
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        
         #save-btn {
-            position: fixed; bottom: 30px; right: 30px; z-index: 100;
-            background: #38C0FF; color: white; padding: 15px 30px;
-            border-radius: 50px; cursor: pointer; border: none;
-            box-shadow: 0 4px 15px rgba(56, 192, 255, 0.4);
+            position: fixed; bottom: 20px; right: 20px;
+            padding: 12px 24px; background: #38C0FF; color: white;
+            border-radius: 20px; z-index: 100;
         }
-        #save-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-<div class="ui-overlay shadow-lg">
-    探險家: <span id="display-username">...</span>
-    <button onclick="location.href='index.html'" class="ml-4 text-slate-500 text-xs">返回</button>
-</div>
-
-<button id="save-btn" onclick="saveData()">儲存我的島嶼</button>
-
-<div id="island-map">
-    <div class="draggable" id="obj_house" style="left: 200px; top: 300px;">
-        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC_Icon.png">
+    <div id="orientation-warning" class="font-cubic">
+        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-32 mb-6">
+        <h2 class="text-2xl thick-border">請將手機橫向旋轉</h2>
+        <p class="mt-2 opacity-80">為了獲得最佳建設體驗</p>
     </div>
-    <div class="draggable" id="obj_tree" style="left: 400px; top: 200px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/489/489969.png">
+
+    <div id="game-container">
+        <div class="fixed top-4 left-4 z-[100] flex items-center gap-3">
+            <div class="glass-panel px-4 py-2 rounded-full shadow-md flex items-center gap-2">
+                <span class="text-[10px] text-slate-500 font-cubic thin-border">探險家</span>
+                <span id="display-username" class="text-sm font-cubic thin-border text-slate-700 font-bold">載入中...</span>
+            </div>
+            <button onclick="window.location.href='index.html'" class="glass-panel p-2 rounded-full hover:bg-white transition-all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </button>
+        </div>
+
+        <button id="save-btn" onclick="saveData()" class="font-cubic thick-border shadow-lg hover:bg-[#2da9e6] active:scale-95 transition-all">
+            儲存島嶼
+        </button>
+
+        <div id="island-map">
+            <div class="draggable" id="obj_npc" style="left: 20%; top: 30%;">
+                <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC">
+            </div>
+            <div class="draggable" id="obj_house" style="left: 50%; top: 40%;">
+                <img src="https://cdn-icons-png.flaticon.com/512/619/619153.png" alt="House">
+            </div>
+            <div class="draggable" id="obj_tree" style="left: 70%; top: 20%;">
+                <img src="https://cdn-icons-png.flaticon.com/512/489/489969.png" alt="Tree">
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBLcVWYcuMPo8qtxu7hiJ39nlc1qf3bipf353DbM6FLeMy6Z1mYHerGv1Pmt6u3e9f/exec';
-    const username = localStorage.getItem('studyLandUser');
+    <script>
+        // 1. 設定與初始化
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBLcVWYcuMPo8qtxu7hiJ39nlc1qf3bipf353DbM6FLeMy6Z1mYHerGv1Pmt6u3e9f/exec';
+        const username = localStorage.getItem('studyLandUser');
 
-    async function initApp() {
-        if (!username) { window.location.href = 'index.html'; return; }
-        document.getElementById('display-username').innerText = username;
+        async function initApp() {
+            if (!username) { window.location.href = 'index.html'; return; }
+            document.getElementById('display-username').innerText = username;
 
-        // 1. 從 GAS 載入位置
-        try {
-            const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}`);
-            const data = await response.json();
-            if (data && data.length > 0) {
-                data.forEach(item => {
-                    const el = document.getElementById(item.id);
-                    if (el) {
-                        el.style.left = item.left;
-                        el.style.top = item.top;
-                    }
-                });
-            }
-        } catch (e) { console.error("載入失敗:", e); }
+            // 從資料庫讀取上次位置
+            try {
+                const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}`);
+                const savedPositions = await response.json();
+                
+                if (savedPositions && savedPositions.length > 0) {
+                    savedPositions.forEach(item => {
+                        const el = document.getElementById(item.id);
+                        if (el) {
+                            el.style.left = item.left;
+                            el.style.top = item.top;
+                        }
+                    });
+                }
+            } catch (e) { console.log("歡迎新探險家，開始佈置你的島嶼吧！"); }
 
-        bindDraggable();
-    }
-
-    function bindDraggable() {
-        const draggables = document.querySelectorAll('.draggable');
-        draggables.forEach(el => {
-            el.onmousedown = function(e) {
-                let shiftX = e.clientX - el.getBoundingClientRect().left;
-                let shiftY = e.clientY - el.getBoundingClientRect().top;
-
-                document.onmousemove = function(e) {
-                    el.style.left = e.pageX - shiftX + 'px';
-                    el.style.top = e.pageY - shiftY + 'px';
-                };
-
-                document.onmouseup = function() {
-                    document.onmousemove = null;
-                };
-            };
-            el.ondragstart = () => false;
-        });
-    }
-
-    async function saveData() {
-        const btn = document.getElementById('save-btn');
-        btn.innerText = "儲存中...";
-        
-        const items = document.querySelectorAll('.draggable');
-        const positions = Array.from(items).map(el => ({
-            id: el.id,
-            left: el.style.left,
-            top: el.style.top
-        }));
-
-        try {
-            // 使用 POST 傳送資料
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors', // 解決跨網域問題
-                body: JSON.stringify({ user: username, positions: positions })
-            });
-            alert('島嶼已儲存！');
-        } catch (e) {
-            console.error(e);
-            alert('儲存發生錯誤');
-        } finally {
-            btn.innerText = "儲存我的島嶼";
+            bindDraggable();
         }
-    }
 
-    window.onload = initApp;
-</script>
+        // 2. 拖拽邏輯 (兼容滑鼠與觸控)
+        function bindDraggable() {
+            const draggables = document.querySelectorAll('.draggable');
+            
+            draggables.forEach(el => {
+                const startAction = (e) => {
+                    e.preventDefault();
+                    // 取得初始點位
+                    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                    
+                    const rect = el.getBoundingClientRect();
+                    const shiftX = clientX - rect.left;
+                    const shiftY = clientY - rect.top;
 
+                    const moveAction = (e) => {
+                        const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                        const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                        
+                        // 計算新位置
+                        el.style.left = (moveX - shiftX) + 'px';
+                        el.style.top = (moveY - shiftY) + 'px';
+                    };
+
+                    const endAction = () => {
+                        document.removeEventListener('mousemove', moveAction);
+                        document.removeEventListener('mouseup', endAction);
+                        document.removeEventListener('touchmove', moveAction);
+                        document.removeEventListener('touchend', endAction);
+                    };
+
+                    document.addEventListener('mousemove', moveAction);
+                    document.addEventListener('mouseup', endAction);
+                    document.addEventListener('touchmove', moveAction, { passive: false });
+                    document.addEventListener('touchend', endAction);
+                };
+
+                el.addEventListener('mousedown', startAction);
+                el.addEventListener('touchstart', startAction, { passive: false });
+                el.ondragstart = () => false;
+            });
+        }
+
+        // 3. 儲存邏輯
+        async function saveData() {
+            const btn = document.getElementById('save-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "儲存中...";
+            btn.disabled = true;
+
+            const items = document.querySelectorAll('.draggable');
+            const positions = Array.from(items).map(el => ({
+                id: el.id,
+                left: el.style.left,
+                top: el.style.top
+            }));
+
+            try {
+                // 使用 POST 傳送，需與 GAS 配合
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ user: username, positions: positions })
+                });
+                alert('島嶼已保存！');
+            } catch (e) {
+                alert('連線失敗，請稍後再試');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // 啟動
+        window.onload = initApp;
+
+        // 防止手機下拉重新整理
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) e.preventDefault(); 
+        }, { passive: false });
+
+    </script>
 </body>
 </html>
