@@ -228,25 +228,29 @@
 
             // 渲染縮圖資產
             const thumbScale = 0.24; 
+            // --- 修改後的 renderLobby 邏輯 ---
             islandAssets.forEach(asset => {
                 if (asset.lastX && asset.lastY) {
                     const miniImg = document.createElement('img');
                     miniImg.src = asset.assetUrl;
                     miniImg.style.position = 'absolute';
-                    miniImg.style.left = asset.lastX;
+                    
+                    // 1. 直接套用百分比座標，這會讓位置與大圖比例一致
+                    miniImg.style.left = asset.lastX; 
                     miniImg.style.top = asset.lastY;
-                    miniImg.style.width = (90 * thumbScale) + 'px';
+                    
+                    // 2. 關鍵：縮圖裡的物件寬度也必須使用百分比，才能跟隨卡片縮放
+                    // 既然島嶼內是 width: 8%，縮圖也設為 8%
+                    miniImg.style.width = '8%'; 
+                    
+                    // 3. 修正偏移：因為寬度是 8%，如果不做修正，物件會看起來往右下偏移
+                    // 加上這一行可以讓縮圖更精準（可選）
+                    miniImg.style.transform = 'translate(-4%, -4%)'; 
+            
                     miniImg.style.pointerEvents = 'none';
                     card.appendChild(miniImg);
                 }
             });
-
-            const title = document.createElement('div');
-            title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[12px] font-cubic text-center py-2 backdrop-blur-md';
-            title.innerText = first.islandName || `島嶼 ${no}`;
-            card.appendChild(title);
-            container.appendChild(card);
-        });
     }
 
     async function enterIsland(no) {
