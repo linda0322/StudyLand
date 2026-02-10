@@ -94,8 +94,7 @@
         <button onclick="location.href='index.html'" class="glass-panel p-2 rounded-full shadow-sm hover:scale-105 transition-transform">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         </button>
-        <div id="island-buttons-container" class="grid grid-cols-2 gap-x-8 gap-y-4 w-full max-w-[420px] px-4">
-    </div>
+        <div id="island-buttons-container" class="grid grid-cols-2 gap-x-8 gap-y-4 w-full max-w-[420px] px-4"></div>
     </div>
 
     <button id="save-btn" onclick="saveData()" class="font-cubic thick-border shadow-lg">儲存島嶼</button>
@@ -227,6 +226,47 @@
                 alert('島嶼已同步雲端！');
             } catch (e) { alert('儲存失敗'); }
             btn.innerText = "儲存島嶼";
+        }
+
+        async function showMainPage(name) {
+            userDisplayName.textContent = name;
+            loginOverlay.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+        
+            // 向後台詢問我有權限的島嶼
+            try {
+                const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(name)}&action=getIslands`);
+                const allowedIslands = await response.json();
+                
+                const container = document.getElementById('island-buttons-container');
+                container.innerHTML = ''; // 清空舊按鈕
+        
+                if (allowedIslands.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 font-cubic">目前沒有可前往的島嶼</p>';
+                    return;
+                }
+        
+                // 定義島嶼資訊 (名稱與風格)
+                const islandConfig = {
+                    'island_1': { name: '青青草原', color: 'bg-lime-100', icon: '🌳' },
+                    'island_2': { name: '黃金沙灘', color: 'bg-yellow-100', icon: '🏖️' }
+                };
+        
+                allowedIslands.forEach(id => {
+                    const config = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
+                    const btnHtml = `
+                        <a href="island.html?id=${id}" class="group bg-white p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all">
+                            <div class="${config.color} h-24 rounded-[20px] mb-2 flex items-center justify-center text-4xl">
+                                ${config.icon}
+                            </div>
+                            <h3 class="font-cubic text-sm thin-border text-slate-800 text-center">${config.name}</h3>
+                        </a>
+                    `;
+                    container.innerHTML += btnHtml;
+                });
+            } catch (e) {
+                console.error("載入權限失敗", e);
+            }
         }
 
         window.onload = initApp;
