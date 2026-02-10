@@ -147,7 +147,7 @@
         
     <!-- 島嶼選單 MENU -->
     <div id="island-menu" class="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-md hidden flex items-center justify-center">
-        <div class="bg-white/80 backdrop-blur-md p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
+        <div class="bg-white p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
             <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-2xl thin-border text-slate-400 hover:text-slate-600">✕</button>
             <h2 class="font-cubic text-xl thick-border text-center mb-8 text-slate-600">想去哪裡？</h2>
             <div id="island-buttons-container" class="grid grid-cols-3 gap-6 w-full">
@@ -188,10 +188,18 @@
 
         // 物件 ASSETS
         const assetLibrary = {
-            'npc': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif' },
-            'house': { src: 'https://cdn-icons-png.flaticon.com/512/619/619153.png' },
-            'tree': { src: 'https://cdn-icons-png.flaticon.com/512/489/489969.png' },
             'brick1a_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true },
+            'brick1a_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true },
+            'brick1a_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true },
+            'brick2a_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2a.webp', isBottom: true },
+            'brick2a_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2a.webp', isBottom: true },
+            'brick2a_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2a.webp', isBottom: true },
+            'brick3a_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
+            'brick3a_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
+            'brick3a_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
+            
+            'npc': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif' },
+            
         };
                 
         async function initApp() {
