@@ -177,7 +177,7 @@
     </div>
 
 <script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzNtUuKszXLM6buRfV4Fe8XSgF69dqYwy4eAZ8qOEdbRuQjsaR1dZ7Cz-9U1wLhGu3v/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbykW6BUJrI6z032UuNPMXm7tdeFjQqhXbTscNsvwsitZbNKUOQJt2_eR0c5sFVtb7CL/exec'; // 記得替換成新的部署網址
     let USERNAME = localStorage.getItem('studyLandUser');
     let allAssets = []; 
     let currentIslandNo = null;
@@ -207,11 +207,14 @@
             });
             allAssets = await response.json();
             renderLobby();
-        } catch (e) { console.error("抓取失敗:", e); }
+        } catch (e) { 
+            console.error("抓取失敗:", e);
+            showToast("載入島嶼失敗", "error");
+        }
         finally { showLoading(false); }
     }
 
-    // 整合版本 A 的縮圖渲染邏輯
+    // --- 修改：縮圖渲染 ---
     function renderLobby() {
         const container = document.getElementById('islandContainer');
         container.innerHTML = "";
@@ -224,35 +227,35 @@
             const card = document.createElement('div');
             card.className = 'island-card';
             card.style.backgroundImage = `url('${first.islandBG}')`;
+            // 使用 GAS 傳回的背景模式
+            card.style.backgroundSize = first.bgMode || "100% 100%"; 
             card.onclick = () => enterIsland(no);
 
             // 渲染縮圖資產
-            const thumbScale = 0.24; 
-            // --- 修改後的 renderLobby 邏輯 ---
             islandAssets.forEach(asset => {
                 if (asset.lastX && asset.lastY) {
                     const miniImg = document.createElement('img');
                     miniImg.src = asset.assetUrl;
                     miniImg.style.position = 'absolute';
-                    
-                    // 1. 直接套用百分比座標，這會讓位置與大圖比例一致
-                    miniImg.style.left = asset.lastX; 
+                    // 直接套用百分比座標
+                    miniImg.style.left = asset.lastX;
                     miniImg.style.top = asset.lastY;
-                    
-                    // 2. 關鍵：縮圖裡的物件寬度也必須使用百分比，才能跟隨卡片縮放
-                    // 既然島嶼內是 width: 8%，縮圖也設為 8%
-                    miniImg.style.width = '8%'; 
-                    
-                    // 3. 修正偏移：因為寬度是 8%，如果不做修正，物件會看起來往右下偏移
-                    // 加上這一行可以讓縮圖更精準（可選）
-                    miniImg.style.transform = 'translate(-4%, -4%)'; 
-            
+                    // 使用 GAS 傳回的大小
+                    miniImg.style.width = asset.assetSize || '12%'; 
                     miniImg.style.pointerEvents = 'none';
                     card.appendChild(miniImg);
                 }
             });
+
+            const title = document.createElement('div');
+            title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[12px] font-cubic text-center py-2 backdrop-blur-md';
+            title.innerText = first.islandName || `島嶼 ${no}`;
+            card.appendChild(title);
+            container.appendChild(card);
+        });
     }
 
+    // --- 修改：進入島嶼 ---
     async function enterIsland(no) {
         currentIslandNo = no;
         const islandAssets = allAssets.filter(a => a.islandNo == no);
@@ -267,7 +270,6 @@
         const layer = document.getElementById('assetLayer');
         layer.innerHTML = "";
 
-        // 延遲渲染確保容器尺寸已計算 (手機優化)
         setTimeout(() => {
             islandAssets.forEach((asset, index) => {
                 const img = document.createElement('img');
@@ -277,8 +279,13 @@
                 img.style.opacity = "0";
 
                 img.onload = () => {
-                    img.style.left = asset.lastX || (10 + (index % 5) * 15) + "%";
-                    img.style.top = asset.lastY || (20 + Math.floor(index / 5) * 20) + "%";
+                    // 處理舊資料可能是 px 的問題，統一轉為字串
+                    let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
+                    let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
+                    
+                    img.style.left = lx;
+                    img.style.top = ly;
+                    img.style.width = asset.assetSize || '12%'; // 使用 GAS 傳回的大小
                     img.style.opacity = "1";
                     makeDraggable(img);
                 };
@@ -287,7 +294,6 @@
         }, 150);
     }
 
-    // 整合版本 A 的增強型拖拽邏輯
     function makeDraggable(el) {
         let isDragging = false;
         let offset = { x: 0, y: 0 };
@@ -311,7 +317,6 @@
             let newX = c.clientX - offset.x;
             let newY = c.clientY - offset.y;
             
-            // 邊界限制
             newX = Math.max(0, Math.min(newX, stage.offsetWidth - el.offsetWidth));
             newY = Math.max(0, Math.min(newY, stage.offsetHeight - el.offsetHeight));
             
@@ -336,23 +341,44 @@
         window.addEventListener('touchend', stop);
     }
 
+    // --- 修改：儲存時強制轉換為百分比 ---
     async function savePositions() {
         showLoading(true);
         const stage = document.getElementById('islandStage');
         const assets = document.querySelectorAll('.asset');
-        const positions = Array.from(assets).map(el => ({
-            name: el.dataset.assetName,
-            x: (parseFloat(el.style.left) / stage.offsetWidth * 100).toFixed(2) + '%',
-            y: (parseFloat(el.style.top) / stage.offsetHeight * 100).toFixed(2) + '%'
-        }));
+        
+        const positions = Array.from(assets).map(el => {
+            // 將當前的 px 座標轉換回 %
+            const xPct = (parseFloat(el.style.left) / stage.offsetWidth * 100).toFixed(2) + '%';
+            const yPct = (parseFloat(el.style.top) / stage.offsetHeight * 100).toFixed(2) + '%';
+            return {
+                name: el.dataset.assetName,
+                x: xPct,
+                y: yPct
+            };
+        });
 
         try {
             const res = await fetch(GAS_URL, {
                 method: "POST",
-                body: JSON.stringify({ action: "saveIslandUpdate", username: USERNAME, islandNo: currentIslandNo, positionData: JSON.stringify(positions) })
+                body: JSON.stringify({ 
+                    action: "saveIslandUpdate", 
+                    username: USERNAME, 
+                    islandNo: currentIslandNo, 
+                    positionData: JSON.stringify(positions) 
+                })
             });
             const result = await res.json();
-            if (result.result === "success") showToast("成功儲存");
+            if (result.result === "success") {
+                showToast("成功儲存佈置");
+                // 同步更新本地資料，這樣回大廳不用重新 fetch
+                allAssets.forEach(a => {
+                    if (a.islandNo == currentIslandNo) {
+                        const p = positions.find(pos => pos.name === a.assetName);
+                        if (p) { a.lastX = p.x; a.lastY = p.y; }
+                    }
+                });
+            }
         } catch (e) { showToast("連線錯誤", "error"); }
         finally { showLoading(false); }
     }
@@ -361,7 +387,7 @@
         document.getElementById('islandView').style.display = 'none';
         document.getElementById('lobby').style.display = 'flex';
         document.body.classList.replace('in-island', 'in-lobby');
-        fetchIslands();
+        renderLobby(); // 直接用更新後的 allAssets 重新渲染
     }
 
     function showLoading(s) { document.getElementById('loadingOverlay').style.display = s ? 'flex' : 'none'; }
