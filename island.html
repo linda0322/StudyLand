@@ -155,17 +155,8 @@
         </div>
 
         <!-- 物件 -->
-        <div id="items-layer">
-            <div class="draggable" id="item_npc" style="left: 20%; top: 30%;">
-                <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif">
-            </div>
-            <div class="draggable" id="item_house" style="left: 50%; top: 40%;">
-                <img src="https://cdn-icons-png.flaticon.com/512/619/619153.png">
-            </div>
-            <div class="draggable" id="item_tree" style="left: 70%; top: 20%;">
-                <img src="https://cdn-icons-png.flaticon.com/512/489/489969.png">
-            </div>
-        </div>
+        <div id="items-layer"></div>
+        
     </div>
 
     <!-- 通知 TOAST -->
@@ -175,7 +166,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaI10eXnJm9ZpQ704yrD9CgdJ9YRb-jml2zM7sbddaeNmqmSQHNua4WOsgWZOpuhhT/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzSLLs8W1aFDFoh3R3enAoGerlUv4Ykogcn9c53LPrCfo-2Wj_fehqj97rifOv_uo2G/exec'; 
         const username = localStorage.getItem('studyLandUser');
         const urlParams = new URLSearchParams(window.location.search);
         const currentIslandId = urlParams.get('id') || 'island_1';
@@ -187,26 +178,58 @@
             'island_3': { name: '沙漠', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/third.webp', color: 'bg-amber-200', icon: '🏜️' },
         };
 
+        // 物件 ASSETS
+        const assetLibrary = {
+            'npc': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif' },
+            'house': { src: 'https://cdn-icons-png.flaticon.com/512/619/619153.png' },
+            'tree': { src: 'https://cdn-icons-png.flaticon.com/512/489/489969.png' },
+        };
+                
         async function initApp() {
             if (!username) { window.location.href = 'index.html'; return; }
-            
+
             const config = islandConfig[currentIslandId] || islandConfig['island_1'];
             document.getElementById('background-img').src = config.bg;
             document.getElementById('island-title').innerText = config.name;
 
             const startTime = Date.now();
+            
+            try {
+            // 根據 Username 和 IslandID 獲取 Asset
+            const assetResp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getAssets`);
+            const allowedAssets = await assetResp.json();
+            const itemsLayer = document.getElementById('items-layer');
+            // 清空預設
+            itemsLayer.innerHTML = '';
+            // 動態生成物件
+            allowedAssets.forEach(assetId => {
+                if (assetLibrary[assetId]) {
+                    const div = document.createElement('div');
+                    div.className = 'draggable';
+                    div.id = `item_${assetId}`;
+                    div.style.left = '50%'; 
+                    div.style.top = '50%';
+                    div.innerHTML = `<img src="${assetLibrary[assetId].src}">`;
+                    itemsLayer.appendChild(div);
+                }
+            });
             // 載入物件位置
             await loadIslandData();
             // 載入切換清單
             loadIslandList();
-            // 綁定拖拽
+            // 綁定拖拽物件
             bindDraggable();
+
+        } catch (err) {
+            console.error("初始化失敗:", err);
+            showToast("載入失敗", "error");
+        }
+            // 遮罩淡出
             const elapsedTime = Date.now() - startTime;
             const minimumWait = 1000; // 最少顯示1秒載入遮罩
             const remainingWait = Math.max(0, minimumWait - elapsedTime)
             setTimeout(() => {
-                const loader = document.getElementById('loading-screen');
-                loader.classList.add('fade-out');
+                const loader = document.getElementById('loading-screen'); loader.classList.add('fade-out');
             }, remainingWait);
         }
 
