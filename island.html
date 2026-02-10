@@ -62,8 +62,13 @@
             touch-action: none;
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
             cursor: move;
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -moz-user-select: none;
+            -webkit-touch-callout: none;
         }
-        .draggable img { width: 100%; pointer-events: none; }
+        .draggable img { width: 100%; pointer-events: none; -webkit-user-drag: none;}
 
         /* 手機旋轉提示 */
         #orientation-warning {
@@ -142,8 +147,8 @@
         
     <!-- 島嶼選單 MENU -->
     <div id="island-menu" class="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-md hidden flex items-center justify-center">
-        <div class="p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
-            <button onclick="toggleIslandMenu()" class="bg-white/80 absolute top-6 right-8 text-2xl thin-border text-slate-400 hover:text-slate-600">✕</button>
+        <div class="bg-white/80 p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl">
+            <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-2xl thin-border text-slate-400 hover:text-slate-600">✕</button>
             <h2 class="font-cubic text-xl thick-border text-center mb-8 text-slate-600">想去哪裡？</h2>
             <div id="island-buttons-container" class="grid grid-cols-3 gap-6 w-full">
                 <p class="w-full col-span-full text-center text-slate-400 font-cubic py-8 flex justify-center items-center">打開地圖中...</p>
