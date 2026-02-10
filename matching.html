@@ -30,6 +30,25 @@
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
         }
         
+        /* 手機旋轉提示 */
+        #orientation-warning {
+            display: none; position: fixed; inset: 0;
+            background: #1dc5fd; z-index: 9999;
+            flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-align: center;
+        }
+        @media screen and (orientation: landscape) {
+            #orientation-warning { display: flex; }
+            #game-stage { display: none; }
+        }
+        @keyframes wobble {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .wobble-img {animation: wobble 1s ease-in-out infinite;}
+        
         .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
         .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
