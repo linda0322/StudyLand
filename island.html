@@ -227,7 +227,6 @@
             const card = document.createElement('div');
             card.className = 'island-card';
             card.style.backgroundImage = `url('${first.islandBG}')`;
-            // 使用 GAS 傳回的背景模式
             card.style.backgroundSize = first.bgMode || "100% 100%"; 
             card.onclick = () => enterIsland(no);
 
@@ -237,13 +236,14 @@
                     const miniImg = document.createElement('img');
                     miniImg.src = asset.assetUrl;
                     miniImg.style.position = 'absolute';
-                    // 直接套用百分比座標
                     miniImg.style.left = asset.lastX;
                     miniImg.style.top = asset.lastY;
-                    // 使用 GAS 傳回的大小
-                    miniImg.style.width = asset.assetSize || '12%'; 
-                    miniImg.style.pointerEvents = 'none';
-                    card.appendChild(miniImg);
+
+                let originalSize = parseFloat(asset.assetSize || '12');
+                let thumbnailSize = originalSize * 0.7; // 這裡的 0.7 可以根據視覺感覺調整 (0.5~0.8)
+                miniImg.style.width = thumbnailSize + '%'; 
+                miniImg.style.pointerEvents = 'none';
+                card.appendChild(miniImg);
                 }
             });
 
