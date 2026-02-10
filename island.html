@@ -110,12 +110,16 @@
         .asset { 
             position: absolute; 
             cursor: move; 
-            min-width: 20px; /* 降低最小限制，讓 2% 這種小尺寸能表現出來 */
+            /* 移除 width: 8% */
+            /* 降低或移除 min-width，讓 2% 能生效 */
+            min-width: 5px; 
             z-index: 10; 
             touch-action: none;
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+            /* 增加平滑感 */
+            transition: opacity 0.3s;
         }
-
+        
         .toolbar { 
             position: fixed; 
             top: env(safe-area-inset-top, 15px); 
@@ -233,20 +237,20 @@
             card.style.backgroundSize = first.bgMode || "100% 100%"; 
             card.onclick = () => enterIsland(no);
     
+            // 渲染縮圖資產
             islandAssets.forEach((asset, index) => {
-                // --- 修正點：即使沒有 lastX (沒存過座標)，也給它一個預設位置顯示在縮圖上 ---
+                // --- 修正：移除 if (asset.lastX && asset.lastY) 的限制 ---
                 const miniImg = document.createElement('img');
                 miniImg.src = asset.assetUrl;
                 miniImg.style.position = 'absolute';
                 
-                // 如果沒座標，就用預設排列位置，否則縮圖會是空的
+                // 如果沒有儲存過的座標，就給它一個預設的排列位置
                 miniImg.style.left = asset.lastX || (10 + (index % 5) * 15) + "%";
                 miniImg.style.top = asset.lastY || (20 + Math.floor(index / 5) * 20) + "%";
     
-                // 尺寸處理
-                let originalSize = parseFloat(asset.assetSize || '12'); 
-                let thumbnailSize = originalSize * 0.8; // 縮圖物件稍縮小一點點比較美觀
-                miniImg.style.width = thumbnailSize + '%'; 
+                // 處理縮圖比例：物件在縮圖裡通常要比在島嶼內再小一點才好看
+                let sizeVal = parseFloat(asset.assetSize || '12');
+                miniImg.style.width = (sizeVal * 0.8) + '%'; // 縮圖物件打 8 折
                 
                 miniImg.style.pointerEvents = 'none';
                 card.appendChild(miniImg);
@@ -259,7 +263,7 @@
             container.appendChild(card);
         });
     }
-
+    
     // --- 修改：進入島嶼 ---
     async function enterIsland(no) {
         currentIslandNo = no;
@@ -289,13 +293,12 @@
                     
                     img.style.left = lx;
                     img.style.top = ly;
-    
-                    // --- 關鍵：確保使用 Sheet 裡的尺寸 ---
-                    // 如果 Sheet 填 2%，這裡就會是 2%
-                    img.style.setProperty('width', asset.assetSize || '12%', 'important'); 
+                    const finalSize = asset.assetSize || '12%';
+                    img.style.width = finalSize; 
                     
                     img.style.opacity = "1";
                     makeDraggable(img);
+                };
                 };
                 layer.appendChild(img);
             });
