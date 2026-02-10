@@ -2,178 +2,140 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>StudyLand</title>
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC_Icon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的島嶼</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @font-face {
             font-family: 'Cubic11';
             src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
-            font-display: swap;
         }
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            -webkit-user-select: none;
-            background-color: #1dc5fd;            
-            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png');
-            background-repeat: no-repeat;
+        body { font-family: 'Cubic11', sans-serif; background: #87CEEB; margin: 0; overflow: hidden; }
+        
+        /* 島嶼背景圖層 */
+        #island-map {
+            width: 2000px; height: 2000px; /* 大地圖 */
+            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png'); /* 這裡換成你的島嶼底圖 */
             background-size: cover;
-            background-position: center 25%;
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23BAE6FF'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, auto;
-            height: auto;
-            margin: 0;
-            padding: 0;
-            scroll-behavior: auto !important;
+            position: relative;
         }
-        
-        #login-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-        }
-        a, button, [role="button"] {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
-        }
-        
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
-        
-        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
-        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
-        .font-cubic { font-family: 'Cubic11', sans-serif; }
-        .hidden { display: none !important; }
 
-        .no-preview {
-            -webkit-touch-callout: none; 
-            -webkit-user-select: none;
-            user-select: none;}
-        
+        .draggable {
+            position: absolute;
+            cursor: move;
+            width: 80px; height: 80px;
+            z-index: 10;
+            touch-action: none; /* 防止手機瀏覽器干擾 */
+        }
+        .draggable img { width: 100%; pointer-events: none; }
+
+        .ui-overlay {
+            position: fixed; top: 20px; left: 20px; z-index: 100;
+            background: rgba(255,255,255,0.8); padding: 10px 20px;
+            border-radius: 20px; backdrop-filter: blur(5px);
+        }
+        #save-btn {
+            position: fixed; bottom: 30px; right: 30px; z-index: 100;
+            background: #38C0FF; color: white; padding: 15px 30px;
+            border-radius: 50px; cursor: pointer; border: none;
+            box-shadow: 0 4px 15px rgba(56, 192, 255, 0.4);
+        }
+        #save-btn:active { transform: scale(0.95); }
     </style>
-
-
 </head>
 <body>
 
-    <div id="login-overlay">
-        <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
-            <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="w-20 h-20 mb-6">
-            <h2 class="text-xl font-cubic thick-border text-slate-700 mb-4">登入</h2>
-            <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl px-4 py-4 text-center font-cubic thin-border mb-6 outline-none focus:border-[#38C0FF] transition-all">
-            <button id="confirm-user" class="w-full py-4 bg-[#38C0FF] text-white rounded-2xl font-cubic thin-border shadow-[#38C0FF]/30 hover:bg-[#2da9e6] active:scale-95 transition-all">進入遊戲</button>
-        </div>
+<div class="ui-overlay shadow-lg">
+    探險家: <span id="display-username">...</span>
+    <button onclick="location.href='index.html'" class="ml-4 text-slate-500 text-xs">返回</button>
+</div>
+
+<button id="save-btn" onclick="saveData()">儲存我的島嶼</button>
+
+<div id="island-map">
+    <div class="draggable" id="obj_house" style="left: 200px; top: 300px;">
+        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC_Icon.png">
     </div>
-
-    <!-- 玩家資訊 -->
-    <main id="main-content" class="container mx-auto px-8 py-8 hidden flex flex-col items-center">
-    
-    <div class="w-full max-w-sm mb-8 flex items-center justify-between px-1">
-        <div class="flex items-center gap-2">
-            <div class="glass-panel px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
-                <span class="text-[10px] text-slate-500 font-cubic thin-border tracking-wider">探險家</span>
-                <span id="user-display-name" class="text-sm font-cubic thin-border text-slate-700">載入中...</span>
-            </div>
-            <button id="logout-btn" class="p-2 glass-panel rounded-full text-red-500 hover:bg-white/20 active:scale-90 transition-all shadow-lg" title="登出">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            </button>
-        </div>
+    <div class="draggable" id="obj_tree" style="left: 400px; top: 200px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/489/489969.png">
     </div>
+</div>
 
-    <header class="text-center mb-10 flex flex-col items-center">
-        <div class="relative mb-4">
-           <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="w-[140px] h-auto drop-shadow-md select-none pointer-events-none" draggable="false">
-           <div class="absolute -top-1 -right-5 text-[25px] text-shadow-sm font-cubic thick-border text-white animate-bounce tracking-widest">GO!</div>
-        </div>
-    </header>
+<script>
+    const SCRIPT_URL = '你的_GAS_網址';
+    const username = localStorage.getItem('studyLandUser');
 
-    <div class="grid grid-cols-2 gap-x-8 gap-y-4 w-full max-w-[420px] px-4">
-        <!-- 島嶼 -->
-        <a href="island.html" draggable="false" class="no-preview group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <div class="bg-lime-100 h-24 rounded-[20px] mb-2 flex items-center justify-center overflow-hidden">
-                <img src="https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/picture.svg" alt="我的島嶼" class="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300" draggable="false">
-            </div>
-            <h3 class="font-cubic text-sm thin-border text-slate-800 text-center">我的島嶼</h3>
-        <!-- 遊戲一 -->
-        <a href="writing.html" draggable="false" class="no-preview group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <div class="bg-purple-100 h-24 rounded-[20px] mb-2 flex items-center justify-center overflow-hidden">
-                <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/man_icon.png" alt="單字練習" class="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300" draggable="false">
-            </div>
-            <h3 class="font-cubic text-sm thin-border text-slate-800 text-center">單字練習</h3>
-        </a>
-        <!-- 遊戲二 -->
-        <a href="matching.html" draggable="false" class="no-preview group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <div class="bg-yellow-100 h-24 rounded-[20px] mb-2 flex items-center justify-center overflow-hidden">
-                <img src="https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/waffle.svg" alt="圖文配對" class="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300" draggable="false">
-            </div>
-            <h3 class="font-cubic text-sm thin-border text-slate-800 text-center">圖文配對</h3>
-        </a>
-        
-    </div>
-</main>
+    async function initApp() {
+        if (!username) { window.location.href = 'index.html'; return; }
+        document.getElementById('display-username').innerText = username;
 
-    <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHbvqj1HIR4EWMes6lIvLLYBZ7VaGMlz_jSPD4FU2skachrCKFgAVw5ppMfMSq5mre/exec';
-        
-        const loginOverlay = document.getElementById('login-overlay');
-        const mainContent = document.getElementById('main-content');
-        const usernameInput = document.getElementById('username-input');
-        const confirmBtn = document.getElementById('confirm-user');
-        const userDisplayName = document.getElementById('user-display-name');
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedName = localStorage.getItem('studyLandUser');
-            if (savedName) {
-                showMainPage(savedName);
-            }
-        });
-
-        confirmBtn.addEventListener('click', async () => {
-            const username = usernameInput.value.trim();
-            if (!username) {
-                alert('你的名字是甚麼？');
-                return;
-            }
-
-            localStorage.setItem('studyLandUser', username);
-            showMainPage(username);
-
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: username })
-            }).catch(error => console.error('Error:', error));
-        });
-
-        function showMainPage(name) {
-            userDisplayName.textContent = name;
-            loginOverlay.classList.add('hidden');
-            mainContent.classList.remove('hidden');
-            window.scrollTo(0, 0);
-            setTimeout(() => {
-                window.scrollTo({
-                top: 0,
-                behavior: 'instant'
+        // 1. 從 GAS 載入位置
+        try {
+            const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}`);
+            const data = await response.json();
+            if (data && data.length > 0) {
+                data.forEach(item => {
+                    const el = document.getElementById(item.id);
+                    if (el) {
+                        el.style.left = item.left;
+                        el.style.top = item.top;
+                    }
                 });
-                document.body.scrollTop = 0;
-                document.documentElement.scrollTop = 0; 
-                }, 10); 
-         }
+            }
+        } catch (e) { console.error("載入失敗:", e); }
 
-        const logoutBtn = document.getElementById('logout-btn');
-            logoutBtn.addEventListener('click', () => {
-            if (confirm('確定要登出嗎？')) {
-            localStorage.removeItem('studyLandUser');
-            window.location.reload();
-                }
-            });
+        bindDraggable();
+    }
+
+    function bindDraggable() {
+        const draggables = document.querySelectorAll('.draggable');
+        draggables.forEach(el => {
+            el.onmousedown = function(e) {
+                let shiftX = e.clientX - el.getBoundingClientRect().left;
+                let shiftY = e.clientY - el.getBoundingClientRect().top;
+
+                document.onmousemove = function(e) {
+                    el.style.left = e.pageX - shiftX + 'px';
+                    el.style.top = e.pageY - shiftY + 'px';
+                };
+
+                document.onmouseup = function() {
+                    document.onmousemove = null;
+                };
+            };
+            el.ondragstart = () => false;
+        });
+    }
+
+    async function saveData() {
+        const btn = document.getElementById('save-btn');
+        btn.innerText = "儲存中...";
         
-    </script>
+        const items = document.querySelectorAll('.draggable');
+        const positions = Array.from(items).map(el => ({
+            id: el.id,
+            left: el.style.left,
+            top: el.style.top
+        }));
+
+        try {
+            // 使用 POST 傳送資料
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // 解決跨網域問題
+                body: JSON.stringify({ user: username, positions: positions })
+            });
+            alert('島嶼已儲存！');
+        } catch (e) {
+            console.error(e);
+            alert('儲存發生錯誤');
+        } finally {
+            btn.innerText = "儲存我的島嶼";
+        }
+    }
+
+    window.onload = initApp;
+</script>
+
 </body>
 </html>
