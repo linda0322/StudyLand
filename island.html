@@ -108,8 +108,11 @@
         }
 
         .asset { 
-            position: absolute; cursor: move; width: 8%; min-width: 40px;
-            z-index: 10; touch-action: none;
+            position: absolute; 
+            cursor: move; 
+            min-width: 20px; /* 降低最小限制，讓 2% 這種小尺寸能表現出來 */
+            z-index: 10; 
+            touch-action: none;
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
         }
 
@@ -223,30 +226,32 @@
         islandIds.forEach(no => {
             const islandAssets = allAssets.filter(a => a.islandNo == no);
             const first = islandAssets[0];
-
+    
             const card = document.createElement('div');
             card.className = 'island-card';
             card.style.backgroundImage = `url('${first.islandBG}')`;
             card.style.backgroundSize = first.bgMode || "100% 100%"; 
             card.onclick = () => enterIsland(no);
-
-            // 渲染縮圖資產
-            islandAssets.forEach(asset => {
-                if (asset.lastX && asset.lastY) {
-                    const miniImg = document.createElement('img');
-                    miniImg.src = asset.assetUrl;
-                    miniImg.style.position = 'absolute';
-                    miniImg.style.left = asset.lastX;
-                    miniImg.style.top = asset.lastY;
-
-                let originalSize = parseFloat(asset.assetSize || '12');
-                let thumbnailSize = originalSize * 0.7; // 這裡的 0.7 可以根據視覺感覺調整 (0.5~0.8)
+    
+            islandAssets.forEach((asset, index) => {
+                // --- 修正點：即使沒有 lastX (沒存過座標)，也給它一個預設位置顯示在縮圖上 ---
+                const miniImg = document.createElement('img');
+                miniImg.src = asset.assetUrl;
+                miniImg.style.position = 'absolute';
+                
+                // 如果沒座標，就用預設排列位置，否則縮圖會是空的
+                miniImg.style.left = asset.lastX || (10 + (index % 5) * 15) + "%";
+                miniImg.style.top = asset.lastY || (20 + Math.floor(index / 5) * 20) + "%";
+    
+                // 尺寸處理
+                let originalSize = parseFloat(asset.assetSize || '12'); 
+                let thumbnailSize = originalSize * 0.8; // 縮圖物件稍縮小一點點比較美觀
                 miniImg.style.width = thumbnailSize + '%'; 
+                
                 miniImg.style.pointerEvents = 'none';
                 card.appendChild(miniImg);
-                }
             });
-
+    
             const title = document.createElement('div');
             title.className = 'absolute bottom-0 w-full bg-black/40 text-white text-[12px] font-cubic text-center py-2 backdrop-blur-md';
             title.innerText = first.islandName || `島嶼 ${no}`;
@@ -270,22 +275,25 @@
         const layer = document.getElementById('assetLayer');
         layer.innerHTML = "";
 
-        setTimeout(() => {
+      setTimeout(() => {
             islandAssets.forEach((asset, index) => {
                 const img = document.createElement('img');
                 img.src = asset.assetUrl;
                 img.className = 'asset';
                 img.dataset.assetName = asset.assetName;
                 img.style.opacity = "0";
-
+    
                 img.onload = () => {
-                    // 處理舊資料可能是 px 的問題，統一轉為字串
                     let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
                     let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
                     
                     img.style.left = lx;
                     img.style.top = ly;
-                    img.style.width = asset.assetSize || '12%'; // 使用 GAS 傳回的大小
+    
+                    // --- 關鍵：確保使用 Sheet 裡的尺寸 ---
+                    // 如果 Sheet 填 2%，這裡就會是 2%
+                    img.style.setProperty('width', asset.assetSize || '12%', 'important'); 
+                    
                     img.style.opacity = "1";
                     makeDraggable(img);
                 };
