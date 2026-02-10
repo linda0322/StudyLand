@@ -282,10 +282,17 @@
                 const container = document.getElementById('island-buttons-container');
                 container.innerHTML = ''; 
 
-                if (allowedIslands.length === 0) {
-                    container.innerHTML = '<p class="w-full col-span-full text-center text-slate-400 font-cubic py-8 flex justify-center items-center">目前無島可歸 🥲</p>';
-                    return;
-                }
+        if (allowedIslands.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4">
+                    <span class="text-5xl">🏝️</span>
+                    <p class="text-slate-400 font-cubic text-center tracking-widest thin-border">
+                        目前無島可歸 🥲
+                    </p>
+                </div>
+            `;
+            return;
+        }
 
                 allowedIslands.forEach(id => {
                     const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
