@@ -23,6 +23,7 @@
         }
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
+        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
 
         /* 16:9 */
         #game-stage {
@@ -90,7 +91,7 @@
     </style>
 </head>
 <body>
-
+    <!-- 手機旋轉提示 -->
     <div id="orientation-warning" class="font-cubic">
         <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4 wobble-img">
         <h2 class="text-xl thick-border">旋轉畫面至橫向模式</h2>
@@ -98,8 +99,7 @@
 
     <div class="fixed top-4 left-4 z-[100] flex items-center gap-3">
         <div class="glass-panel px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
-            <span id="island-title" class="text-[10px] text-blue-500 font-cubic">...</span>
-            <span id="display-username" class="text-sm font-cubic text-slate-700 font-bold">...</span>
+            <span id="island-title" class="text-[10px] text-slate-500 font-cubic thin-border">...</span>
         </div>
         <button onclick="location.href='index.html'" class="glass-panel p-2 rounded-full shadow-sm hover:scale-105 transition-transform">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
@@ -152,7 +152,6 @@
 
         async function initApp() {
             if (!username) { window.location.href = 'index.html'; return; }
-            document.getElementById('display-username').innerText = username;
             
             const config = islandConfig[currentIslandId] || islandConfig['island_1'];
             document.getElementById('background-img').src = config.bg;
