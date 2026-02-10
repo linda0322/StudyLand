@@ -294,6 +294,8 @@
 
             draggables.forEach(el => {
                 const handleStart = (e) => {
+                    document.querySelectorAll('.draggable').forEach(d => d.style.zIndex = "10");
+                    el.style.zIndex = "100";
                     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
                     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
                     const rect = el.getBoundingClientRect();
