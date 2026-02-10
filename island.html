@@ -191,12 +191,12 @@
             'brick1a_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true },
             'brick1a_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true },
             'brick1a_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true },
-            'brick2a_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2a.webp', isBottom: true },
-            'brick2a_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2a.webp', isBottom: true },
-            'brick2a_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2a.webp', isBottom: true },
-            'brick3a_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
-            'brick3a_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
-            'brick3a_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
+            'brick1b_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1b.webp', isBottom: true },
+            'brick1b_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1b.webp', isBottom: true },
+            'brick1b_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1b.webp', isBottom: true },
+            'brick1c_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1c.webp', isBottom: true },
+            'brick1c_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1c.webp', isBottom: true },
+            'brick1c_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1c.webp', isBottom: true },
 
             'brick2b_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2b.webp', isBottom: true, width: '36%'},
             
@@ -281,7 +281,7 @@
                 allowedIslands.forEach(id => {
                     const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
                     const btnHtml = `
-                        <a href="island.html?id=${id}" class="group bg-slate-50 p-4 rounded-[25px] hover:bg-white hover:shadow-xl transition-all text-center border border-slate-100">
+                        <a href="island.html?id=${id}" class="group bg-slate-50 p-4 rounded-[25px] hover:bg-white hover:shadow-xl transition-all text-center">
                             <div class="${cfg.color} h-20 rounded-[20px] mb-2 flex items-center justify-center text-3xl">
                                 ${cfg.icon}
                             </div>
@@ -333,7 +333,8 @@
                     const stageRect = stage.getBoundingClientRect();
                     const shiftX = clientX - rect.left;
                     const shiftY = clientY - rect.top;
-
+                    
+                    el.style.transform = 'none';
                     el.style.left = (rect.left - stageRect.left) + 'px';
                     el.style.top = (rect.top - stageRect.top) + 'px';
 
