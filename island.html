@@ -92,29 +92,31 @@
             overflow: hidden;
         }
         
-       #islandStage {
+        #islandStage {
             position: relative; 
-            /* 核心邏輯：確保舞台始終完整顯示在螢幕內 */
+            /* 必須有明確的寬度與高度，物件的 % 才會生效 */
             width: 100vw;
-            height: 56.25vw; /* 16:9 的高度比例 */
+            height: 56.25vw; 
+            max-width: 177.78vh; 
             max-height: 100vh;
-            max-height: -webkit-fill-available;
-            max-width: 177.78vh; /* 16:9 的寬度比例 (100 * 16 / 9) */
-            
             background-size: 100% 100%; 
             background-repeat: no-repeat;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+            margin: auto; 
             overflow: hidden;
         }
-
         .asset { 
             position: absolute; 
             cursor: move; 
-            min-width: 5px;
+            /* 核心修正：移除 max-width 的限制，並確保預設寬度不會暴走 */
+            width: 10%; /* 給一個合理的預設值 */
+            max-width: none !important; 
+            min-width: 1px;
             z-index: 10; 
             touch-action: none;
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
             transition: opacity 0.3s;
+            /* 防止圖片被拉伸變形 */
+            object-fit: contain; 
         }
         
         .toolbar { 
@@ -277,25 +279,33 @@
             layer.innerHTML = "";
     
             setTimeout(() => {
-                islandAssets.forEach((asset, index) => {
-                    const img = document.createElement('img');
-                    img.src = asset.assetUrl;
-                    img.className = 'asset';
-                    img.dataset.assetName = asset.assetName;
-                    img.style.opacity = "0";
+            islandAssets.forEach((asset, index) => {
+                const img = document.createElement('img');
+                img.src = asset.assetUrl;
+                img.className = 'asset';
+                img.dataset.assetName = asset.assetName;
+                img.style.opacity = "0";
     
-                    img.onload = () => {
-                        let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
-                        let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
-                        img.style.left = lx;
-                        img.style.top = ly;
-                        const finalSize = asset.assetSize || '12%';
-                        img.style.width = finalSize; 
-                        img.style.opacity = "1";
-                        makeDraggable(img);
-                    };
-                    layer.appendChild(img);
-                });
+                // --- 核心修正：在載入前與載入後都確保寬度 ---
+                let sizeFromSheet = asset.assetSize ? asset.assetSize.toString() : '12%'; 
+                if (!sizeFromSheet.includes('%') && !sizeFromSheet.includes('px')) {
+                    sizeFromSheet += '%';
+                }
+                img.style.width = sizeFromSheet; // 先設定一次防止閃爍
+
+                img.onload = () => {
+                    let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
+                    let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
+                    
+                    img.style.left = lx;
+                    img.style.top = ly;
+                    img.style.width = sizeFromSheet; // 載入完成再次確認寬度
+                    
+                    img.style.opacity = "1";
+                    makeDraggable(img);
+                };
+                layer.appendChild(img);
+            });
             }, 150);
         }
     
