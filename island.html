@@ -110,13 +110,10 @@
         .asset { 
             position: absolute; 
             cursor: move; 
-            /* 移除 width: 8% */
-            /* 降低或移除 min-width，讓 2% 能生效 */
-            min-width: 5px; 
+            min-width: 5px;
             z-index: 10; 
             touch-action: none;
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-            /* 增加平滑感 */
             transition: opacity 0.3s;
         }
         
@@ -266,45 +263,42 @@
     
     // --- 修改：進入島嶼 ---
     async function enterIsland(no) {
-        currentIslandNo = no;
-        const islandAssets = allAssets.filter(a => a.islandNo == no);
-        document.getElementById('lobby').style.display = 'none';
-        document.body.classList.replace('in-lobby', 'in-island');
-        
-        const view = document.getElementById('islandView');
-        view.style.display = 'flex';
-        
-        const stage = document.getElementById('islandStage');
-        stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
-        const layer = document.getElementById('assetLayer');
-        layer.innerHTML = "";
-
-      setTimeout(() => {
-            islandAssets.forEach((asset, index) => {
-                const img = document.createElement('img');
-                img.src = asset.assetUrl;
-                img.className = 'asset';
-                img.dataset.assetName = asset.assetName;
-                img.style.opacity = "0";
+            currentIslandNo = no;
+            const islandAssets = allAssets.filter(a => a.islandNo == no);
+            document.getElementById('lobby').style.display = 'none';
+            document.body.classList.replace('in-lobby', 'in-island');
+            
+            const view = document.getElementById('islandView');
+            view.style.display = 'flex';
+            
+            const stage = document.getElementById('islandStage');
+            stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
+            const layer = document.getElementById('assetLayer');
+            layer.innerHTML = "";
     
-                img.onload = () => {
-                    let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
-                    let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
-                    
-                    img.style.left = lx;
-                    img.style.top = ly;
-                    const finalSize = asset.assetSize || '12%';
-                    img.style.width = finalSize; 
-                    
-                    img.style.opacity = "1";
-                    makeDraggable(img);
-                };
-                };
-                layer.appendChild(img);
-            });
-        }, 150);
-    }
-
+            setTimeout(() => {
+                islandAssets.forEach((asset, index) => {
+                    const img = document.createElement('img');
+                    img.src = asset.assetUrl;
+                    img.className = 'asset';
+                    img.dataset.assetName = asset.assetName;
+                    img.style.opacity = "0";
+    
+                    img.onload = () => {
+                        let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
+                        let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
+                        img.style.left = lx;
+                        img.style.top = ly;
+                        const finalSize = asset.assetSize || '12%';
+                        img.style.width = finalSize; 
+                        img.style.opacity = "1";
+                        makeDraggable(img);
+                    };
+                    layer.appendChild(img);
+                });
+            }, 150);
+        }
+    
     function makeDraggable(el) {
         let isDragging = false;
         let offset = { x: 0, y: 0 };
