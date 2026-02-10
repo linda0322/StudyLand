@@ -1,70 +1,80 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>Big Chungus Island</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的島嶼 - StudyLand</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { margin: 0; font-family: sans-serif; overflow: hidden; background: #222; }
-        #island-container {
-            width: 100vw; height: 100vh;
-            background: url('https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?q=80&w=2073') center/cover;
+        @font-face {
+            font-family: 'Cubic11';
+            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
+        }
+        body { font-family: 'Cubic11', sans-serif; background: #87CEEB; margin: 0; overflow: hidden; }
+        
+        /* 島嶼背景圖層 */
+        #island-map {
+            width: 2000px; height: 2000px; /* 大地圖 */
+            background-image: url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png'); /* 這裡換成你的島嶼底圖 */
+            background-size: cover;
             position: relative;
         }
-        .user-panel {
-            position: fixed; top: 10px; left: 10px; padding: 10px;
-            background: rgba(255,255,255,0.8); border-radius: 8px; z-index: 100;
-        }
+
         .draggable {
+            position: absolute;
+            cursor: move;
             width: 80px; height: 80px;
-            position: absolute; cursor: grab;
-            user-select: none; transition: transform 0.1s;
+            z-index: 10;
+            touch-action: none; /* 防止手機瀏覽器干擾 */
         }
-        .draggable:active { cursor: grabbing; transform: scale(1.1); }
         .draggable img { width: 100%; pointer-events: none; }
-        #save-btn {
-            position: fixed; top: 10px; right: 10px;
-            padding: 10px 20px; background: #28a745; color: white;
-            border: none; border-radius: 5px; cursor: pointer; z-index: 100;
+
+        .ui-overlay {
+            position: fixed; top: 20px; left: 20px; z-index: 100;
+            background: rgba(255,255,255,0.8); padding: 10px 20px;
+            border-radius: 20px; backdrop-filter: blur(5px);
         }
+        #save-btn {
+            position: fixed; bottom: 30px; right: 30px; z-index: 100;
+            background: #38C0FF; color: white; padding: 15px 30px;
+            border-radius: 50px; cursor: pointer; border: none;
+            box-shadow: 0 4px 15px rgba(56, 192, 255, 0.4);
+        }
+        #save-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-<div class="user-panel">使用者: <span id="display-username">...</span></div>
+<div class="ui-overlay shadow-lg">
+    探險家: <span id="display-username">...</span>
+    <button onclick="location.href='index.html'" class="ml-4 text-slate-500 text-xs">返回</button>
+</div>
+
 <button id="save-btn" onclick="saveData()">儲存我的島嶼</button>
 
-<div id="island-container">
-    <div class="draggable" id="item_tree" style="left: 100px; top: 100px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/489/489969.png" alt="Tree">
+<div id="island-map">
+    <div class="draggable" id="obj_house" style="left: 200px; top: 300px;">
+        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC_Icon.png">
     </div>
-    <div class="draggable" id="item_house" style="left: 250px; top: 150px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/619/619153.png" alt="House">
-    </div>
-    <div class="draggable" id="item_rabbit" style="left: 400px; top: 300px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/2663/2663343.png" alt="Rabbit">
+    <div class="draggable" id="obj_tree" style="left: 400px; top: 200px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/489/489969.png">
     </div>
 </div>
 
 <script>
-    // 請替換成你的 GAS 網址
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzRgC4l_FeBISlhB0Oerksa1evNKAKvrGVhw8QeQLd6fq8GLJp-sCW-RGEcB5P1KRQ/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBLcVWYcuMPo8qtxu7hiJ39nlc1qf3bipf353DbM6FLeMy6Z1mYHerGv1Pmt6u3e9f/exec';
     const username = localStorage.getItem('studyLandUser');
 
     async function initApp() {
-        if (!username) {
-            alert('請先登入！');
-            window.location.href = 'index.html';
-            return;
-        }
+        if (!username) { window.location.href = 'index.html'; return; }
         document.getElementById('display-username').innerText = username;
 
-        // 1. 從 Google Sheets 載入資料
+        // 1. 從 GAS 載入位置
         try {
-            const response = await fetch(`${GAS_URL}?user=${encodeURIComponent(username)}`);
-            const savedPositions = await response.json();
-            
-            if (savedPositions && savedPositions.length > 0) {
-                savedPositions.forEach(item => {
+            const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}`);
+            const data = await response.json();
+            if (data && data.length > 0) {
+                data.forEach(item => {
                     const el = document.getElementById(item.id);
                     if (el) {
                         el.style.left = item.left;
@@ -72,14 +82,14 @@
                     }
                 });
             }
-        } catch (e) { console.error("載入失敗", e); }
+        } catch (e) { console.error("載入失敗:", e); }
 
-        makeDraggable();
+        bindDraggable();
     }
 
-    function makeDraggable() {
-        const items = document.querySelectorAll('.draggable');
-        items.forEach(el => {
+    function bindDraggable() {
+        const draggables = document.querySelectorAll('.draggable');
+        draggables.forEach(el => {
             el.onmousedown = function(e) {
                 let shiftX = e.clientX - el.getBoundingClientRect().left;
                 let shiftY = e.clientY - el.getBoundingClientRect().top;
@@ -93,15 +103,13 @@
                     document.onmousemove = null;
                 };
             };
-            
-            // 阻擋預設拖拽圖片行為
-            el.ondragstart = function() { return false; };
+            el.ondragstart = () => false;
         });
     }
 
     async function saveData() {
-        const saveBtn = document.getElementById('save-btn');
-        saveBtn.innerText = '儲存中...';
+        const btn = document.getElementById('save-btn');
+        btn.innerText = "儲存中...";
         
         const items = document.querySelectorAll('.draggable');
         const positions = Array.from(items).map(el => ({
@@ -111,16 +119,18 @@
         }));
 
         try {
-            await fetch(GAS_URL, {
+            // 使用 POST 傳送資料
+            await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // GAS post 限制
+                mode: 'no-cors', // 解決跨網域問題
                 body: JSON.stringify({ user: username, positions: positions })
             });
-            alert('島嶼位置已儲存！');
+            alert('島嶼已儲存！');
         } catch (e) {
-            alert('儲存失敗，請檢查網路。');
+            console.error(e);
+            alert('儲存發生錯誤');
         } finally {
-            saveBtn.innerText = '儲存我的島嶼';
+            btn.innerText = "儲存我的島嶼";
         }
     }
 
