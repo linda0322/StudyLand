@@ -60,7 +60,7 @@
             width: 12%; 
             z-index: 10;
             touch-action: none;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+            /**filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));**/
             cursor: move;
             user-select: none;
             -webkit-user-select: none;
@@ -68,7 +68,7 @@
             -moz-user-select: none;
             -webkit-touch-callout: none;
         }
-        .draggable img { width: 100%; pointer-events: none; -webkit-user-drag: none;}
+        .draggable img { width: 100%; height: auto; pointer-events: none; -webkit-user-drag: none;}
 
         /* 手機旋轉提示 */
         #orientation-warning {
@@ -197,6 +197,8 @@
             'brick3a_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
             'brick3a_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
             'brick3a_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3a.webp', isBottom: true },
+
+            'brick2b_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2b.webp', isBottom: true, width: '36%'},
             
             'npc': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif' },
             
@@ -224,11 +226,16 @@
                     const div = document.createElement('div');
                     div.className = 'draggable';
                     div.id = `item_${assetId}`;
+
+                    const assetCfg = assetLibrary[assetId];
+                    div.style.width = assetCfg.width || '12%';
+                    
                     const isBottom = assetLibrary[assetId].isBottom;
                     div.style.zIndex = isBottom ? "1" : "10";
                     if (isBottom) div.dataset.isBottom = "true";
                     div.style.left = '50%'; 
                     div.style.top = '50%';
+                    div.style.transform = 'translate(-50%, -50%)';
                     div.innerHTML = `<img src="${assetLibrary[assetId].src}">`;
                     itemsLayer.appendChild(div);
                 }
