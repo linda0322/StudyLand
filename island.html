@@ -428,6 +428,32 @@
             }, 2500);
         }
         
+
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzUHMVO7iwgvf1RONm3KB9C88HzlJZpqhZuZLqP3FIYQDb_WXBqDTdPOl_N_X9VtzAw/exec";
+
+        function syncMyIsland(myId) {
+            const furnitureElements = document.querySelectorAll('.furniture, .item, img[style*="position: absolute"]');
+            const layoutData = Array.from(furnitureElements).map(el => {
+                return {
+                imgSrc: el.src,      // 家具圖片路徑
+                x: el.style.left,    // X 座標
+                y: el.style.top,     // Y 座標
+                z: el.style.zIndex   // 層級
+                };
+            });
+        fetch(GAS_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: myId,
+                layout: layoutData
+            })
+         }).then(() => {
+            console.log("島嶼數據已上傳");
+            });
+         }
+           
         window.onload = initApp;
     </script>
 </body>
