@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>Big Chungus Island</title>
+    <style>
+        body { margin: 0; font-family: sans-serif; overflow: hidden; background: #222; }
+        #island-container {
+            width: 100vw; height: 100vh;
+            background: url('https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?q=80&w=2073') center/cover;
+            position: relative;
+        }
+        .user-panel {
+            position: fixed; top: 10px; left: 10px; padding: 10px;
+            background: rgba(255,255,255,0.8); border-radius: 8px; z-index: 100;
+        }
+        .draggable {
+            width: 80px; height: 80px;
+            position: absolute; cursor: grab;
+            user-select: none; transition: transform 0.1s;
+        }
+        .draggable:active { cursor: grabbing; transform: scale(1.1); }
+        .draggable img { width: 100%; pointer-events: none; }
+        #save-btn {
+            position: fixed; top: 10px; right: 10px;
+            padding: 10px 20px; background: #28a745; color: white;
+            border: none; border-radius: 5px; cursor: pointer; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+<div class="user-panel">使用者: <span id="display-username">...</span></div>
+<button id="save-btn" onclick="saveData()">儲存我的島嶼</button>
+
+<div id="island-container">
+    <div class="draggable" id="item_tree" style="left: 100px; top: 100px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/489/489969.png" alt="Tree">
+    </div>
+    <div class="draggable" id="item_house" style="left: 250px; top: 150px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/619/619153.png" alt="House">
+    </div>
+    <div class="draggable" id="item_rabbit" style="left: 400px; top: 300px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/2663/2663343.png" alt="Rabbit">
+    </div>
+</div>
+
+<script>
+    // 請替換成你的 GAS 網址
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzRgC4l_FeBISlhB0Oerksa1evNKAKvrGVhw8QeQLd6fq8GLJp-sCW-RGEcB5P1KRQ/exec';
+    const username = localStorage.getItem('studyLandUser');
+
+    async function initApp() {
+        if (!username) {
+            alert('請先登入！');
+            window.location.href = 'index.html';
+            return;
+        }
+        document.getElementById('display-username').innerText = username;
+
+        // 1. 從 Google Sheets 載入資料
+        try {
+            const response = await fetch(`${GAS_URL}?user=${encodeURIComponent(username)}`);
+            const savedPositions = await response.json();
+            
+            if (savedPositions && savedPositions.length > 0) {
+                savedPositions.forEach(item => {
+                    const el = document.getElementById(item.id);
+                    if (el) {
+                        el.style.left = item.left;
+                        el.style.top = item.top;
+                    }
+                });
+            }
+        } catch (e) { console.error("載入失敗", e); }
+
+        makeDraggable();
+    }
+
+    function makeDraggable() {
+        const items = document.querySelectorAll('.draggable');
+        items.forEach(el => {
+            el.onmousedown = function(e) {
+                let shiftX = e.clientX - el.getBoundingClientRect().left;
+                let shiftY = e.clientY - el.getBoundingClientRect().top;
+
+                document.onmousemove = function(e) {
+                    el.style.left = e.pageX - shiftX + 'px';
+                    el.style.top = e.pageY - shiftY + 'px';
+                };
+
+                document.onmouseup = function() {
+                    document.onmousemove = null;
+                };
+            };
+            
+            // 阻擋預設拖拽圖片行為
+            el.ondragstart = function() { return false; };
+        });
+    }
+
+    async function saveData() {
+        const saveBtn = document.getElementById('save-btn');
+        saveBtn.innerText = '儲存中...';
+        
+        const items = document.querySelectorAll('.draggable');
+        const positions = Array.from(items).map(el => ({
+            id: el.id,
+            left: el.style.left,
+            top: el.style.top
+        }));
+
+        try {
+            await fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors', // GAS post 限制
+                body: JSON.stringify({ user: username, positions: positions })
+            });
+            alert('島嶼位置已儲存！');
+        } catch (e) {
+            alert('儲存失敗，請檢查網路。');
+        } finally {
+            saveBtn.innerText = '儲存我的島嶼';
+        }
+    }
+
+    window.onload = initApp;
+</script>
+
+</body>
+</html>
