@@ -77,46 +77,47 @@
         .island-card:hover { transform: translateY(-5px) scale(1.03); }
 
         /* 島嶼舞台 */
-       #islandView { 
-            display: none; 
-            width: 100vw; 
-            height: 100vh; 
-            height: -webkit-fill-available; /* 修正行動裝置瀏覽器高度計算 */
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            align-items: center; 
-            justify-content: center; 
+        #islandView {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0; left: 0;
             z-index: 500;
-            background-color: #2c3e50; /* 確保背景填滿 */
-            overflow: hidden;
+            background-color: #2c3e50;
+            justify-content: center; /* 水平置中舞台 */
+            align-items: center;     /* 垂直置中舞台 */
         }
         
         #islandStage {
-            position: relative; 
-            /* 必須有明確的寬度與高度，物件的 % 才會生效 */
+            position: relative;
             width: 100vw;
-            height: 56.25vw; 
-            max-width: 177.78vh; 
+            height: 56.25vw; /* 保持 16:9 */
+            max-width: 177.78vh;
             max-height: 100vh;
-            background-size: 100% 100%; 
+            background-color: #333; 
+            background-size: 100% 100%; /* 強制背景鋪滿 */
             background-repeat: no-repeat;
-            margin: auto; 
+            margin: auto;
             overflow: hidden;
+            z-index: 1; /* 舞台基底 */
         }
-        .asset { 
-            position: absolute; 
-            cursor: move; 
-            /* 核心修正：移除 max-width 的限制，並確保預設寬度不會暴走 */
-            width: 10%; /* 給一個合理的預設值 */
-            max-width: none !important; 
-            min-width: 1px;
-            z-index: 10; 
+        
+        #assetLayer {
+            position: absolute;
+            inset: 0;
+            z-index: 50; /* 確保資產層在背景之上 */
+            /* 移除 pointer-events: none; 以免點不到物件 */
+        }
+        
+        .asset {
+            position: absolute;
+            cursor: move;
+            z-index: 100; /* 物件本體在最前 */
+            transition: opacity 0.3s, transform 0.2s;
+            /* 防止圖片拖動時出現系統預設陰影 */
+            -webkit-user-drag: none; 
             touch-action: none;
-            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-            transition: opacity 0.3s;
-            /* 防止圖片被拉伸變形 */
-            object-fit: contain; 
         }
         
         .toolbar { 
@@ -265,49 +266,63 @@
     
     // --- 修改：進入島嶼 ---
     async function enterIsland(no) {
-            currentIslandNo = no;
-            const islandAssets = allAssets.filter(a => a.islandNo == no);
-            document.getElementById('lobby').style.display = 'none';
-            document.body.classList.replace('in-lobby', 'in-island');
-            
-            const view = document.getElementById('islandView');
-            view.style.display = 'flex';
-            
-            const stage = document.getElementById('islandStage');
-            stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
-            const layer = document.getElementById('assetLayer');
-            layer.innerHTML = "";
-    
-            setTimeout(() => {
-            islandAssets.forEach((asset, index) => {
-                const img = document.createElement('img');
-                img.src = asset.assetUrl;
-                img.className = 'asset';
-                img.dataset.assetName = asset.assetName;
-                img.style.opacity = "0";
-    
-                // --- 核心修正：在載入前與載入後都確保寬度 ---
-                let sizeFromSheet = asset.assetSize ? asset.assetSize.toString() : '12%'; 
-                if (!sizeFromSheet.includes('%') && !sizeFromSheet.includes('px')) {
-                    sizeFromSheet += '%';
-                }
-                img.style.width = sizeFromSheet; // 先設定一次防止閃爍
+        currentIslandNo = no;
+        const islandAssets = allAssets.filter(a => a.islandNo == no);
+        
+        if (islandAssets.length === 0) return;
 
-                img.onload = () => {
-                    let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
-                    let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
-                    
-                    img.style.left = lx;
-                    img.style.top = ly;
-                    img.style.width = sizeFromSheet; // 載入完成再次確認寬度
-                    
-                    img.style.opacity = "1";
-                    makeDraggable(img);
-                };
-                layer.appendChild(img);
-            });
-            }, 150);
-        }
+        // 1. 切換介面
+        document.getElementById('lobby').style.display = 'none';
+        document.body.classList.replace('in-lobby', 'in-island');
+        document.getElementById('islandView').style.display = 'flex';
+        
+        // 2. 設定舞台背景
+        const stage = document.getElementById('islandStage');
+        const layer = document.getElementById('assetLayer');
+        stage.style.backgroundImage = `url('${islandAssets[0].islandBG}')`;
+        layer.innerHTML = ""; 
+
+        // 3. 渲染物件
+        islandAssets.forEach((asset, index) => {
+            const img = document.createElement('img');
+            img.src = asset.assetUrl;
+            img.className = 'asset';
+            img.dataset.assetName = asset.assetName;
+            
+            // 處理尺寸 (防呆：確保有 % 單位)
+            let sizeVal = asset.assetSize ? asset.assetSize.toString() : '12%';
+            if (!sizeVal.includes('%') && !sizeVal.includes('px')) sizeVal += '%';
+            img.style.width = sizeVal;
+            
+            // 初始設為透明，載入後才顯現
+            img.style.opacity = "0";
+
+            img.onload = () => {
+                // 處理座標
+                let lx = asset.lastX ? asset.lastX.toString() : (10 + (index % 5) * 15) + "%";
+                let ly = asset.lastY ? asset.lastY.toString() : (20 + Math.floor(index / 5) * 20) + "%";
+                
+                // 如果座標不含單位，補上 %
+                if (!lx.includes('%') && !lx.includes('px')) lx += '%';
+                if (!ly.includes('%') && !ly.includes('px')) ly += '%';
+
+                img.style.left = lx;
+                img.style.top = ly;
+                img.style.opacity = "1"; // 顯示圖片
+                makeDraggable(img);
+            };
+
+            img.onerror = () => {
+                console.error("圖片載入失敗:", asset.assetUrl);
+                img.style.backgroundColor = "red"; // 如果圖片壞了，顯示紅塊提醒
+                img.style.width = "50px";
+                img.style.height = "50px";
+                img.style.opacity = "0.5";
+            };
+
+            layer.appendChild(img);
+        });
+    }
     
     function makeDraggable(el) {
         let isDragging = false;
