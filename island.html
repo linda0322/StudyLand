@@ -94,6 +94,8 @@
         <button onclick="location.href='index.html'" class="glass-panel p-2 rounded-full shadow-sm hover:scale-105 transition-transform">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         </button>
+        <div id="island-buttons-container" class="grid grid-cols-2 gap-x-8 gap-y-4 w-full max-w-[420px] px-4">
+    </div>
     </div>
 
     <button id="save-btn" onclick="saveData()" class="font-cubic thick-border shadow-lg">儲存島嶼</button>
@@ -117,7 +119,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysYwClHtm6rhm9f1meWNsbbgANy9InS9nsXsdr7B1reCG7OtJvETAv3RFoVbLePbX1/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaI10eXnJm9ZpQ704yrD9CgdJ9YRb-jml2zM7sbddaeNmqmSQHNua4WOsgWZOpuhhT/exec'; 
         const username = localStorage.getItem('studyLandUser');
         const urlParams = new URLSearchParams(window.location.search);
         const currentIslandId = urlParams.get('id') || 'island_1';
