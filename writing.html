@@ -359,11 +359,11 @@
                 showSuccess();
                 saveProgress();
             } else {
-                showToast("筆劃正確，但寫得不夠準確 🙅🏻‍♀️");
+                showToast("不夠準確");
                 setTimeout(clearCanvas, 800);
             }
         } else if (paths.length > target) {
-            showToast("筆劃數太多，請重試 🙂‍↔️");
+            showToast("筆劃太多");
             setTimeout(clearCanvas, 800);
         }
     }
