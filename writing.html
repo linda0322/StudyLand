@@ -88,6 +88,20 @@
         
         #sync-status { transition: opacity 0.3s; opacity: 0; }
         #sync-status.show { opacity: 1; }
+
+        #toast-container.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        }
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
         
     </style>
 </head>
@@ -149,7 +163,13 @@
         </div>
     </div>
     
-
+    <div id="toast-container" class="fixed bottom-32 left-1/2 -translate-x-1/2 z-[100] pointer-events-none opacity-0 transition-all duration-300 transform translate-y-4">
+        <div class="glass-panel px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border-amber-200 border">
+            <span class="text-xl">✍🏻</span>
+            <p id="toast-msg" class="font-cubic thin-border text-slate-600 text-sm tracking-wide"></p>
+        </div>
+    </div>
+    
     <main class="w-full max-w-md flex flex-col items-center">
         
         <!-- 操作欄 -->
@@ -186,6 +206,7 @@
             <div id="step-container"></div>
         </div>
     </main>
+
 
 <script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbyxO9H_GCvLXrm7eIf2vdUz1I8mwYc9jHoFgzvYJd8fA64dQzlYN3f4VKBTm-nBIXCi/exec';
@@ -333,12 +354,75 @@
     function checkScore() {
         const target = userCharacters[currentIndex].strokes;
         if (paths.length === target) {
-            userCharacters[currentIndex].completed = true;
-            showSuccess();
-            saveProgress();
+            if (verifyWriting()) { 
+                userCharacters[currentIndex].completed = true;
+                showSuccess();
+                saveProgress();
+            } else {
+                showToast("筆劃正確，但寫得不夠準確 🙅🏻‍♀️");
+                setTimeout(clearCanvas, 800);
+            }
+        } else if (paths.length > target) {
+            showToast("筆劃數太多，請重試 🙂‍↔️");
+            setTimeout(clearCanvas, 800);
         }
     }
 
+    function verifyWriting() {
+        const w = canvas.width;
+        const h = canvas.height;
+        // 取得筆跡
+        const userData = ctx.getImageData(0, 0, w, h).data;
+        // 建立「正確答案」
+        const offscreen = document.createElement('canvas');
+        offscreen.width = w;
+        offscreen.height = h;
+        const octx = offscreen.getContext('2d');
+        // 跟隨水印
+        const fontSize = Math.min(w * 0.8, 240); 
+        octx.font = `${fontSize}px Iansui`;
+        octx.textAlign = 'center';
+        octx.textBaseline = 'middle';
+        octx.fillStyle = 'black';
+        octx.fillText(userCharacters[currentIndex].char, w / 2, h / 2);
+        const standardData = octx.getImageData(0, 0, w, h).data;
+        let hitPixels = 0;
+        let totalStandardPixels = 0;
+        let overflowPixels = 0;
+        for (let i = 3; i < userData.length; i += 4) {
+            const userAlpha = userData[i];
+            const stdAlpha = standardData[i];
+            if (stdAlpha > 50) {
+                totalStandardPixels++;
+                if (userAlpha > 50) hitPixels++; 
+            } else {
+                if (userAlpha > 50) overflowPixels++;
+            }
+        }
+        const hitRate = hitPixels / totalStandardPixels;
+        const overflowRate = overflowPixels / (w * h);
+        // 嚴格門檻：
+        // hitRate > 0.35: 至少要有 35% 的字體面積被覆蓋
+        // overflowRate < 0.03: 寫在字外的面積不能超過畫布的 3% (避免亂塗)
+        return hitRate > 0.35 && overflowRate < 0.03;
+    }
+
+    function showToast(message) {
+        const container = document.getElementById('toast-container');
+        const msgElem = document.getElementById('toast-msg');
+        const canvasContainer = document.querySelector('.canvas-container');
+    
+        msgElem.innerText = message;
+        container.classList.add('show');
+        
+        canvasContainer.classList.add('shake');
+        
+        setTimeout(() => {
+            container.classList.remove('show');
+            canvasContainer.classList.remove('shake');
+        }, 2000);
+    }
+        
     async function saveProgress() {
         const username = localStorage.getItem('studyLandUser');
         syncStatus.classList.add('show');
