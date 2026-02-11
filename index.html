@@ -129,8 +129,9 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedName = localStorage.getItem('studyLandUser');
+            const savedPermissions = localStorage.getItem('userPermissions');
             if (savedName) {
-                showMainPage(savedName);
+                showMainPage(savedName, savedPermissions);
             }
         });
 
@@ -186,13 +187,13 @@
             window.scrollTo(0, 0);
          }
 
-        const logoutBtn = document.getElementById('logout-btn');
-            logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', () => {
             if (confirm('確定要登出嗎？')) {
-            localStorage.removeItem('studyLandUser');
-            window.location.reload();
-                }
-            });
+                localStorage.removeItem('studyLandUser');
+                localStorage.removeItem('userPermissions');
+                window.location.reload();
+            }
+        });
         
     </script>
 </body>
