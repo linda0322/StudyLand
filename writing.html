@@ -404,7 +404,7 @@
         }
         const hitRate = hitPixels / totalStandardPixels;
         const overflowRate = overflowPixels / (w * h);
-        return hitRate > 0.4 && overflowRate < 0.05;
+        return hitRate > 0.35 && overflowRate < 0.1;
     }
 
     function showToast(message) {
