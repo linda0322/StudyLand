@@ -401,10 +401,7 @@
         }
         const hitRate = hitPixels / totalStandardPixels;
         const overflowRate = overflowPixels / (w * h);
-        // 嚴格門檻：
-        // hitRate > 0.35: 至少要有 35% 的字體面積被覆蓋
-        // overflowRate < 0.03: 寫在字外的面積不能超過畫布的 3% (避免亂塗)
-        return hitRate > 0.35 && overflowRate < 0.03;
+        return hitRate > 0.35 && overflowRate < 0.1;
     }
 
     function showToast(message) {
