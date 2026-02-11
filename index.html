@@ -70,6 +70,20 @@
         </div>
     </div>
 
+    <div id="logout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] hidden p-6">
+        <div class="bg-white rounded-[30px] p-8 w-full max-w-xs text-center shadow-2xl scale-95 transition-transform">
+            <h3 class="font-cubic thick-border text-slate-700 text-lg mb-6">確定要登出嗎？</h3>
+            <div class="flex gap-4">
+                <button id="cancel-logout" class="flex-1 py-3 bg-slate-200 text-slate-600 rounded-2xl font-cubic thin-border hover:bg-slate-300 transition-all">
+                    取消
+                </button>
+                <button id="confirm-logout" class="flex-1 py-3 bg-red-500 text-white rounded-2xl font-cubic thin-border shadow-lg shadow-red-200 hover:bg-red-600 active:scale-95 transition-all">
+                    確定
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 玩家資訊 -->
     <main id="main-content" class="container mx-auto px-8 py-8 hidden flex flex-col items-center">
     
@@ -116,48 +130,16 @@
         </a>
         
     </div>
-    </main>
-
-    <div id="logout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] hidden p-6">
-    <div class="bg-white rounded-[30px] p-8 w-full max-w-xs text-center shadow-2xl scale-95 transition-transform">
-        <h3 class="font-cubic thick-border text-slate-700 text-lg mb-6">確定要登出嗎？</h3>
-        <div class="flex gap-4">
-            <button id="cancel-logout" class="flex-1 py-3 bg-slate-200 text-slate-600 rounded-2xl font-cubic thin-border hover:bg-slate-300 transition-all">
-                取消
-            </button>
-            <button id="confirm-logout" class="flex-1 py-3 bg-red-500 text-white rounded-2xl font-cubic thin-border shadow-lg shadow-red-200 hover:bg-red-600 active:scale-95 transition-all">
-                確定
-            </button>
-        </div>
-    </div>
-    </div>
+</main>
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHbvqj1HIR4EWMes6lIvLLYBZ7VaGMlz_jSPD4FU2skachrCKFgAVw5ppMfMSq5mre/exec';
         
         const loginOverlay = document.getElementById('login-overlay');
-        const logoutModal = document.getElementById('logout-modal');
         const mainContent = document.getElementById('main-content');
         const usernameInput = document.getElementById('username-input');
         const confirmBtn = document.getElementById('confirm-user');
         const userDisplayName = document.getElementById('user-display-name');
-
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            logoutModal.classList.remove('hidden');
-        });
-        cancelLogout.addEventListener('click', () => {
-            logoutModal.classList.add('hidden');
-        });
-        confirmLogout.addEventListener('click', () => {
-            localStorage.removeItem('studyLandUser');
-            window.location.reload();
-        });
-        logoutModal.addEventListener('click', (e) => {
-            if (e.target === logoutModal) {
-                logoutModal.classList.add('hidden');
-            }
-        });
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedName = localStorage.getItem('studyLandUser');
@@ -200,12 +182,29 @@
          }
 
         const logoutBtn = document.getElementById('logout-btn');
-            logoutBtn.addEventListener('click', () => {
-            if (confirm('確定要登出嗎？')) {
+        const logoutModal = document.getElementById('logout-modal');
+        const cancelLogout = document.getElementById('cancel-logout');
+        const confirmLogout = document.getElementById('confirm-logout');
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logoutModal.classList.remove('hidden');
+        });
+
+        cancelLogout.addEventListener('click', () => {
+            logoutModal.classList.add('hidden');
+        });
+
+        confirmLogout.addEventListener('click', () => {
             localStorage.removeItem('studyLandUser');
             window.location.reload();
-                }
-            });
+        });
+
+        logoutModal.addEventListener('click', (e) => {
+            if (e.target === logoutModal) {
+                logoutModal.classList.add('hidden');
+            }
+        });
         
     </script>
 </body>
