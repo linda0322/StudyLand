@@ -187,6 +187,7 @@
             window.scrollTo(0, 0);
          }
 
+        const logoutBtn = document.getElementById('logout-btn');
         logoutBtn.addEventListener('click', () => {
             if (confirm('確定要登出嗎？')) {
                 localStorage.removeItem('studyLandUser');
