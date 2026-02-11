@@ -119,7 +119,7 @@
 </main>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMuDKBtju8zY_l3Re7Jh-8aYhVnsKEYLJ9UQIppEhKITx1RaZPRt3HE8Y1zcLS5Jwy/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymY386bSwBIAOn7PAvPUkzko6hMGSGghnU1lYDwjVoGe4Mngyb3vr-JpscirmLq-an/exec';
         
         const loginOverlay = document.getElementById('login-overlay');
         const mainContent = document.getElementById('main-content');
@@ -157,7 +157,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 localStorage.setItem('studyLandUser', username);
-                showMainPage(username, "island,writing,matching"); 
+                showMainPage(username, "");
             }
         });
 
