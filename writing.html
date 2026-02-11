@@ -383,6 +383,9 @@
         octx.font = `${fontSize}px Iansui`;
         octx.textAlign = 'center';
         octx.textBaseline = 'middle';
+        octx.strokeStyle = 'black';
+        octx.lineWidth = canvas.width * 0.08; // 增加判定的容錯寬度
+        octx.strokeText(userCharacters[currentIndex].char, w / 2, h / 2);
         octx.fillStyle = 'black';
         octx.fillText(userCharacters[currentIndex].char, w / 2, h / 2);
         const standardData = octx.getImageData(0, 0, w, h).data;
@@ -392,11 +395,11 @@
         for (let i = 3; i < userData.length; i += 4) {
             const userAlpha = userData[i];
             const stdAlpha = standardData[i];
-            if (stdAlpha > 50) {
+            if (stdAlpha > 30) {
                 totalStandardPixels++;
-                if (userAlpha > 50) hitPixels++; 
+                if (userAlpha > 30) hitPixels++; 
             } else {
-                if (userAlpha > 50) overflowPixels++;
+                if (userAlpha > 30) overflowPixels++;
             }
         }
         const hitRate = hitPixels / totalStandardPixels;
