@@ -352,7 +352,8 @@
     }
 
     function checkScore() {
-        const target = userCharacters[currentIndex].strokes;
+        const current = userCharacters[currentIndex];
+        const target = current.strokes;
         if (paths.length === target) {
             if (verifyWriting()) { 
                 userCharacters[currentIndex].completed = true;
@@ -360,11 +361,12 @@
                 saveProgress();
             } else {
                 showToast("不夠準確");
-                setTimeout(clearCanvas, 800);
             }
         } else if (paths.length > target) {
             showToast("筆劃太多");
-            setTimeout(clearCanvas, 800);
+            document.getElementById('current-strokes').classList.add('text-red-500');
+        } else {
+            document.getElementById('current-strokes').classList.remove('text-red-500');
         }
     }
 
@@ -457,7 +459,7 @@
         }, 1200);
     }
 
-    function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); paths = []; updateStrokeCount(); }
+    function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); paths = []; updateStrokeCount(); document.getElementById('current-strokes').classList.remove('text-red-500');}
     document.getElementById('clear-btn').onclick = clearCanvas;
     document.getElementById('undo-btn').onclick = () => { 
         paths.pop(); 
