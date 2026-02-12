@@ -70,6 +70,16 @@
         </div>
     </div>
 
+    <div id="logout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] hidden p-6">
+        <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xs text-center flex flex-col items-center">
+            <h2 class="text-xl font-cubic thick-border text-slate-700 mb-6">確定要登出嗎？</h2>
+            <div class="flex gap-4 w-full">
+                <button id="cancel-logout" class="flex-1 py-3 bg-slate-200 text-slate-600 rounded-2xl font-cubic thin-border hover:bg-slate-300 transition-all">取消</button>
+                <button id="confirm-logout-final" class="flex-1 py-3 bg-red-500 text-white rounded-2xl font-cubic thin-border shadow-lg shadow-red-200 hover:bg-red-600 active:scale-95 transition-all">登出</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 玩家資訊 -->
     <main id="main-content" class="container mx-auto px-8 py-8 hidden flex flex-col items-center">
     
@@ -188,11 +198,23 @@
          }
 
         const logoutBtn = document.getElementById('logout-btn');
+        const logoutModal = document.getElementById('logout-modal');
+        const cancelLogout = document.getElementById('cancel-logout');
+        const confirmLogoutFinal = document.getElementById('confirm-logout-final');
         logoutBtn.addEventListener('click', () => {
-            if (confirm('確定要登出嗎？')) {
-                localStorage.removeItem('studyLandUser');
-                localStorage.removeItem('userPermissions');
-                window.location.reload();
+            logoutModal.classList.remove('hidden');
+        });
+        cancelLogout.addEventListener('click', () => {
+            logoutModal.classList.add('hidden');
+        });
+        confirmLogoutFinal.addEventListener('click', () => {
+            localStorage.removeItem('studyLandUser');
+            localStorage.removeItem('userPermissions');
+            window.location.reload();
+        });
+        logoutModal.addEventListener('click', (e) => {
+            if (e.target === logoutModal) {
+                logoutModal.classList.add('hidden');
             }
         });
         
