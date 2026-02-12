@@ -59,16 +59,18 @@
         .grid {-webkit-overflow-scrolling: touch; overscroll-behavior: contain; -ms-overflow-style: none; scrollbar-width: none; touch-action: pan-y;}
         .grid::-webkit-scrollbar {display: none;}
 
-        /* NPC 互動 */
+        /* NPC 動畫 */
         @keyframes mini-bounce {
             0%, 100% { transform: translateY(-4px); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
             50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
         }
-        .npc-hover-animation:hover {
-            animation: mini-bounce 1s infinite !important;
-            cursor: pointer;
+        .animate-text-bounce {
+            animation: mini-bounce 1.2s infinite;
         }
-        .animate-text-bounce { animation: mini-bounce 1s infinite;}
+        .npc-auto-bounce {
+            animation: mini-bounce 1.2s infinite;
+            animation-delay: 0.2s;
+        }
         
     </style>
 </head>
@@ -130,7 +132,7 @@
         <!-- 歡迎動畫 WELCOME ANIMATION -->
         <header class="flex flex-col items-center text-center mb-6">
             <div class="relative mb-4">
-               <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-[140px] h-auto drop-shadow-md pointer-events-auto npc-hover-animation">
+               <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-[140px] h-auto drop-shadow-md pointer-events-auto npc-auto-bounce">
                <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border text-shadow-md tracking-widest animate-text-bounce">GO!</div>
             </div>
         </header>
