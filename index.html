@@ -33,9 +33,13 @@
         }
 
         .hidden { display: none !important; }
-        .no-preview {
-            -webkit-touch-callout: none; /* 禁止 safari 長按彈出選單 */
-            -webkit-user-select: none; /* 禁止選取 */
+
+        .no-touch {
+            -webkit-touch-callout: none; /* 禁止 Safari 長按彈出選單 */
+            -webkit-user-select: none;   /* 禁止文字選取 */
+            user-select: none;
+            -webkit-user-drag: none;     /* 禁止拖動元素 */
+            user-drag: none;           
         }
 
         .glass-panel { 
@@ -57,7 +61,7 @@
     <!-- 登入彈窗 LOGIN WINDOW -->
     <div id="login-overlay" class="fixed z-[100] inset-0 bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
         <div class="bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center w-full max-w-xs p-8">
-            <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="w-20 h-20 mb-6" draggable="false">
+            <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-20 h-20 mb-6">
             <h2 class="font-cubic text-slate-700 text-xl thick-border mb-4">登入</h2>
             <input type="text" id="username-input" placeholder="請輸入你的名字" class="rounded-2xl border-2 border-slate-100 font-cubic thin-border text-center w-full px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
             <button id="confirm-user" class="bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border w-full py-4 hover:bg-[#2da9e6] active:scale-95 transition-all">進入遊戲</button>
@@ -74,46 +78,51 @@
             </div>
         </div>
     </div>
-    
-    <!-- 玩家資訊 -->
-    <main id="main-content" class="container mx-auto px-8 py-8 hidden flex flex-col items-center">
 
-    <div class="w-full max-w-sm mb-8 flex items-center justify-between px-1">
-        <div class="flex items-center gap-2">
-            <div class="glass-panel px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
-                <span class="text-[10px] text-slate-500 font-cubic thin-border tracking-wider">探險家</span>
-                <span id="user-display-name" class="text-sm font-cubic thin-border text-slate-700">載入中...</span>
+    <!-- 主要內容 -->
+    <main id="main-content" class="hidden container flex flex-col items-center mx-auto px-8 py-8">
+
+        <!-- 頂欄 TOP -->
+        <nav class="w-full max-w-sm flex justify-between mb-8">
+            <!-- 左邊群組 TOP LEFT-->
+            <div class="flex items-center gap-2">
+                <!-- 用户名稱 USERNAME -->
+                <div class="glass-panel rounded-full shadow-md flex items-center px-4 py-1.5 gap-2">
+                    <span class="font-cubic text-slate-500 text-[10px] thin-border tracking-wider">玩家</span>
+                    <span id="user-display-name" class="font-cubic text-slate-700 text-sm thin-border">載入中...</span>
+                </div>
+                <!-- 登出按鈕 LOGOUT BUTTON -->
+                <button id="logout-btn" class="glass-panel rounded-full shadow-md text-red-500 p-2 hover:bg-white/20 active:scale-95 transition-all" title="登出">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
             </div>
-            <button id="logout-btn" class="p-2 glass-panel rounded-full text-red-500 hover:bg-white/20 active:scale-90 transition-all shadow-lg" title="登出">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            </button>
-        </div>
-    </div>
+        </nav>
 
-    <header class="text-center mb-10 flex flex-col items-center">
-        <div class="relative mb-4">
-           <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="w-[140px] h-auto drop-shadow-md select-none pointer-events-none" draggable="false">
-           <div class="absolute -top-1 -right-5 text-[25px] text-shadow-sm font-cubic thick-border text-white animate-bounce tracking-widest">GO!</div>
-        </div>
-    </header>
+        <!-- 歡迎動畫 WELCOME ANIMATION -->
+        <header class="flex flex-col items-center text-center mb-10">
+            <div class="relative mb-4">
+               <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch pointer-events-none w-[140px] h-auto drop-shadow-md">
+               <div class="absolute -top-1 -right-5 font-cubic text-white text-[25px] thick-border text-shadow-md tracking-widest animate-bounce">GO!</div>
+            </div>
+        </header>
 
     <div class="grid grid-cols-2 gap-x-8 gap-y-4 w-full max-w-[420px] px-4">
         <!-- 島嶼 -->
-        <a id="btn-island" href="island.html" draggable="false" class="no-preview group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <a id="btn-island" href="island.html" draggable="false" class="no-touch group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
             <div class="bg-lime-100 h-24 rounded-[20px] mb-2 flex items-center justify-center overflow-hidden">
                 <img src="https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/picture.svg" alt="我的島嶼" class="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300" draggable="false">
             </div>
             <h3 class="font-cubic text-sm thin-border text-slate-800 text-center">我的島嶼</h3>
         </a>
         <!-- 遊戲一 -->
-        <a id="btn-writing" href="writing.html" draggable="false" class="no-preview group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <a id="btn-writing" href="writing.html" draggable="false" class="no-touch group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
             <div class="bg-purple-100 h-24 rounded-[20px] mb-2 flex items-center justify-center overflow-hidden">
                 <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/man_icon.png" alt="單字練習" class="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300" draggable="false">
             </div>
             <h3 class="font-cubic text-sm thin-border text-slate-800 text-center">單字練習</h3>
         </a>
         <!-- 遊戲二 -->
-        <a id="btn-matching" href="matching.html" draggable="false" class="no-preview group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <a id="btn-matching" href="matching.html" draggable="false" class="no-touch group bg-white backdrop-blur-md p-3 rounded-[25px] shadow-xl hover:-translate-y-1 transition-all duration-300">
             <div class="bg-yellow-100 h-24 rounded-[20px] mb-2 flex items-center justify-center overflow-hidden">
                 <img src="https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/waffle.svg" alt="圖文配對" class="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300" draggable="false">
             </div>
@@ -121,7 +130,7 @@
         </a>
         
     </div>
-</main>
+</main> 
 
     <script>
 
@@ -132,6 +141,10 @@
         const confirmBtn = document.getElementById('confirm-user');
         const userDisplayName = document.getElementById('user-display-name');
 
+        /* 禁止選取及拖動 */
+        document.querySelectorAll('.no-touch').forEach(el => {
+            el.addEventListener('dragstart', (e) => e.preventDefault());
+        });
         /* 禁止雙指縮放 */
         document.addEventListener('gesturestart', function(e) { e.preventDefault();}, false);
         /* 禁止雙擊縮放 */
