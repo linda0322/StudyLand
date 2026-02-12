@@ -4,6 +4,9 @@
   
 <id="">
 <class="">
+
+輸入框
+<input type="text" id="" placeholder="文字" class="">
     
 
 圖片 <img src="link" alt="text" class="">
