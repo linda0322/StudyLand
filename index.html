@@ -131,7 +131,7 @@
         </header>
 
         <!-- 遊戲選單 GAME MENU -->
-        <div id="grid" class="w-full max-w-[420px] max-h-[60vh] grid grid-cols-2 gap-x-8 gap-y-4 px-2 pt-4 -mt-4 overflow-y-auto">
+        <div id="grid" class="w-full max-w-[420px] max-h-[60vh] grid grid-cols-2 gap-x-8 gap-y-4 px-4 pt-4 pb-4 -mt-4 overflow-y-auto">
             
             <!-- 我的島嶼 -->
             <a id="btn-island" href="island.html" class="no-touch group bg-white rounded-[25px] shadow-xl p-3 hover:-translate-y-1 active:scale-95 transition-all duration-300">
@@ -178,8 +178,8 @@
             if (isControlOrCommand && (e.key === '+' || e.key === '-' || e.key === '=' || e.code === 'NumpadAdd' || e.code === 'NumpadSubtract' || e.code === 'Digit0'))
             {e.preventDefault();}});
         /* 禁止頁面捲動（排除遊戲選單） */
-        document.addEventListener('touchmove', function(e) {const menu = getElementById('.grid');
-            if (menu && menu.contains(e.target){ if (menu.scrollHeight > menu.clientHeight){return;}}
+        document.addEventListener('touchmove', function(e) {const menu = getElementById('grid');
+            if (menu && menu.contains(e.target)){ if (menu.scrollHeight > menu.clientHeight){return;}}
             if (e.cancelable) e.preventDefault();
         }, { passive: false });
 
