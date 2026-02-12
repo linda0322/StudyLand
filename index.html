@@ -153,41 +153,29 @@
     </main> 
 
     <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymY386bSwBIAOn7PAvPUkzko6hMGSGghnU1lYDwjVoGe4Mngyb3vr-JpscirmLq-an/exec';
 
         // 禁止畫面互動 TOUCH
         /* 選取及拖動 */
-        document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
-        /* 手指縮放 */
-        document.addEventListener('gesturestart', function(e) { e.preventDefault();}, false);
-        /* 點擊縮放 */
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function(e) {const now = (new Date()).getTime(); 
-            if (now - lastTouchEnd <= 300) {e.preventDefault();} lastTouchEnd = now;}, false);
-        document.addEventListener('touchstart', function(e) {if (e.touches.length > 1) {e.preventDefault();}}, { passive: false });
-        /* 滑鼠或觸控板縮放 */
-        document.addEventListener('wheel', function(e) {if (e.ctrlKey) {e.preventDefault();}}, { passive: false });
-        /* 鍵盤縮放 */
-        document.addEventListener('keydown', function(e) {const isControlOrCommand = e.ctrlKey || e.metaKey;
-            if (isControlOrCommand && (e.key === '+' || e.key === '-' || e.key === '=' || e.code === 'NumpadAdd' || e.code === 'NumpadSubtract' || e.code === 'Digit0'))
-            {e.preventDefault();}});
-        /* 禁止頁面捲動（排除遊戲選單） */
+        document.querySelectorAll('.no-touch').forEach(el => { el.addEventListener('dragstart', (e) => e.preventDefault());});
+        /* 手指與鍵盤縮放 */
+        const preventZoom = (e) => { if (e.touches?.length > 1 || e.ctrlKey || e.metaKey) { if (e.cancelable) e.preventDefault();}};
+            ['touchstart', 'wheel', 'keydown', 'gesturestart'].forEach(type => { document.addEventListener(type, preventZoom, { passive: false });});
+        /* 雙擊縮放 */
+        let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
+        /* 捲動控制 */
         let startY = 0;
-        document.addEventListener('touchstart', function(e) {startY = e.touches[0].pageY;}, { passive: false });
-        document.addEventListener('touchmove', function(e) {
-            const menu = document.getElementById('grid'); const isScrollingMenu = menu && menu.contains(e.target);
-            if (isScrollingMenu) {
-                const currentY = e.touches[0].pageY; const scrollTop = menu.scrollTop; const scrollHeight = menu.scrollHeight; const clientHeight = menu.clientHeight;
-                /* 防止重新整理 */
-                if (scrollTop <= 0 && currentY > startY) {if (e.cancelable) e.preventDefault(); return;}
-                /* 防止背景位移 */
-                if (scrollTop + clientHeight >= scrollHeight && currentY < startY) {if (e.cancelable) e.preventDefault(); return;}
-                return;
-            }if (e.cancelable) e.preventDefault();
-        }, { passive: false });
+        document.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; }, { passive: false });
+        document.addEventListener('touchmove', (e) => { const menu = document.getElementById('grid'); const path = e.composedPath();
+                                                       if (menu && path.includes(menu)) { const { scrollTop, scrollHeight, clientHeight } = menu;
+                                                                                          const deltaY = startY - e.touches[0].pageY;
+                                                                                          const isAtTop = scrollTop <= 0 && deltaY < 0;
+                                                                                          const isAtBottom = scrollTop + clientHeight >= scrollHeight && deltaY > 0;
+                                                                                          if (!isAtTop && !isAtBottom) return;
+                                                                                        }
+                                                       if (e.cancelable) e.preventDefault();},{ passive: false });
 
         // 登入 LOGIN
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymY386bSwBIAOn7PAvPUkzko6hMGSGghnU1lYDwjVoGe4Mngyb3vr-JpscirmLq-an/exec';
-        
         const loginOverlay = document.getElementById('login-overlay');
         const mainContent = document.getElementById('main-content');
         const usernameInput = document.getElementById('username-input');
@@ -199,7 +187,7 @@
         loginError.addEventListener('click', (e) => {if (e.target === loginError) {loginError.classList.add('hidden')}});
         backBtn.addEventListener('click', () => {loginError.classList.add('hidden')});
                                             
-            /* 載入 HTML --> 檢查本地資料 --> 獲取雲端資料 --> 執行主頁功能（隱藏登入彈窗） */
+        /* 載入網頁 --> 檢查快取 --> 連接雲端 --> 執行主頁 */
             /* 自動登入 */
             window.addEventListener('DOMContentLoaded', () => {
                 const savedName = localStorage.getItem('studyLandUser');
@@ -212,17 +200,15 @@
                 if (!username) {
                     loginError.classList.remove('hidden'); confirmBtn.innerText = "進入遊戲"; return;}
                 confirmBtn.innerText = "載入中...";
-                try {
-                    const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
-                    const data = await response.json(); 
-                    const permissions = data.permissions; 
-                    localStorage.setItem('studyLandUser', username);
-                    localStorage.setItem('userPermissions', permissions);
-                    showMainPage(username, permissions);
+                try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
+                     const data = await response.json(); 
+                     const permissions = data.permissions; 
+                     localStorage.setItem('studyLandUser', username);
+                     localStorage.setItem('userPermissions', permissions);
+                     showMainPage(username, permissions);
                 } catch (error) {console.error('Error:', error);
-                    localStorage.setItem('studyLandUser', username); /** 顯示玩家名稱 **/
-                    showMainPage(username, ""); /** 顯示空白遊戲選單 **/
-                }
+                     localStorage.setItem('studyLandUser', username); /** 顯示玩家名稱 **/
+                     showMainPage(username, "");} /** 顯示空白遊戲選單 **/
             });
         
         // 主頁功能 MAIN PAGE FUNCTION
@@ -233,12 +219,10 @@
             const allGames = {
                 'island': document.getElementById('btn-island'),
                 'writing': document.getElementById('btn-writing'),
-                'matching': document.getElementById('btn-matching'),
-            };
+                'matching': document.getElementById('btn-matching'),};
             Object.values(allGames).forEach(el => el?.classList.add('hidden')); /** 隱藏所有遊戲 **/
             if (permissions) {const pList = permissions.split(','); 
-                pList.forEach(p => {const key = p.trim(); if (allGames[key]) {allGames[key].classList.remove('hidden');}}); /** 檢查雲端權限 **/
-            }
+                pList.forEach(p => {const key = p.trim(); if (allGames[key]) {allGames[key].classList.remove('hidden');}});} /** 檢查雲端權限 **/
             window.scrollTo(0, 0); /** 將畫面拉回左上角 **/
          }
 
