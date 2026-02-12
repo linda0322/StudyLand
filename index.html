@@ -59,9 +59,11 @@
         .grid {-webkit-overflow-scrolling: touch; overscroll-behavior: contain; -ms-overflow-style: none; scrollbar-width: none; touch-action: pan-y;}
         .grid::-webkit-scrollbar {display: none;}
 
+        /* NPC 互動 */
         @keyframes mini-bounce {0%, 100% {transform: translateY(-4px); animation-timing-function: cubic-bezier(0.8, 0, 1, 1);} /* 停頓 */
                                 50% {transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); /* 落地 */}
         }
+        .animate-mini-bounce {animation: mini-bounce 1s infinite;}
         
     </style>
 </head>
