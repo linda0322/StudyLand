@@ -27,7 +27,7 @@
             margin: 0;
             padding: 0;
             scroll-behavior: auto !important;
-            -webkit-user-select: none
+            -webkit-user-select: none;
             touch-action: none;
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23BAE6FF'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, auto;
         }
@@ -63,6 +63,7 @@
             -webkit-overflow-scrolling: touch;
             -ms-overflow-style: none;
             scrollbar-width: none;
+            overscroll-behavior: contain;
         }
         .grid::-webkit-scrollbar {display: none;}
     
@@ -120,7 +121,7 @@
         </header>
 
         <!-- 遊戲選單 GAME MENU -->
-        <div id="grid" class="w-full max-w-[420px] max-h-[60vh] grid grid-cols-2 gap-x-8 gap-y-4 px-4 overflow-y-auto">
+        <div id="grid" class="w-full max-w-[420px] max-h-[60vh] grid grid-cols-2 gap-x-8 gap-y-4 px-8 pt-4 -mt-4 overflow-y-auto">
             
             <!-- 我的島嶼 -->
             <a id="btn-island" href="island.html" class="no-touch group bg-white rounded-[25px] shadow-xl p-3 hover:-translate-y-1 active:scale-95 transition-all duration-300">
