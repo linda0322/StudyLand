@@ -1,0 +1,57 @@
+<div> .... </> division
+  <h1/h2/h3> heading
+  <p> paragraph
+  
+<id="">
+<class="">
+    
+
+圖片 <img src="link" alt="text" class="">
+------------------------------
+CLASS
+------------------------------
+<背景 bg->
+
+    white 白色
+    #1dc5fd 藍天背景
+    #38C0FF 天藍按鈕
+
+https://tailscan.com/colors
+------------------------------
+<陰影 shadow->
+
+    sm < md < lg < xl < 2xl < ...
+    inner 內陰影
+------------------------------
+<圓角 rounded-[px]>
+------------------------------
+<文字 text->
+  
+    position: center 置中
+
+    size: sm < md < lg < xl < 2xl < ...
+------------------------------
+<物件 items->
+
+    position: center 置中
+------------------------------
+<寬/長度 w/h->
+
+    w-full: 小螢幕(手機)預設寬度 100%
+
+    上限
+    max-w-none < max-w-xs (320px 20rem) < max-w-sm (384px 24rem) < max-w-md (448px 28rem)
+
+    size (w/h-) *4的倍數 : ... < 16 (64px 4rem) < 20 (80px 5rem) < 24 (96px 6rem) < ...
+------------------------------
+<LAYOUT>
+
+    <內邊距 p(padding)-[0]>
+
+    <彈性 flex>
+    flex-col: 元素垂直堆疊
+    flex-row: 元素水平堆疊
+
+    <邊界 margin->
+    mb(marginal bottom)-[0]
+------------------------------
