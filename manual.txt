@@ -6,7 +6,10 @@
 <class="">
 
 輸入框
-<input type="text" id="" placeholder="文字" class="">
+<input type="text" id="名稱" placeholder="顯示文字" class="outline-none focus:border-">
+
+按鈕
+  文字按鈕 <button id="名稱" class="">顯示文字</button>
     
 
 圖片 <img src="link" alt="text" class="">
@@ -27,6 +30,12 @@ https://tailscan.com/colors
     inner 內陰影
 ------------------------------
 <圓角 rounded-[px]>
+------------------------------
+<邊界 border->
+
+    size: border-[0(px)]
+    color: border-[color]
+    
 ------------------------------
 <文字 text->
   
@@ -50,6 +59,7 @@ https://tailscan.com/colors
 <LAYOUT>
 
     <內邊距 p(padding)-[0]>
+    <左右邊距 px-[0]>    
 
     <彈性 flex>
     flex-col: 元素垂直堆疊
@@ -58,3 +68,11 @@ https://tailscan.com/colors
     <邊界 margin->
     mb(marginal bottom)-[0]
 ------------------------------
+<EFFECT>
+    
+    懸停 <hover: >
+    按住 <active: >
+
+    scale-[縮小：95,90,75,50][放大：105,110,125,150]
+
+    transition-all: 平滑動畫過渡
