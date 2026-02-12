@@ -82,6 +82,14 @@
         </div>
     </div>
 
+    <!-- 登入錯誤彈窗 LOGIN ERROR WINDOW -->
+    <div id="login-error" class="fixed hidden z-[150] inset-0 bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
+        <div class="bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center w-full max-w-xs p-8">
+            <h2 class="font-cubic text-slate-700 text-xl thick-border mb-4">請輸入你的名字</h2>
+            <button id="back-to-login" class="bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border w-full py-4 hover:bg-[#2da9e6] active:scale-95 transition-all">返回</button>
+        </div>
+    </div>
+
     <!-- 登出彈窗 LOGOUT WINDOW -->
     <div id="logout-modal" class="fixed hidden z-[200] inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-6">
         <div class="bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center w-full max-w-xs p-8 ">
@@ -121,7 +129,7 @@
         </header>
 
         <!-- 遊戲選單 GAME MENU -->
-        <div id="grid" class="w-full max-w-[420px] max-h-[60vh] grid grid-cols-2 gap-x-8 gap-y-4 px-8 pt-4 -mt-4 overflow-y-auto">
+        <div id="grid" class="w-full max-w-[420px] max-h-[60vh] grid grid-cols-2 gap-x-8 gap-y-4 px-2 pt-4 -mt-4 overflow-y-auto">
             
             <!-- 我的島嶼 -->
             <a id="btn-island" href="island.html" class="no-touch group bg-white rounded-[25px] shadow-xl p-3 hover:-translate-y-1 active:scale-95 transition-all duration-300">
@@ -151,136 +159,95 @@
 
     <script>
 
+        // 禁止畫面互動 TOUCH
+        /* 選取及拖動 */
+        document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
+        /* 手指縮放 */
+        document.addEventListener('gesturestart', function(e) { e.preventDefault();}, false);
+        /* 點擊縮放 */
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {const now = (new Date()).getTime(); 
+            if (now - lastTouchEnd <= 300) {e.preventDefault();} lastTouchEnd = now;}, false);
+        document.addEventListener('touchstart', function(e) {if (e.touches.length > 1) {e.preventDefault();}}, { passive: false });
+        /* 滑鼠或觸控板縮放 */
+        document.addEventListener('wheel', function(e) {if (e.ctrlKey) {e.preventDefault();}}, { passive: false });
+        /* 鍵盤縮放 */
+        document.addEventListener('keydown', function(e) {const isControlOrCommand = e.ctrlKey || e.metaKey;
+            if (isControlOrCommand && (e.key === '+' || e.key === '-' || e.key === '=' || e.code === 'NumpadAdd' || e.code === 'NumpadSubtract' || e.code === 'Digit0'))
+            {e.preventDefault();}});
+        /* 禁止頁面捲動（排除遊戲選單） */
+        document.addEventListener('touchmove', function(e) {const menu = document.querySelector('.grid');
+            if (menu && menu.contains(e.target)) {return;} e.preventDefault();}, { passive: false }); 
+
+        // 登入 LOGIN
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymY386bSwBIAOn7PAvPUkzko6hMGSGghnU1lYDwjVoGe4Mngyb3vr-JpscirmLq-an/exec';
         const loginOverlay = document.getElementById('login-overlay');
         const mainContent = document.getElementById('main-content');
         const usernameInput = document.getElementById('username-input');
         const confirmBtn = document.getElementById('confirm-user');
         const userDisplayName = document.getElementById('user-display-name');
-
-        /* 禁止選取及拖動 */
-        document.querySelectorAll('.no-touch').forEach(el => {
-            el.addEventListener('dragstart', (e) => e.preventDefault());
-        });
-        /* 禁止雙指縮放 */
-        document.addEventListener('gesturestart', function(e) { e.preventDefault();}, false);
-        /* 禁止雙擊縮放 */
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function(e) {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-        /* 禁止多指縮放 */
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        /* 禁止滑鼠或觸控板縮放 */
-        document.addEventListener('wheel', function(e) {
-            if (e.ctrlKey) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        /* 禁止鍵盤縮放 */
-        document.addEventListener('keydown', function(e) {
-            const isControlOrCommand = e.ctrlKey || e.metaKey;
-            if (isControlOrCommand && (e.key === '+' || e.key === '-' || e.key === '=' || e.code === 'NumpadAdd' || e.code === 'NumpadSubtract' || e.code === 'Digit0')) 
-            {e.preventDefault();}
-        });
-        /* 禁止頁面捲動（排除遊戲選單） */
-        document.addEventListener('touchmove', function(e) {
-            const menu = document.querySelector('.grid');
-            if (menu && menu.contains(e.target)) {
-                return;
-            }
-            e.preventDefault();
-        }, { passive: false }); 
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedName = localStorage.getItem('studyLandUser');
-            const savedPermissions = localStorage.getItem('userPermissions');
-            if (savedName) {
-                showMainPage(savedName, savedPermissions);
-            }
-        });
-
-        confirmBtn.addEventListener('click', async () => {
-            const username = usernameInput.value.trim();
-            if (!username) {
-                alert('你的名字是甚麼？');
-                return;
-            }
-
-            confirmBtn.innerText = "載入中...";
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ username: username })
-                });
-                const data = await response.json(); 
-                const permissions = data.permissions; 
-                localStorage.setItem('studyLandUser', username);
-                localStorage.setItem('userPermissions', permissions);
-                showMainPage(username, permissions);
-            } catch (error) {
-                console.error('Error:', error);
-                localStorage.setItem('studyLandUser', username);
-                showMainPage(username, "");
-            }
-        });
-
+        const loginError = document.getElementById('login-error');
+        
+            /* 載入 HTML --> 檢查本地資料 --> 獲取雲端資料 --> 執行主頁功能（隱藏登入彈窗） */
+            /* 自動登入 */
+            window.addEventListener('DOMContentLoaded', () => {
+                const savedName = localStorage.getItem('studyLandUser');
+                const savedPermissions = localStorage.getItem('userPermissions');
+                if (savedName) {showMainPage(savedName, savedPermissions);}
+            });
+            /* 重新登入 */
+            confirmBtn.addEventListener('click', async () => {
+                const username = usernameInput.value.trim();
+                if (!username) { 
+                    {loginError.classList.add('hidden'); loginError.addEventListener('click', (e) => {if (e.target === loginError) {loginError.classList.add('hidden');}})}
+                    return;}
+                confirmBtn.innerText = "載入中...";
+                try {
+                    const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
+                    const data = await response.json(); 
+                    const permissions = data.permissions; 
+                    localStorage.setItem('studyLandUser', username);
+                    localStorage.setItem('userPermissions', permissions);
+                    showMainPage(username, permissions);
+                } catch (error) {console.error('Error:', error);
+                    localStorage.setItem('studyLandUser', username); /** 顯示玩家名稱 **/
+                    showMainPage(username, ""); /** 顯示空白遊戲選單 **/
+                }
+            });
+        
+        // 主頁功能 MAIN PAGE FUNCTION
         function showMainPage(name, permissions) {
             userDisplayName.textContent = name;
             loginOverlay.classList.add('hidden');
             mainContent.classList.remove('hidden');
-
             const allGames = {
+                'island': document.getElementById('btn-island'),
                 'writing': document.getElementById('btn-writing'),
                 'matching': document.getElementById('btn-matching'),
-                'island': document.getElementById('btn-island')
             };
-
-            Object.values(allGames).forEach(el => el?.classList.add('hidden'));
-
-            if (permissions) {
-                const pList = permissions.split(',');
-                pList.forEach(p => {
-                    const key = p.trim();
-                    if (allGames[key]) {
-                        allGames[key].classList.remove('hidden');
-                    }
-                });
+            Object.values(allGames).forEach(el => el?.classList.add('hidden')); /** 隱藏所有遊戲 **/
+            if (permissions) {const pList = permissions.split(','); 
+                pList.forEach(p => {const key = p.trim(); if (allGames[key]) {allGames[key].classList.remove('hidden');}}); /** 檢查雲端權限 **/
             }
-            
-            window.scrollTo(0, 0);
+            window.scrollTo(0, 0); /** 將畫面拉回左上角 **/
          }
 
+        // 登出 LOGOUT
         const logoutBtn = document.getElementById('logout-btn');
         const logoutModal = document.getElementById('logout-modal');
         const cancelLogout = document.getElementById('cancel-logout');
         const confirmLogoutFinal = document.getElementById('confirm-logout-final');
-        logoutBtn.addEventListener('click', () => {
-            logoutModal.classList.remove('hidden');
-        });
-        cancelLogout.addEventListener('click', () => {
-            logoutModal.classList.add('hidden');
-        });
+
+        logoutBtn.addEventListener('click', () => {logoutModal.classList.remove('hidden');});
+        cancelLogout.addEventListener('click', () => {logoutModal.classList.add('hidden');});
+        
         confirmLogoutFinal.addEventListener('click', () => {
-            localStorage.removeItem('studyLandUser');
-            localStorage.removeItem('userPermissions');
+            localStorage.removeItem('studyLandUser'); localStorage.removeItem('userPermissions');
             window.location.reload();
         });
-        logoutModal.addEventListener('click', (e) => {
-            if (e.target === logoutModal) {
-                logoutModal.classList.add('hidden');
-            }
-        });
         
+        logoutModal.addEventListener('click', (e) => {if (e.target === logoutModal) {logoutModal.classList.add('hidden');}});
+
     </script>
 </body>
 </html>
