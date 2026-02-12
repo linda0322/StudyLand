@@ -189,7 +189,7 @@
         const loginError = document.getElementById('login-error');
         const backBtn = document.getElementById('back-to-login');
 
-        loginError.addEventListener('click', (e) => {if (e.target === loginError) {loginError.classList.add('hidden')}};
+        loginError.addEventListener('click', (e) => {if (e.target === loginError) {loginError.classList.add('hidden')}});
         backBtn.addEventListener('click', () => {loginError.classList.add('hidden')});
                                             
             /* 載入 HTML --> 檢查本地資料 --> 獲取雲端資料 --> 執行主頁功能（隱藏登入彈窗） */
@@ -203,7 +203,7 @@
             confirmBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) {
-                    loginError.classList.remove('hidden'); return;}
+                    loginError.classList.remove('hidden'); confirmBtn.innerText = "進入遊戲"; return;}
                 confirmBtn.innerText = "載入中...";
                 try {
                     const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
