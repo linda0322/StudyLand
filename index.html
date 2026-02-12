@@ -123,7 +123,14 @@
 </main>
 
     <script>
-        
+
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymY386bSwBIAOn7PAvPUkzko6hMGSGghnU1lYDwjVoGe4Mngyb3vr-JpscirmLq-an/exec';
+        const loginOverlay = document.getElementById('login-overlay');
+        const mainContent = document.getElementById('main-content');
+        const usernameInput = document.getElementById('username-input');
+        const confirmBtn = document.getElementById('confirm-user');
+        const userDisplayName = document.getElementById('user-display-name');
+
         /* 禁止雙指縮放 */
         document.addEventListener('gesturestart', function(e) { e.preventDefault();}, false);
         /* 禁止雙擊縮放 */
@@ -141,14 +148,17 @@
                 e.preventDefault();
             }
         }, { passive: false });
-        
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymY386bSwBIAOn7PAvPUkzko6hMGSGghnU1lYDwjVoGe4Mngyb3vr-JpscirmLq-an/exec';
-        
-        const loginOverlay = document.getElementById('login-overlay');
-        const mainContent = document.getElementById('main-content');
-        const usernameInput = document.getElementById('username-input');
-        const confirmBtn = document.getElementById('confirm-user');
-        const userDisplayName = document.getElementById('user-display-name');
+        /* 禁止滑鼠縮放 */
+        document.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        /* 禁止鍵盤縮放 */
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.code === 'NumpadAdd' || e.code === 'NumpadSubtract' || e.code === 'Digit0')) 
+            {e.preventDefault();}
+        });
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedName = localStorage.getItem('studyLandUser');
