@@ -198,9 +198,7 @@
             /* 重新登入 */
             confirmBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
-                if (!username) { 
-                    {loginError.classList.add('hidden'); loginError.addEventListener('click', (e) => {if (e.target === loginError) {loginError.classList.add('hidden');}})}
-                    return;}
+                if (!username) {loginError.classList.remove('hidden'); {return; loginError.addEventListener('click', (e) => {if (e.target === loginError) {loginError.classList.add('hidden');}})}};
                 confirmBtn.innerText = "載入中...";
                 try {
                     const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
