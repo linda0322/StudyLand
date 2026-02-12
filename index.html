@@ -60,10 +60,11 @@
         .grid::-webkit-scrollbar {display: none;}
 
         /* NPC 互動 */
-        @keyframes mini-bounce {0%, 100% {transform: translateY(-4px); animation-timing-function: cubic-bezier(0.8, 0, 1, 1);}
-                                50% {transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1);}
+        @keyframes mini-bounce {
+            0%, 100% { transform: translateY(-4px); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+            50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
         }
-        .animate-mini-bounce {animation: mini-bounce 1s infinite; will-change: transform;}
+        .animate-mini-bounce { animation: mini-bounce 1s infinite;}
         
     </style>
 </head>
@@ -125,7 +126,7 @@
         <!-- 歡迎動畫 WELCOME ANIMATION -->
         <header class="flex flex-col items-center text-center mb-6">
             <div class="relative mb-4">
-               <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-[140px] h-auto drop-shadow-md hover:animate-mini-bounce transition-transform">
+               <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-[140px] h-auto drop-shadow-md pointer-events-auto hover:animate-mini-bounce transition-all">
                <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border text-shadow-md tracking-widest animate-bounce">GO!</div>
             </div>
         </header>
