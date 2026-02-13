@@ -63,6 +63,12 @@
         @keyframes float-loop {0%, 100% {transform: translateY(-2px); animation-timing-function: ease-in-out;} 50% {transform: translateY(2px); animation-timing-function: ease-in-out;}}
         .animate-text-bounce {animation: float-loop 3s infinite;}
         .npc-auto-bounce {animation: float-loop 3s infinite; animation-delay: -1.5s; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.1)); transition: filter 1.5s ease-in-out;}
+
+        /* 手機橫屏禁止 */
+        #orientation-warning {display: none;}
+        @media screen and (max-width: 1023px) and (orientation: landscape) {#orientation-warning {display: flex;} body {overflow: hidden;}}
+        @keyframes phone-rotate {0%, 10% {transform: rotate(90deg);} 40%, 60% {transform: rotate(0deg);} 90%, 100% {transform: rotate(90deg);}}
+        .animate-phone-rotate {animation: phone-rotate 2s ease-in-out infinite;}
         
     </style>
 </head>
@@ -71,6 +77,15 @@
     
     <!-- 背景圖 BACKGROUND -->
     <div class="bg-layer"></div>
+
+    <!-- 手機旋轉提示 -->
+    <div id="orientation-warning" class="fixed hidden z-[9999] inset-0 bg-[#1dc5fd] flex flex-col items-center justify-center text-white text-center p-6">
+        <div class="w-20 h-20 mb-4 animate-phone-rotate">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        </div>
+        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4 npc-auto-bounce">
+        <h2 class="font-cubic text-xl thick-border tracking-wider">旋轉畫面以繼續遊戲</h2>
+    </div>
 
     <!-- 登入彈窗 LOGIN WINDOW -->
     <div id="login-overlay" class="fixed z-[100] inset-0 bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
