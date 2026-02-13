@@ -14,7 +14,7 @@
             src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
             font-display: swap;
         }
-        body {font-family: 'Noto Sans TC', sans-serif; background-color: #1a1a1a; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; overscroll-behavior: none;
+        body {font-family: 'Noto Sans TC', sans-serif; background-color: #1a1a1a; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; overscroll-behavior: none; margin: 0; padding: 0;
              cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23BAE6FF'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, auto;
         }
         a, button, [role="button"] {
@@ -22,16 +22,9 @@
         }
 
         /* 手機畫面縮小 */
-        #game-stage { position: relative; height: 85vh; width: calc(85vh * 1.7778); max-height: calc(100vw / 1.7778); max-width: 100vw; 
-                      background-color: #333; overflow: hidden; margin: auto; display: flex; align-items: center; justify-content: center;}
-        #background-img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; z-index: 1;}
-        nav .fixed { position: absolute !important; top: 5px; z-index: 100;}
-        nav .left-4 { calc(50% - (min(85vh * 1.7778, 100vw) / 2) + 10px); }
-        nav .right-4 { right: calc(50% - (min(85vh * 1.7778, 100vw) / 2) + 10px); }
-        @media screen and (max-width: 932px) and (orientation: landscape) {
-            body { transform: none !important; display: flex; align-items: center; justify-content: center;}
-            .glass-panel { transform: scale(0.8); }
-        }
+        .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
+        .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
+        @media screen and (max-width: 932px) and (orientation: landscape) {.glass-panel { transform: scale(0.7); transform-origin: top;}}
 
         /* 玻璃外框 */
         .glass-panel {background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
@@ -45,7 +38,7 @@
         #loading-screen.fade-out { opacity: 0; visibility: hidden; }
         
         /* 16:9 外框 FRAME */
-        #game-stage { position: relative; width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh; background-color: #333; overflow: hidden; }
+        #game-stage { position: relative; width: calc(70vh * 1.7778); height: 70vh; max-height: calc(95vw / 1.7778); max-width: 95vw; background-color: #333; overflow: hidden; margin: auto;}
         /* 島嶼背景圖 BACKGROUND IMAGE */
         #background-img { width: 100%; height: 100%; object-fit: fill; position: absolute; inset: 0; z-index: 1; pointer-events: none; user-select: none;}
         /* 拖曳物件 DRAGGABLE ITEMS */
@@ -90,37 +83,6 @@
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">請旋轉螢幕以進入島嶼</h2>
     </div>
 
-    <!-- 導覽及按鈕 BUTTONS -->
-    <nav>
-        <!-- 左邊群組 LEFT -->
-        <div class="fixed top-4 left-4 z-[100] flex items-center gap-3">
-            <!-- 返回主頁 MAIN PAGE -->
-            <button onclick="location.href='../index.html'" class="glass-panel p-2 rounded-full text-slate-500 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="返回">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-open-icon lucide-door-open"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg>
-            </button>
-            <!-- 島嶼選單及地點顯示 ISLAND MENU & LOCATION -->
-            <button onclick="toggleIslandMenu()" class="glass-panel group rounded-full text-slate-500 shadow-md flex items-center px-4 py-2 gap-3 hover:bg-white/20 active:scale-95 transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pinned-icon lucide-map-pinned group-hover:text-white transition-colors""><path d="M18 8c0 3.613-3.869 7.429-5.393 8.795a1 1 0 0 1-1.214 0C9.87 15.429 6 11.613 6 8a6 6 0 0 1 12 0"/><circle cx="12" cy="8" r="2"/><path d="M8.714 14h-3.71a1 1 0 0 0-.948.683l-2.004 6A1 1 0 0 0 3 22h18a1 1 0 0 0 .948-1.316l-2-6a1 1 0 0 0-.949-.684h-3.712"/></svg> 
-                <span id="island-title" class="text-[13px] text-slate-500 font-cubic thin-border text-center tracking-wider group-hover:text-white transition-colors"">將抵達...</span>
-            </button>     
-            <!-- 倉庫按鈕 WAREHOUSE BUTTON -->
-            <button onclick="toggleWarehouse()" class="glass-panel p-2 rounded-full text-slate-500 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="倉庫">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-warehouse-icon lucide-warehouse"><path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/></svg>
-            </button>
-        </div>
-        <!-- 右邊群組 RIGHT -->
-        <div class="fixed top-4 right-4 z-[100] flex items-center gap-3">
-            <!-- 儲存進度 SAVE -->
-            <button id="save-btn" onclick="saveData()" class="glass-panel p-2 rounded-full text-sky-700 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="儲存">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-            </button>
-            <!-- 重新整理 RELOAD -->
-            <button id="reload-btn" onclick="location.reload()" class="glass-panel p-2 rounded-full text-sky-700 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="重新整理">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            </button>  
-        </div>
-    </nav>
-
     <!-- 倉庫彈窗 WAREHOUSE WINDOW -->
     <div id="warehouse-window" class="fixed inset-0 z-[3000] bg-black/20 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-lg rounded-[30px] p-6 shadow-2xl relative">
@@ -154,6 +116,36 @@
     
     <!-- 16:9 外框及物件 FRAME & ITEMS -->
     <div id="game-stage">
+        <!-- 導覽及按鈕 BUTTONS -->
+        <nav>
+            <!-- 左邊群組 LEFT -->
+            <div class="fixed-controls-left">
+                <!-- 返回主頁 MAIN PAGE -->
+                <button onclick="location.href='../index.html'" class="glass-panel p-2 rounded-full text-slate-500 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="返回">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-open-icon lucide-door-open"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg>
+                </button>
+                <!-- 島嶼選單及地點顯示 ISLAND MENU & LOCATION -->
+                <button onclick="toggleIslandMenu()" class="glass-panel group rounded-full text-slate-500 shadow-md flex items-center px-4 py-2 gap-3 hover:bg-white/20 active:scale-95 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pinned-icon lucide-map-pinned group-hover:text-white transition-colors""><path d="M18 8c0 3.613-3.869 7.429-5.393 8.795a1 1 0 0 1-1.214 0C9.87 15.429 6 11.613 6 8a6 6 0 0 1 12 0"/><circle cx="12" cy="8" r="2"/><path d="M8.714 14h-3.71a1 1 0 0 0-.948.683l-2.004 6A1 1 0 0 0 3 22h18a1 1 0 0 0 .948-1.316l-2-6a1 1 0 0 0-.949-.684h-3.712"/></svg> 
+                    <span id="island-title" class="text-[13px] text-slate-500 font-cubic thin-border text-center tracking-wider group-hover:text-white transition-colors"">將抵達...</span>
+                </button>     
+                <!-- 倉庫按鈕 WAREHOUSE BUTTON -->
+                <button onclick="toggleWarehouse()" class="glass-panel p-2 rounded-full text-slate-500 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="倉庫">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-warehouse-icon lucide-warehouse"><path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/></svg>
+                </button>
+            </div>
+            <!-- 右邊群組 RIGHT -->
+            <div class="fixed-controls-right">
+                <!-- 儲存進度 SAVE -->
+                <button id="save-btn" onclick="saveData()" class="glass-panel p-2 rounded-full text-sky-700 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="儲存">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+                </button>
+                <!-- 重新整理 RELOAD -->
+                <button id="reload-btn" onclick="location.reload()" class="glass-panel p-2 rounded-full text-sky-700 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="重新整理">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                </button>  
+            </div>
+        </nav>
         <div id="background-layer"><img id="background-img" src="" alt="background"></div>
         <div id="items-layer"></div>
     </div>
