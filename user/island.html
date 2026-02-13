@@ -240,9 +240,10 @@
                 console.log(`正在部署 ${type}, 設定寬度為: ${config.width}`);
                 div.className = 'draggable';
                 div.id = id;
-                if (config && config.width) {
-                    if (config.width.includes('%')) {const percent = parseFloat(config.width) / 100; div.style.width = (1280 * percent) + 'px';} else {
-                        div.style.width = config.width;}} else {div.style.width = '150px'}
+                if (config && config.width) {const widthStr = String(config.width); if (widthStr.includes('%')) {
+                    const percent = parseFloat(widthStr) / 100; div.style.width = (1280 * percent) + 'px';
+                    } else {div.style.width = widthStr.includes('px') ? widthStr : widthStr + 'px';
+                    }} else {div.style.width = '150px';}
                 div.style.left = left + '%';
                 div.style.top = top + '%';
                 div.style.transform = 'translate(-50%, -50%)';
