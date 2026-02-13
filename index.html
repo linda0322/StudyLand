@@ -64,11 +64,11 @@
         .animate-text-bounce {animation: float-loop 3s infinite;}
         .npc-auto-bounce {animation: float-loop 3s infinite; animation-delay: -1.5s; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.1)); transition: filter 1.5s ease-in-out;}
 
-        /* 手機橫屏禁止 */
-        #orientation-warning {display: none;}
-        @media screen and (max-width: 1023px) and (orientation: landscape) {#orientation-warning {display: flex;} body {overflow: hidden;}}
-        @keyframes phone-rotate {0%, 10% {transform: rotate(90deg);} 40%, 60% {transform: rotate(0deg);} 90%, 100% {transform: rotate(90deg);}}
-        .animate-phone-rotate {animation: phone-rotate 2s ease-in-out infinite;}
+        /* 手機旋轉提示 */
+        #orientation-warning {display: none; position: fixed; inset: 0; z-index: 99999; background-color: #1dc5fd; flex-direction: column; align-items: center; justify-content: center;}
+        @media screen and (max-width: 1023px) and (orientation: landscape) {#orientation-warning {display: flex !important;} body {overflow: hidden !important;}}
+        @keyframes phone-rotate-left {0% { transform: rotate(0deg); } 30% { transform: rotate(-90deg); } 70% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); }}
+        .animate-phone-rotate {animation: phone-rotate-left 2s ease-in-out infinite;}
         
     </style>
 </head>
@@ -85,6 +85,13 @@
         </div>
         <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4 npc-auto-bounce">
         <h2 class="font-cubic text-xl thick-border tracking-wider">旋轉畫面以繼續遊戲</h2>
+    </div>
+
+    <div id="orientation-warning"><div class="w-20 h-20 mb-6 animate-phone-rotate flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+    </div>
+        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4 npc-auto-bounce">
+        <h2 class="font-cubic text-xl text-white thick-border tracking-wider">請將手機螢幕轉回直向</h2>
     </div>
 
     <!-- 登入彈窗 LOGIN WINDOW -->
@@ -259,6 +266,17 @@
         });
         
         logoutModal.addEventListener('click', (e) => {if (e.target === logoutModal) {logoutModal.classList.add('hidden');}});
+
+        // 手機旋轉提示
+        function handleOrientationChange() {
+            const warning = document.getElementById('orientation-warning');
+            const isLandscape = window.innerWidth > window.innerHeight;
+            const isMobileOrTablet = window.innerWidth < 1024;
+            if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}
+        }
+        window.addEventListener('resize', handleOrientationChange);
+        window.addEventListener('orientationchange', handleOrientationChange);
+        handleOrientationChange();
 
     </script>
 </body>
