@@ -259,10 +259,10 @@
                 console.log(`正在部署 ${type}, 設定寬度為: ${config.width}`);
                 div.className = 'draggable';
                 div.id = id;
-                if (config && config.width) {const widthStr = String(config.width); if (widthStr.includes('%')) {
-                    const percent = parseFloat(widthStr) / 100; div.style.width = (1280 * percent) + 'px';
-                    } else {div.style.width = widthStr.includes('px') ? widthStr : widthStr + 'px';
-                    }} else {div.style.width = '150px';}
+                if (config && config.width) {let widthStr = String(config.width); if (widthStr.includes('%')) {
+                    const percentValue = parseFloat(widthStr) / 100; const actualPixelWidth = 1280 * percentValue; div.style.width = actualPixelWidth + 'px';
+                    console.log(`物件 ${type} 寬度計算：1280 * ${percentValue} = ${actualPixelWidth}px`);} else {div.style.width = widthStr.includes('px') ? widthStr : widthStr + 'px';}} 
+                    else {div.style.width = '150px';}
                 div.style.left = left + '%';
                 div.style.top = top + '%';
                 div.style.transform = 'translate(-50%, -50%)';
