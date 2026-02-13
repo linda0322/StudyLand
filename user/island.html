@@ -25,6 +25,13 @@
         a, button, [role="button"] {
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
         }
+        
+        /* 禁止選取及拖動 */
+        .no-touch {
+            -webkit-touch-callout: none; /* 禁止彈出選單 */
+            -webkit-user-select: none; user-select: none; /* 禁止文字選取 */
+            -webkit-user-drag: none; user-drag: none; /* 禁止拖動元素 */
+        }
 
         
         .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
@@ -165,7 +172,7 @@
                 </button>  
             </div>
         </nav>
-        <div id="background-layer"><img id="background-img" src="" alt="background" draggable="false"></div>
+        <div id="background-layer"><img id="background-img" src="" alt="background" class="no-touch"></div>
         <div id="items-layer"></div>
     </div>
 
@@ -178,9 +185,28 @@
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPxLzM47qozl9CJxGjjf0wMdtPppx8Kt8R1caUnAQpCX-s3ol6lERYawriMQFv6p3a/exec'; 
 
-        // 捲動控制 SCROLL
+        // 禁止畫面互動 TOUCH
+        /* 捲動控制 */
         let startY = 0;
         document.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; }, { passive: false });
+        /* 選取及拖動 */
+        document.querySelectorAll('.no-touch').forEach(el => { el.addEventListener('dragstart', (e) => e.preventDefault());});
+        /* 手指與鍵盤縮放 */
+        const preventZoom = (e) => { if (e.touches?.length > 1 || e.ctrlKey || e.metaKey) { if (e.cancelable) e.preventDefault();}};
+            ['touchstart', 'wheel', 'keydown', 'gesturestart'].forEach(type => { document.addEventListener(type, preventZoom, { passive: false });});
+        /* 雙擊縮放 */
+        let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
+        /* 捲動控制 */
+        let startY = 0;
+        document.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; }, { passive: false });
+        document.addEventListener('touchmove', (e) => { const menu = document.getElementById('grid'); const path = e.composedPath();
+                                                       if (menu && path.includes(menu)) { const { scrollTop, scrollHeight, clientHeight } = menu;
+                                                                                          const deltaY = startY - e.touches[0].pageY;
+                                                                                          const isAtTop = scrollTop <= 0 && deltaY < 0;
+                                                                                          const isAtBottom = scrollTop + clientHeight >= scrollHeight && deltaY > 0;
+                                                                                          if (!isAtTop && !isAtBottom) return;
+                                                                                        }
+                                                       if (e.cancelable) e.preventDefault();},{ passive: false });
         
         const username = localStorage.getItem('studyLandUser');
         const urlParams = new URLSearchParams(window.location.search);
