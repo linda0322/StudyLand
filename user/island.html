@@ -446,7 +446,9 @@
         });
 
         window.addEventListener('load', async () => {autoScaleGame(); setTimeout(async () => {await initApp();}, 100);});
-
+        
+        document.getElementById('island-buttons-container').addEventListener('dragstart', function(event) { if (event.target.tagName.toLowerCase() === 'a' || event.target.tagName.toLowerCase() === 'img') {event.preventDefault();}}, false);
+        
     </script>
 </body>
 </html>
