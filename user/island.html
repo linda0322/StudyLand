@@ -31,7 +31,19 @@
         .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
         @media screen and (max-width: 932px) and (orientation: landscape) {#game-stage { height: 85vh; width: calc(85vh * 1.7778); }
                                                                            .glass-panel {transform: scale(0.75); transform-origin: top;}}
-
+        @media (max-width: 932px) {.fixed-controls-left, .fixed-controls-right {gap: 12px; top: 15px;}
+                                   .fixed-controls-left button, .fixed-controls-right button {padding: 10px;}
+                                   .fixed-controls-left svg, .fixed-controls-right svg {width: 24px; height: 24px;}
+                                   #island-title {font-size: 16px;}
+                                   .group.rounded-full {padding-left: 16px; padding-right: 16px; height: 48px;}
+                                  }
+        @media (max-width: 932px) {#warehouse-items {grid-template-columns: repeat(3, 1fr); gap: 12px;}
+                                   .inventory-item img {width: 60px; height: 60px;}
+                                   .inventory-item span {font-size: 12px;}
+                                   .tab-btn {padding: 8px 16px; font-size: 14px;}
+                                  }
+        
+    
         /* 玻璃外框 */
         .glass-panel {background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
         /* 字體 */
