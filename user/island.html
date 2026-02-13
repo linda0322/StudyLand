@@ -173,42 +173,39 @@
 
         // 載入雲端資料 CLOUD INFORMATION
         async function initApp() {
+            // 檢查登入狀態
             if (!username) { window.location.href = '../index.html'; return; }
+            // 紀錄開始時間（控制 Loading 遮罩顯示時長）
+            const startTime = Date.now();
+            // 設定島嶼
             const config = islandConfig[currentIslandId] || islandConfig['island_1'];
             document.getElementById('background-img').src = config.bg;
             document.getElementById('island-title').innerText = config.name;
-
-            //const startTime = Date.now();
-
             try {
-                /* 載入資產 */
-                const libResp = await fetch(`${SCRIPT_URL}?action=getLibrary`);
+                /* 載入基礎資料 */
+                const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`),
+                                                              fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
                 assetLibrary = await libResp.json();
-                /* 載入位置 */
-                const posResp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`);
                 const savedItems = await posResp.json();
-                const itemsLayer = document.getElementById('items-layer');
-                itemsLayer.innerHTML = '';
-                savedItems.forEach(item => {
-                    const assetType = item.id.replace('item_', '').split('_')[0];
-                    if (assetLibrary[assetType]) {
-                        createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);
-                    }
-                });
-                /* 載入島嶼及倉庫資料 */
-                loadIslandList();
-                refreshInventory();
-            } catch (err) {console.error("載入失敗:", err); showToast("連線失敗", "error");} 
-              finally {document.getElementById('loading-screen').classList.add('fade-out');}
+                /* 載入已儲存的物件 */
+                const itemsLayer = document.getElementById('items-layer'); itemsLayer.innerHTML = '';
+                if (Array.isArray(savedItems)) { savedItems.forEach(item => {
+                        /* ID 格式為「item_名稱_序號」*/
+                        const assetType = item.id.replace('item_', '').split('_')[0];
+                        if (assetLibrary[assetType]) {
+                            createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);}});
+                }
+                /* 載入選單與倉庫資訊 */
+                await loadIslandList(); await refreshInventory(); 
+            } catch (err) { console.error("載入失敗:", err); showToast("連線失敗，請檢查網路", "error");
+                          } finally {
+                /* 隱藏遮罩 */
+                const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
+                setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.classList.add('fade-out');
+                setTimeout(() => loader.style.display = 'none', 500);}
+                }, remainingWait);
+            }
         }
-        
-        // 加載遮罩淡出 LOADING
-        const elapsedTime = Date.now() - startTime;
-        const minimumWait = 1000; // 最少顯示1秒載入遮罩
-        const remainingWait = Math.max(0, minimumWait - elapsedTime)
-        setTimeout(() => {
-            const loader = document.getElementById('loading-screen'); loader.classList.add('fade-out');
-        }, remainingWait);
 
         // 資產 ASSETS
             /* 載入物件 */
