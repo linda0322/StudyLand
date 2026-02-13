@@ -34,7 +34,7 @@
         
         /* 16:9 外框 FRAME */
         #game-stage { position: relative; width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh; background-color: #333; overflow: hidden; }
-        /* 島嶼背景圖 BACKGROUND */
+        /* 島嶼背景圖 BACKGROUND IMAGE */
         #background-img { width: 100%; height: 100%; object-fit: fill; position: absolute; inset: 0; z-index: 1; pointer-events: none; user-select: none;}
         /* 拖曳物件 DRAGGABLE ITEMS */
         .draggable { position: absolute; z-index: 10; width: 12%; touch-action: none; cursor: move; 
@@ -153,265 +153,195 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPxLzM47qozl9CJxGjjf0wMdtPppx8Kt8R1caUnAQpCX-s3ol6lERYawriMQFv6p3a/exec'; 
-        const username = localStorage.getItem('studyLandUser');
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentIslandId = urlParams.get('id') || 'island_1';
 
         // 捲動控制 SCROLL
         let startY = 0;
         document.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; }, { passive: false });
+        
+        const username = localStorage.getItem('studyLandUser');
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentIslandId = urlParams.get('id') || 'island_1';
+        let assetLibrary = {};
+        let userInventory = []; 
 
-        // 背景圖片 BACKGROUND
+        // 島嶼背景圖 BACKGROUND IMAGE
         const islandConfig = {
             'island_1': { name: '草地', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/first.webp', color: 'bg-lime-200', icon: '🌳' },
             'island_2': { name: '海洋', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/second.webp', color: 'bg-sky-200', icon: '🌊' },
             'island_3': { name: '沙漠', bg: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/background/third.webp', color: 'bg-amber-200', icon: '🏜️' },
         };
 
-        // 物件 ASSETS
-        const assetLibrary = {
-            
-            'brick1a_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true }, //BRICKS
-            'brick1a_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true },
-            'brick1a_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1a.webp', isBottom: true },
-            'brick1b_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1b.webp', isBottom: true },
-            'brick1b_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1b.webp', isBottom: true },
-            'brick1b_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1b.webp', isBottom: true },
-            'brick1c_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1c.webp', isBottom: true },
-            'brick1c_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1c.webp', isBottom: true },
-            'brick1c_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick1c.webp', isBottom: true },
-            
-            'brick2b_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2b.webp', isBottom: true, width: '24%' },
-            'brick2c_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick2c.webp', isBottom: true, width: '24%' },
-
-            'brick3c_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3c.webp', isBottom: true, width: '48%' },
-            'brick3c_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/brick/brick3c.webp', isBottom: true, width: '48%' },
-            
-            'npc': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif' }, // CHARACTERS
-            'rick1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/character/rick1.webp' },
-            'rick2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/character/rick2.webp' },
-
-            'doga_1': { src: 'https://dotown.maeda-design-room.net/wp-content/uploads/2022/10/thing_dachshund_02.png', width: '8%' }, // NORMAL PETS DOTOWN
-            'elephants_1': { src: 'https://dotown.maeda-design-room.net/wp-content/uploads/2022/03/guest_elephants_01.png', width: '20%' },
-            'gorilla_1': { src: 'https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/thing_gorilla_01.png', width: '20%' },
-            
-            'ghost_1': { src: 'https://raw.githubusercontent.com/shuqikhor/pixel-icons/92a2d8ff3e9149b87404ec099a27fb90d7399bb9/icons/ghost.svg', width: '6%' }, //NORMAL PETS SHUQIKHOR
-
-            'pepe_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/pepe.png', width: '10%' }, //SPECIAL PETS
-            'pepe_2': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/pepe.png', width: '10%' },
-            'pepe_3': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/pepe.png', width: '10%' },
-            'pepe_4': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/pepe.png', width: '10%' },
-            'pepe_5': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/pepe.png', width: '10%' },
-            'magiccat_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/magiccat.png' },
-            'dojocat_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/dojocat.png' },
-            'dojocat_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/dojocat.png' },
-            'mainebaby_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/mainebaby.png' },
-            'ragdollbaby_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/ragdollbaby.png' },
-
-            'stickerdoga': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/stickerdoga.webp' }, //STICKER PETS
-            'stickerdogb': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/pet/stickerdogb.webp' },
-
-            'treea_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/plant/treea.webp' }, //PLANTS
-            'treeb_1': { src: 'https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/plant_plamtree_01.png', width: '15%' },
-            'tulip_1': { src: 'https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/island/plant/tulip.webp' },
-        };
-                
+        // 載入雲端資料 CLOUD INFORMATION
         async function initApp() {
             if (!username) { window.location.href = '../index.html'; return; }
-
             const config = islandConfig[currentIslandId] || islandConfig['island_1'];
             document.getElementById('background-img').src = config.bg;
             document.getElementById('island-title').innerText = config.name;
 
-            const startTime = Date.now();
-            
+            //const startTime = Date.now();
+
             try {
-            // 根據 Username 和 IslandID 獲取 Asset
-            const assetResp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getAssets`);
-            const allowedAssets = await assetResp.json();
-            const itemsLayer = document.getElementById('items-layer');
-            // 清空預設
-            itemsLayer.innerHTML = '';
-            // 動態生成物件
-            allowedAssets.forEach(assetId => {
-                if (assetLibrary[assetId]) {
-                    const div = document.createElement('div');
-                    div.className = 'draggable';
-                    div.id = `item_${assetId}`;
-
-                    const assetCfg = assetLibrary[assetId];
-                    div.style.width = assetCfg.width || '12%';
-                    
-                    const isBottom = assetLibrary[assetId].isBottom;
-                    div.style.zIndex = isBottom ? "1" : "10";
-                    if (isBottom) div.dataset.isBottom = "true";
-                    div.style.left = '50%'; 
-                    div.style.top = '50%';
-                    div.style.transform = 'translate(-50%, -50%)';
-                    div.innerHTML = `<img src="${assetLibrary[assetId].src}">`;
-                    itemsLayer.appendChild(div);
-                }
-            });
-            // 載入物件位置
-            await loadIslandData();
-            // 載入切換清單
-            loadIslandList();
-            // 綁定拖拽物件
-            bindDraggable();
-
-        } catch (err) {
-            console.error("初始化失敗:", err);
-            showToast("載入失敗", "error");
-        }
-            // 遮罩淡出
-            const elapsedTime = Date.now() - startTime;
-            const minimumWait = 1000; // 最少顯示1秒載入遮罩
-            const remainingWait = Math.max(0, minimumWait - elapsedTime)
-            setTimeout(() => {
-                const loader = document.getElementById('loading-screen'); loader.classList.add('fade-out');
-            }, remainingWait);
-        }
-
-        // 島嶼選單 MENU
-        function toggleIslandMenu() {
-            const menu = document.getElementById('island-menu');
-            menu.classList.toggle('hidden');
+                /* 載入資產 */
+                const libResp = await fetch(`${SCRIPT_URL}?action=getLibrary`);
+                assetLibrary = await libResp.json();
+                /* 載入位置 */
+                const posResp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`);
+                const savedItems = await posResp.json();
+                const itemsLayer = document.getElementById('items-layer');
+                itemsLayer.innerHTML = '';
+                savedItems.forEach(item => {
+                    const assetType = item.id.replace('item_', '').split('_')[0];
+                    if (assetLibrary[assetType]) {
+                        createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);
+                    }
+                });
+                /* 載入島嶼及倉庫資料 */
+                loadIslandList();
+                refreshInventory();
+            } catch (err) {console.error("載入失敗:", err); showToast("連線失敗", "error");} 
+              finally {document.getElementById('loading-screen').classList.add('fade-out');}
         }
         
-        async function loadIslandList() {
-            try {
-                const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
-                const allowedIslands = await response.json();
-                const container = document.getElementById('island-buttons-container');
-                container.innerHTML = ''; 
+        // 加載遮罩淡出 LOADING
+        const elapsedTime = Date.now() - startTime;
+        const minimumWait = 1000; // 最少顯示1秒載入遮罩
+        const remainingWait = Math.max(0, minimumWait - elapsedTime)
+        setTimeout(() => {
+            const loader = document.getElementById('loading-screen'); loader.classList.add('fade-out');
+        }, remainingWait);
 
-        if (allowedIslands.length === 0) {
-            container.innerHTML = `
-                <div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4">
-                    <span class="text-5xl">🏝️</span>
-                    <p class="text-slate-400 font-cubic text-center tracking-widest thin-border">
-                        目前無島可歸
-                    </p>
-                </div>
-            `;
-            return;
-        }
-
-                allowedIslands.forEach(id => {
-                    const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
-                    const btnHtml = `
-                        <a href="island.html?id=${id}" class="group bg-slate-50 p-4 rounded-[25px] hover:bg-white hover:shadow-xl transition-all text-center">
-                            <div class="${cfg.color} h-20 rounded-[20px] mb-2 flex items-center justify-center text-3xl">
-                                ${cfg.icon}
-                            </div>
-                            <h3 class="font-cubic text-lg text-slate-500 thin-border">${cfg.name}</h3>
-                        </a>
-                    `;
-                    container.innerHTML += btnHtml;
-                });
-            } catch (e) {
-                console.error("載入失敗", e);
+        // 資產 ASSETS
+            /* 載入物件 */
+            function createDraggableElement(id, type, left = 50, top = 50) {
+                const config = assetLibrary[type];
+                const div = document.createElement('div');
+                div.className = 'draggable';
+                div.id = id;
+                div.style.width = config.width || '12%';
+                div.style.left = left + '%';
+                div.style.top = top + '%';
+                div.style.transform = 'translate(-50%, -50%)';
+                div.style.zIndex = config.isBottom ? "1" : "10";
+                if (config.isBottom) div.dataset.isBottom = "true";
+                div.innerHTML = `<img src="${config.imgURL}">`;
+                div.oncontextmenu = (e) => {e.preventDefault(); if(confirm("要收回倉庫嗎？")) {div.remove(); showToast("已收回倉庫"); refreshInventory(); }};
+                document.getElementById('items-layer').appendChild(div); bindDraggable(div); 
             }
-        }
-
-        async function loadIslandData() {
-            try {
-                const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}`);
-                const data = await resp.json();
-                if (data && data.length > 0) {
-                    data.forEach(item => {
-                        const el = document.getElementById(item.id);
-                        if (el) {
-                            el.style.left = item.leftPercent + '%';
-                            el.style.top = item.topPercent + '%';
-                        }
-                    });
-                }
-            } catch (e) { console.log("歡迎來到此島！"); }
-        }
-
-        // 拖曳功能 DRAG
-        function bindDraggable() {
-            const draggables = document.querySelectorAll('.draggable');
-            const stage = document.getElementById('game-stage');
-
-            draggables.forEach(el => {
-                const handleStart = (e) => {
-                    const isBottom = el.dataset.isBottom === "true";
-                    if (!isBottom) {
-                        document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => {d.style.zIndex = "10";});
-                        el.style.zIndex = "100";
-                    } else {
-                        el.style.zIndex = "1";
-                    }
-                    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-                    const rect = el.getBoundingClientRect();
-                    const stageRect = stage.getBoundingClientRect();
-                    const shiftX = clientX - rect.left;
-                    const shiftY = clientY - rect.top;
-
-                const handleMove = (e) => {
-                    const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-                    const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-
-                    let newL = moveX - stageRect.left - shiftX + (rect.width / 2);
-                    let newT = moveY - stageRect.top - shiftY + (rect.height / 2);
-
+            /* 拖曳物件 */
+            function bindDraggable(el) {const stage = document.getElementById('game-stage'); el.onmousedown = el.ontouchstart = function(e) {
+                const isTouch = e.type === 'touchstart';
+                const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+                const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+                if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
+                const rect = el.getBoundingClientRect();
+                const stageRect = stage.getBoundingClientRect();
+                const shiftX = clientX - rect.left;
+                const shiftY = clientY - rect.top;
+                function moveAt(clientX, clientY) {
+                    let newL = clientX - stageRect.left - shiftX + (rect.width / 2);
+                    let newT = clientY - stageRect.top - shiftY + (rect.height / 2);
                     newL = Math.max(0, Math.min(newL, stageRect.width));
                     newT = Math.max(0, Math.min(newT, stageRect.height));
-
                     el.style.left = (newL / stageRect.width * 100) + '%';
                     el.style.top = (newT / stageRect.height * 100) + '%';
-                };
-
-                const handleEnd = () => {
-                    document.removeEventListener('mousemove', handleMove);
-                    document.removeEventListener('mouseup', handleEnd);
-                    document.removeEventListener('touchmove', handleMove);
-                    document.removeEventListener('touchend', handleEnd);
-                };
-
-                document.addEventListener('mousemove', handleMove);
-                document.addEventListener('mouseup', handleEnd);
-                document.addEventListener('touchmove', handleMove, { passive: false });
-                document.addEventListener('touchend', handleEnd);
-            };
-
-                el.addEventListener('mousedown', handleStart);
-                el.addEventListener('touchstart', handleStart, { passive: false });
-            });
-        }
-
-        // 儲存功能 SAVE
-        async function saveData() {
-            const btn = document.getElementById('save-btn');
-            if (btn.disabled) return;
-            const items = document.querySelectorAll('.draggable');
-            const positions = Array.from(items).map(el => ({
-                id: el.id,
-                leftPercent: parseFloat(el.style.left),
-                topPercent: parseFloat(el.style.top)
-            }));
-
-            try {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })
-                });
-                showToast("成功儲存", "success");
-                } catch (e) {
-                    console.error("Save Error:", e);
-                    showToast("儲存失敗", 'error');
-                } finally {
-                    btn.disabled = false;
-                    btn.style.opacity = "1";
                 }
+                function onMouseMove(e) {
+                    const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                    moveAt(moveX, moveY);
+                }
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('touchmove', onMouseMove, {passive: false});
+                el.onmouseup = el.ontouchend = function() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('touchmove', onMouseMove);
+                    el.onmouseup = el.ontouchend = null;
+                };
+            };}
+
+        // 倉庫 WAREHOUSE
+        function toggleWarehouse() {const win = document.getElementById('warehouse-window');
+            if (win.classList.contains('hidden')) {win.classList.remove('hidden'); refreshInventory();
+            } else {win.classList.add('hidden');}
+        }
+            /* 庫存 INVENTORY */
+            async function refreshInventory() {
+                const container = document.getElementById('warehouse-items');
+                try {
+                    const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
+                    userInventory = await resp.json();
+                    const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; /** 分類 TAB CATEGORY **/
+                    const tabContainer = document.getElementById('warehouse-tabs');
+                    tabContainer.innerHTML = categories.map(cat => `
+                        <button onclick="filterWarehouse('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-slate-100 text-xs font-cubic text-slate-500 transition-all">
+                            ${cat}
+                        </button>
+                    `).join('');
+                    renderInventoryItems('全部');
+                } catch (e) {container.innerHTML = "載入失敗";}
+            }
+        
+            function renderInventoryItems(filter) {
+                const container = document.getElementById('warehouse-items');
+                const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
+                if (items.length === 0) {container.innerHTML = `<p class="col-span-full text-center py-10 text-slate-400 font-cubic">一無所有</p>`; return;}
+                container.innerHTML = items.map(item => `
+                    <div onclick="deployFromWarehouse('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2">
+                        <img src="${item.imgURL}" class="w-12 h-12 object-contain">
+                        <span class="text-[10px] font-cubic text-slate-400">剩餘: ${item.available}</span>
+                    </div>
+                `).join('');
             }
 
+            function filterWarehouse(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); 
+                                           renderInventoryItems(cat);}
+        
+            function deployFromWarehouse(type) {const existing = document.querySelectorAll(`[id^="item_${type}_"]`);
+                let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
+                const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); toggleWarehouse(); showToast("已放置");
+                const invIdx = userInventory.findIndex(i => i.assetType === type);
+                if (invIdx > -1) {userInventory[invIdx].available--; if (userInventory[invIdx].available <= 0) userInventory.splice(invIdx, 1);}
+            }
+
+        // 島嶼選單 MENU
+        function toggleIslandMenu() { document.getElementById('island-menu').classList.toggle('hidden'); }
+        
+        async function loadIslandList() {
+            try {const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
+                 const allowedIslands = await response.json();
+                 const container = document.getElementById('island-buttons-container'); container.innerHTML = ''; 
+                 if (allowedIslands.length === 0) {container.innerHTML = `
+                 <div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🏝️</span>
+                 <p class="text-slate-400 font-cubic text-center tracking-widest thin-border">目前無島可歸</p>
+                 </div>`; return;}
+                 allowedIslands.forEach(id => {const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
+                 const btnHtml = `
+                 <a href="island.html?id=${id}" class="group bg-slate-50 p-4 rounded-[25px] hover:bg-white hover:shadow-xl transition-all text-center">
+                 <div class="${cfg.color} h-20 rounded-[20px] mb-2 flex items-center justify-center text-3xl">${cfg.icon}</div>
+                 <h3 class="font-cubic text-lg text-slate-500 thin-border">${cfg.name}</h3>
+                 </a>`;
+                 container.innerHTML += btnHtml;});
+            } catch (e) {console.error("載入失敗", e);}
+        }
+
+        async function loadIslandData() {try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}`); const data = await resp.json();
+                                              if (data && data.length > 0) { data.forEach(item => {const el = document.getElementById(item.id);
+                                                                                                   if (el) { el.style.left = item.leftPercent + '%'; el.style.top = item.topPercent + '%';}});}
+                                             } catch (e) { console.log("歡迎來到此島！"); }
+        }
+        
+        // 儲存功能 SAVE
+        async function saveData() {
+            const btn = document.getElementById('save-btn'); if (btn.disabled) return;
+            const items = document.querySelectorAll('.draggable');
+            const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
+            try { await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
+                  showToast("成功儲存", "success");} catch (e) {console.error("Save Error:", e); showToast("儲存失敗", 'error');
+                } finally { btn.disabled = false; btn.style.opacity = "1";}
+        }
+
         // 通知 TOAST
-        let toastTimer; // 用來存放計時器，避免衝突
+        let toastTimer;
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toast-icon');
@@ -426,8 +356,6 @@
                 toast.classList.remove('opacity-100', 'translate-y-0');
             }, 2500);
         }
-        
-        window.onload = initApp;
 
         // 手機旋轉提示 ORIENTATION
         function handleOrientationChange() {
@@ -439,6 +367,8 @@
         window.addEventListener('resize', handleOrientationChange);
         window.addEventListener('orientationchange', handleOrientationChange);
         handleOrientationChange();
+
+        window.onload = initApp;
 
     </script>
 </body>
