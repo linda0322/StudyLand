@@ -137,6 +137,10 @@
         <span id="toast-msg" class="font-cubic text-slate-500 thin-border"></span>
     </div>
 
+    // 捲動控制 SCROLL
+    let startY = 0;
+    document.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; }, { passive: false });
+
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPxLzM47qozl9CJxGjjf0wMdtPppx8Kt8R1caUnAQpCX-s3ol6lERYawriMQFv6p3a/exec'; 
         const username = localStorage.getItem('studyLandUser');
