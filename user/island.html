@@ -28,87 +28,34 @@
         .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
         .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
 
-        /* 16:9 FRAME */
-        #game-stage {
-            position: relative;
-            width: 100vw;
-            height: 56.25vw; 
-            max-height: 100vh;
-            max-width: 177.78vh; 
-            background-color: #333;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            overflow: hidden;
-        }
-
-        /* 背景圖片 BACKGROUND */
-        #background-layer {
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            user-select: none;
-        }
-        #background-img {
-            width: 100%; height: 100%;
-            object-fit: fill; 
-        }
-
-        /* 拖曳功能 DRAG */
-        .draggable {
-            position: absolute;
-            width: 12%; 
-            z-index: 10;
-            touch-action: none;
-            /**filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));**/
-            cursor: move;
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            -moz-user-select: none;
-            -webkit-touch-callout: none;
-        }
-        .draggable img { width: 100%; height: auto; pointer-events: none; -webkit-user-drag: none;}
-
-        /* 手機旋轉提示 */
-        #orientation-warning {
-            display: none; position: fixed; inset: 0;
-            background: #1dc5fd; z-index: 9999;
-            flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center;
-        }
-        @media screen and (orientation: portrait) {
-            #orientation-warning { display: flex; }
-            #game-stage { display: none; }
-        }
-        @keyframes wobble {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            75% { transform: rotate(-15deg); }
-            100% { transform: rotate(0deg); }
-        }
-        .wobble-img {animation: wobble 1s ease-in-out infinite;}
-
-        /* 島嶼選單 MENU */
-        #island-menu { transition: opacity 0.3s ease; }
-
         /* 載入遮罩 */
-        #loading-screen {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(15px);
-            z-index: 6000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        #loading-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
-        }
-                
+        #loading-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease; }
+        #loading-screen.fade-out { opacity: 0; visibility: hidden; }
+        
+        /* 16:9 外框 */
+        #game-stage { position: relative; width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh; background-color: #333; overflow: hidden; }
+        /* 島嶼背景圖 */
+        #background-img { width: 100%; height: 100%; object-fit: fill; position: absolute; inset: 0; z-index: 1; pointer-events: none; user-select: none;}
+        /* 拖曳物件 DRAGGABLE ITEMS */
+        .draggable { position: absolute; z-index: 10; width: 12%; touch-action: none; cursor: move; 
+                    user-select: none; -webkit-user-drag: -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none; -webkit-touch-callout: none;}
+        .draggable img { width: 100%; height: auto; pointer-events: none; }
+
+        /* 倉庫 WAREHOUSE */
+        .tab-active { background: #64748b !important; color: white !important; }
+        .inventory-item { transition: all 0.2s; cursor: pointer; }
+        .inventory-item:hover { transform: scale(1.05); background: rgba(255,255,255,0.9); }
+
+        /* 手機旋轉提示 ORIENTATION */
+        #orientation-warning {display: none; position: fixed; inset: 0; z-index: 99999; background-color: #1dc5fd; flex-direction: column; align-items: center; justify-content: center;}
+        @media screen and (max-width: 700px) and (orientation: portrait) {#orientation-warning {display: flex !important;} #game-stage { display: none; }}
+        @keyframes phone-rotate-right {0% { transform: rotate(90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(90deg); }}
+        .animate-phone-rotate {animation: phone-rotate-right 2s ease-in-out infinite;}
+
+        /**--**/
+        /* 島嶼選單 MENU */
+        #island-menu { transition: opacity 0.3s ease; }    
+    
     </style>
 </head>
 <body>
@@ -118,11 +65,12 @@
         <div class="animate-bounce text-3xl mb-4">☁️</div>
         <div class="font-cubic text-xl text-white thick-border tracking-widest">飛行中</div>
     </div>
-    
-    <!-- 手機旋轉提示 -->
-    <div id="orientation-warning" class="font-cubic">
-        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4 wobble-img">
-        <h2 class="text-xl thick-border">旋轉畫面以進入島嶼</h2>
+
+    <!-- 手機旋轉提示 ORIENTATION -->
+    <div id="orientation-warning"><div class="w-20 h-20 mb-6 animate-phone-rotate flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+    </div>
+        <h2 class="font-cubic text-xl text-white thick-border tracking-wider">請旋轉螢幕以進入島嶼</h2>
     </div>
 
     <!-- 按鈕及地點 -->
@@ -458,6 +406,18 @@
         }
         
         window.onload = initApp;
+
+        // 手機旋轉提示 ORIENTATION
+        function handleOrientationChange() {
+            const warning = document.getElementById('orientation-warning');
+            const isPortrait = window.innerHeight > window.innerWidth;
+            const isMobileOrTablet = window.innerWidth < 700;
+            if (isPortrait && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}
+        }
+        window.addEventListener('resize', handleOrientationChange);
+        window.addEventListener('orientationchange', handleOrientationChange);
+        handleOrientationChange();
+
     </script>
 </body>
 </html>
