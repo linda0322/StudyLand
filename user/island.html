@@ -332,7 +332,7 @@
                 if (items.length === 0) {container.innerHTML = `<p class="col-span-full text-center py-10 text-slate-400 font-cubic">一無所有</p>`; return;}
                 container.innerHTML = items.map(item => `
                     <div onclick="deployFromWarehouse('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
-                        <img src="${item.imgURL}" class="w-12 h-12 object-contain">
+                        <img src="${item.imgURL}" class="w-12 h-12 object-contain" draggable="false">
                         <span class="text-[16px] font-cubic text-slate-400 thin-border">${item.available}</span>
                     </div>
                 `).join('');
