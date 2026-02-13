@@ -44,9 +44,10 @@
         #loading-screen.fade-out { opacity: 0; visibility: hidden; }
         
         /* 16:9 外框 FRAME */
-        #game-stage { position: relative; width: 177.78vh; height: 100vh; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.3s ease;}
+        #game-stage { position: relative; width: 1920px; height: 1080px; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.1s ease-out; transform-origin: center center;} 
+        
         /* 島嶼背景圖 BACKGROUND IMAGE */
-        #background-img { width: 100.2%; height: 100.2%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;}
+        #background-img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;}
     
         /* 拖曳物件 DRAGGABLE ITEMS */
         .draggable { position: absolute; z-index: 10; width: 12%; touch-action: none; cursor: move; 
@@ -238,65 +239,23 @@
             }
             /* 拖曳物件 */
             function bindDraggable(el) {const stage = document.getElementById('game-stage'); el.onmousedown = el.ontouchstart = function(e) {
-                const isTouch = e.type === 'touchstart';
-                const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-                const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-                if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
-                const rect = el.getBoundingClientRect();
-                const stageRect = stage.getBoundingClientRect();
-                const shiftX = clientX - rect.left;
-                const shiftY = clientY - rect.top;
-                function moveAt(clientX, clientY) {
-                    let newL = clientX - stageRect.left - shiftX + (rect.width / 2);
-                    let newT = clientY - stageRect.top - shiftY + (rect.height / 2);
-                    newL = Math.max(0, Math.min(newL, stageRect.width));
-                    newT = Math.max(0, Math.min(newT, stageRect.height));
-                    el.style.left = (newL / stageRect.width * 100) + '%';
-                    el.style.top = (newT / stageRect.height * 100) + '%';
-                }
-                function onMouseMove(e) {
-                    const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-                    const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-                    moveAt(moveX, moveY);
-                }
-                document.addEventListener('mousemove', onMouseMove);
-                document.addEventListener('touchmove', onMouseMove, {passive: false});
-                el.onmouseup = el.ontouchend = function() {
-                    document.removeEventListener('mousemove', onMouseMove);
-                    document.removeEventListener('touchmove', onMouseMove);
-                    el.onmouseup = el.ontouchend = null;
-                };
-            };}
-
-            function bindDraggable(el) {
-                const stage = document.getElementById('game-stage'); el.onmousedown = el.ontouchstart = function(e) {
-                    /* 防止手機瀏覽器觸發捲動或縮放 */
-                    if (e.type === 'touchstart') {} const isTouch = e.type === 'touchstart'; 
-                    const clientX = isTouch ? e.touches[0].clientX : e.clientX; 
-                    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-                    /* 處理 z-index */
-                    if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10");
-                                                         el.style.zIndex = "100";}
-                    /* 計算縮放倍率 */
-                    const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / stage.offsetWidth;
-                    /* 計算偏移、新位置及百分比 */
-                    const itemRect = el.getBoundingClientRect(); const shiftX = (clientX - itemRect.left) / scale; const shiftY = (clientY - itemRect.top) / scale;
-                    function moveAt(currentClientX, currentClientY) { 
-                        let mouseXOnStage = (currentClientX - stageRect.left) / scale; let mouseYOnStage = (currentClientY - stageRect.top) / scale;
-                        let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / stage.offsetWidth * 100;
-                        let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / stage.offsetHeight * 100;
-                        newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
-                        el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';
-                    }
-                    function onMouseMove(e) {
-                        const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY; 
-                        moveAt(moveX, moveY);
-                    }
-                    document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, { passive: false });
-                    const onMouseUp = () => {document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('touchmove', onMouseMove);
-                                             document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
-                    document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);};
-                el.ondragstart = function() { return false; };
+                const isTouch = e.type === 'touchstart'; const clientX = isTouch ? e.touches[0].clientX : e.clientX; const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+                if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10");
+                                                     el.style.zIndex = "100";}
+                /** 計算比例及位置 **/
+                const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / stage.offsetWidth; const itemRect = el.getBoundingClientRect();
+                const shiftX = (clientX - itemRect.left) / scale; const shiftY = (clientY - itemRect.top) / scale;
+                function moveAt(currentClientX, currentClientY) {let mouseXOnStage = (currentClientX - stageRect.left) / scale;
+                                                                 let mouseYOnStage = (currentClientY - stageRect.top) / scale;
+                                                                 let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / stage.offsetWidth * 100;
+                                                                 let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / stage.offsetHeight * 100;
+                                                                 newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
+                                                                 el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';}
+                function onMouseMove(e) {const moveX = isTouch ? e.touches[0].clientX : e.clientX; const moveY = isTouch ? e.touches[0].clientY : e.clientY; moveAt(moveX, moveY);}
+                document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, { passive: false });
+                const onMouseUp = () => {document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('touchmove', onMouseMove);
+                                         document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
+                document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);}; el.ondragstart = function() { return false; };
             }
 
         // 倉庫 WAREHOUSE
@@ -410,25 +369,16 @@
 
         // 手機縮放比例 MOBILE SCALE
         function autoScaleGame() {
-            const stage = document.getElementById('game-stage');
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-            const targetWidth = 177.78;
-            const targetHeight = 100;
-            const scaleX = windowWidth / (windowHeight * (16/9));
-            const scaleY = 1;
-            let scale = Math.min(windowWidth / (windowHeight * 1.7778), windowHeight / (windowHeight));
-            const baseWidth = 1920;
-            const baseHeight = 1080;
-            const currentRatio = windowWidth / windowHeight;
-            const targetRatio = 16 / 9;
-            let finalScale = 1;
-            if (currentRatio < targetRatio) { finalScale = windowWidth / (windowHeight * 1.7778);
-            } else {finalScale = 1; // 保持高度 100vh
-            } stage.style.transform = `scale(${finalScale})`;
+            const stage = document.getElementById('game-stage'); if (!stage) return;
+            const windowWidth = window.innerWidth; const windowHeight = window.innerHeight;
+            const baseWidth = 1920; const baseHeight = 1080;
+            const scaleX = windowWidth / baseWidth; const scaleY = windowHeight / baseHeight;
+            let finalScale = Math.min(scaleX, scaleY);
+            stage.style.transform = `scale(${finalScale})`;
         }
+        
         window.addEventListener('resize', () => {handleOrientationChange(); autoScaleGame();});
-        window.addEventListener('load', () => {initApp(); autoScaleGame(); });
+        window.addEventListener('load', () => {autoScaleGame(); setTimeout(autoScaleGame, 300);});
 
     </script>
 </body>
