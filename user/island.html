@@ -44,7 +44,7 @@
         #loading-screen.fade-out { opacity: 0; visibility: hidden; }
         
         /* 16:9 外框 FRAME */
-        #game-stage { position: relative; width: 177.78vh; height: 100vh; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.3s ease; transform-origin: center center;}
+        #game-stage { position: relative; width: 1280px; height: 720px; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.2s ease; transform-origin: center center;}
         /* 島嶼背景圖 BACKGROUND IMAGE */
         #background-img { width: 100.2%; height: 100.2%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;}
     
@@ -247,7 +247,7 @@
                     if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10");
                                                          el.style.zIndex = "100";}
                     /* 計算縮放倍率 */
-                    const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / stage.offsetWidth;
+                    const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280;
                     /* 計算偏移、新位置及百分比 */
                     const itemRect = el.getBoundingClientRect(); const shiftX = (clientX - itemRect.left) / scale; const shiftY = (clientY - itemRect.top) / scale;
                     function moveAt(currentClientX, currentClientY) { 
@@ -378,13 +378,38 @@
         handleOrientationChange();
 
         // 手機縮放比例 MOBILE SCALE
-        function autoScaleGame() {const stage = document.getElementById('game-stage'); const windowWidth = window.innerWidth;
-                                  const windowHeight = window.innerHeight; const baseHeight = windowHeight; const baseWidth = windowHeight * (16 / 9);
-                                  const scaleX = windowWidth / baseWidth; const scaleY = windowHeight / baseHeight;
-                                  let finalScale = Math.min(scaleX, scaleY); stage.style.transform = `scale(${finalScale})`;
-                                 }
-        window.addEventListener('resize', () => {handleOrientationChange(); autoScaleGame();});
-        window.addEventListener('load', () => {initApp(); autoScaleGame(); });
+        function autoScaleGame() {
+            const stage = document.getElementById('game-stage');
+            if (!stage) return;
+        
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // 目標設計尺寸 (16:9)
+            const targetWidth = 1280;
+            const targetHeight = 720;
+            
+            // 計算寬度與高度各自的縮放比
+            const scaleX = windowWidth / targetWidth;
+            const scaleY = windowHeight / targetHeight;
+            
+            // 取較小值 (Contain 模式)：保證畫面完整，剩下部分留黑邊
+            const finalScale = Math.min(scaleX, scaleY);
+            
+            stage.style.transform = `scale(${finalScale})`;
+        }
+        
+        // 監聽各種尺寸變動事件
+        window.addEventListener('resize', autoScaleGame);
+        window.addEventListener('orientationchange', () => {
+            // 旋轉時延遲一點點，等待瀏覽器視窗數值更新完畢
+            setTimeout(autoScaleGame, 200);
+        });
+
+        window.addEventListener('load', () => {
+            autoScaleGame(); // 優先縮放
+            initApp();
+        });
 
     </script>
 </body>
