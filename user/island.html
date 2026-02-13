@@ -240,7 +240,7 @@
                 }
                 /* 載入選單與倉庫資訊 */
                 await loadIslandList(); await refreshInventory(); 
-            } catch (err) { console.error("載入失敗:", err); showToast("連線失敗，請檢查網路", "error");
+            } catch (err) { console.error("載入失敗:", err); showToast("請檢查網路", "error");
                           } finally {
                 /* 隱藏遮罩 */
                 const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
@@ -318,7 +318,7 @@
                     const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; /** 分類 TAB CATEGORY **/
                     const tabContainer = document.getElementById('warehouse-tabs');
                     tabContainer.innerHTML = categories.map(cat => `
-                        <button onclick="filterWarehouse('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-slate-100 text-xs font-cubic text-slate-500 transition-all">
+                        <button onclick="filterWarehouse('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">
                             ${cat}
                         </button>
                     `).join('');
