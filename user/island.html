@@ -326,7 +326,8 @@
             function renderInventoryItems(filter) {
                 const container = document.getElementById('warehouse-items');
                 const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
-                if (items.length === 0) {container.innerHTML = `<p class="col-span-full text-center py-10 text-slate-400 font-cubic">一無所有</p>`; return;}
+                if (items.length === 0) {container.innerHTML = `<div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🙂‍↔️</span>
+                 <p class="text-slate-400 font-cubic text-center tracking-widest thin-border">一無所有</p></div> `; return;}
                 container.innerHTML = items.map(item => `
                     <div onclick="deployFromWarehouse('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
                         <img src="${item.imgURL}" class="w-12 h-12 object-contain" draggable="false">
