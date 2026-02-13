@@ -326,8 +326,11 @@
             function renderInventoryItems(filter) {
                 const container = document.getElementById('warehouse-items');
                 const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
-                if (items.length === 0) {container.innerHTML = `<div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🙂‍↔️</span>
-                 <p class="text-slate-400 font-cubic text-center tracking-widest thin-border">一無所有</p></div> `; return;}
+                if (items.length === 0) {container.innerHTML = `
+                    <div class="col-span-3 w-full flex flex-col items-center justify-center py-20 gap-6">
+                        <span class="text-5xl">🙂‍↔️</span>
+                        <div class="flex flex-col items-center gap-2"><p class="text-slate-400 font-cubic thin-border tracking-widest text-center w-full">一無所有</p></div>
+                    </div>`; return;}
                 container.innerHTML = items.map(item => `
                     <div onclick="deployFromWarehouse('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
                         <img src="${item.imgURL}" class="w-12 h-12 object-contain" draggable="false">
