@@ -62,7 +62,7 @@
                         -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none;}
     
         /* 拖曳物件 DRAGGABLE ITEMS */
-        .draggable { position: absolute; z-index: 10; width: 12%; touch-action: none; cursor: move; 
+        .draggable { position: absolute; z-index: 10; touch-action: none; cursor: move; 
                      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
                      user-select: none; -webkit-user-drag: -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none; -webkit-touch-callout: none;}
         .draggable img { width: 100%; height: auto; pointer-events: none; }
@@ -166,7 +166,7 @@
                 </button>  
             </div>
         </nav>
-        <div id="background-layer"><img id="background-img" src="" alt="background" class="pointer-events: none;""></div>
+        <div id="background-layer"><img id="background-img" src="" alt="background" class="pointer-events-none;"></div>
         <div id="items-layer"></div>
     </div>
 
@@ -237,9 +237,10 @@
             function createDraggableElement(id, type, left = 50, top = 50) {
                 const config = assetLibrary[type];
                 const div = document.createElement('div');
+                console.log(`正在部署 ${type}, 設定寬度為: ${config.width}`);
                 div.className = 'draggable';
                 div.id = id;
-                div.style.width = config.width || '12%';
+                if (config && config.width) {div.style.width = config.width;} else {div.style.width = '12%';}
                 div.style.left = left + '%';
                 div.style.top = top + '%';
                 div.style.transform = 'translate(-50%, -50%)';
