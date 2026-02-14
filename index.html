@@ -33,48 +33,51 @@
                        background-size: cover; background-position: center center; background-repeat: no-repeat;
                        background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg.png');
             }
-            //* 📱 手機背景 PHONE BACKGROUND LAYER *//
-            @media (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg_phone.webp');}}
+            //* 📱 手機背景 PHONE BACKGROUND LAYER *// 
+            @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg_phone.webp');}}
+            //* 📱 手機旋轉提示 ORIENTATION NOTI *//
+            #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
+                               background-color: #1dc5fd;
+                               flex-direction: column; align-items: center; justify-content: center;}
+            @media screen and (max-width: 1000px) and (orientation: landscape) {#orientation-noti {display: flex !important;} body {overflow: hidden !important;}}
+            @keyframes phone-potrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
+            .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite;}
 
         
-        /* 🙈 隱藏圖層 HIDDEN LAYER */
-        .hidden {display: none !important; }
+        /* ⚒️ 操作 OPERATION */
+            //* 🙈 隱藏圖層 HIDDEN LAYER *// 
+            .hidden {display: none !important; }
+            //* 🫵🏻 手勢禁止 DISABLE GESTURE *//
+            .no-touch {-webkit-touch-callout: none; ///* Safari 選單 */// 
+                       -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; ///* 選取 */// 
+                       -webkit-user-drag: none; user-drag: none; ///* 拖動 *///}
+            //* 🔘 按鈕效果 BUTTON EFFECT *// 
+            a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+            button {transition: transform 0.1s ease;} 
+            button:hover {background-color: rgba(255, 255, 255, 0.2);} 
+            button:active {transform: scale(0.95);}
 
-        /* 按鈕效果 BUTTON EFFECT */
-        a, button, [role="button"] {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;
-        }
-        button {transition: transform 0.1s ease;}
-        button: hover {background-color: rgb(255 255 255 / 20%);}
-        button:active {transform: scale(0.95);}
-
-        /* 禁止選取及拖動 */
-        .no-touch {
-            -webkit-touch-callout: none; /* 禁止彈出選單 */
-            -webkit-user-select: none; user-select: none; /* 禁止文字選取 */
-            -webkit-user-drag: none; user-drag: none; /* 禁止拖動元素 */
-        }
         
+        /* 🌼 樣式 STYLE */
+            //* 玻璃框 *//
+            .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
 
-        /* 玻璃外框 */
-        .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
         
+        /* 🐕 動畫 ANIMATION */
+            //* 🤖 NPC FLOAT *//
+            @keyframes float-loop {0%, 100% {transform: translateY(-2px); animation-timing-function: ease-in-out;} 
+                                   50% {transform: translateY(2px); animation-timing-function: ease-in-out;}}
+            .animate-text-float {animation: float-loop 3s infinite;}
+            .npc-float {animation: float-loop 3s infinite; animation-delay: -1.5s; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.1)); transition: filter 1.5s ease-in-out;}
 
-
-        /* 隱藏遊戲選單 scrollbar */
-        .grid {-webkit-overflow-scrolling: touch; overscroll-behavior: contain; -ms-overflow-style: none; scrollbar-width: none; touch-action: pan-y;}
-        .grid::-webkit-scrollbar {display: none;}
-
-        /* NPC 動畫 */
-        @keyframes float-loop {0%, 100% {transform: translateY(-2px); animation-timing-function: ease-in-out;} 50% {transform: translateY(2px); animation-timing-function: ease-in-out;}}
-        .animate-text-bounce {animation: float-loop 3s infinite;}
-        .npc-auto-bounce {animation: float-loop 3s infinite; animation-delay: -1.5s; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.1)); transition: filter 1.5s ease-in-out;}
-
-        /* 手機旋轉提示 ORIENTATION */
-        #orientation-warning {display: none; position: fixed; inset: 0; z-index: 99999; background-color: #1dc5fd; flex-direction: column; align-items: center; justify-content: center;}
-        @media screen and (max-width: 1023px) and (orientation: landscape) {#orientation-warning {display: flex !important;} body {overflow: hidden !important;}}
-        @keyframes phone-rotate-left {0% { transform: rotate(0deg); } 30% { transform: rotate(-90deg); } 70% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); }}
-        .animate-phone-rotate {animation: phone-rotate-left 2s ease-in-out infinite;}
+        
+        /* ⚙️ 內部結構 INTERNAL */
+            //* ⬇️ 隱藏遊戲選單 HIDE GAME SCROLLBAR *//
+            .grid {-ms-overflow-style: none; scrollbar-width: none;
+                   -webkit-overflow-scrolling: touch; 
+                   overscroll-behavior: contain; 
+                   touch-action: pan-y;}
+            .grid::-webkit-scrollbar {display: none;}
         
     </style>
 </head>
@@ -85,7 +88,7 @@
     <div class="bg-layer"></div>
 
     <!-- 手機旋轉提示 ORIENTATION -->
-    <div id="orientation-warning"><div class="w-20 h-20 mb-6 animate-phone-rotate flex items-center justify-center">
+    <div id="orientation-noti"><div class="w-20 h-20 mb-6 animate-phone-portrait flex items-center justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
     </div>
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">請旋轉螢幕以繼續遊戲</h2>
@@ -143,8 +146,8 @@
         <!-- 歡迎動畫 WELCOME ANIMATION -->
         <header class="flex flex-col items-center text-center mb-6">
             <div class="relative mb-4">
-               <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-[140px] h-auto drop-shadow-md npc-auto-bounce">
-               <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border text-shadow-md tracking-widest animate-text-bounce">GO!</div>
+               <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-[140px] h-auto drop-shadow-md npc-float">
+               <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border text-shadow-md tracking-widest animate-text-float">GO!</div>
             </div>
         </header>
 
@@ -266,7 +269,7 @@
 
         // 手機旋轉提示 ORIENTATION
         function handleOrientationChange() {
-            const warning = document.getElementById('orientation-warning');
+            const warning = document.getElementById('orientation-noti');
             const isLandscape = window.innerWidth > window.innerHeight;
             const isMobileOrTablet = window.innerWidth < 1024;
             if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}
