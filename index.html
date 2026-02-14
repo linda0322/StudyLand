@@ -97,24 +97,23 @@
 
     <!-- 📥 登入 LOGIN -->
         <!-- ⬛️ 遮罩 OVERLAY -->
-        <div id="login-page" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
+        <div id="login-overlay" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
             <!-- 💬 -->
             <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8">
                 <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-20 h-20 mb-6">
                 <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">登入</h2>
                 <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl font-cubic thin-border text-center px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
-                <button id="confirm-user" class="w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border px-4 py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
+                <button id="login-button" class="w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border px-4 py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
             </div>
         </div>
         <!-- ❌ 錯誤彈窗 ERROR WINDOW -->
             <!-- ⬜️ 遮罩 OVERLAY -->
-            <div id="login-error" class="hidden no-touch fixed inset-0 z-[150] bg-black flex flex-col justify-center items-center p-6">
+            <div id="error-overlay" class="hidden no-touch fixed inset-0 z-[150] bg-transparent flex flex-col justify-center items-center p-6">
                 <!-- 💬 -->
                 <div class="no-touch max-w-xs bg-slate-200/70 backdrop-blur-sm rounded-[30px] shadow-md flex flex-col text-center items-center p-8">
-                    <button id="back-to-login" class="w-12 h-12 absolute top-4 right-2 text-slate-400 flex text-center justify-center hover:text-slate-600 hover:bg-transparent active:bg-transparent transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    </button>
-                    <h1 class="text-4xl mb-4">🙏🏻</h1><h2 class="font-cubic text-slate-700 text-lg thick-border tracking-wider">...</h2>
+                    <button id="error-close" class="w-12 h-12 absolute top-4 right-2 text-slate-400 flex text-center justify-center hover:text-slate-600 hover:bg-transparent active:bg-transparent transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                    <h1 class="text-4xl mb-4">🙏🏻</h1>
+                    <h2 id="login-error" class="font-cubic text-slate-700 text-lg thick-border tracking-wider">...</h2>
                 </div>
             </div>
 
@@ -206,16 +205,16 @@
                                                        if (e.cancelable) e.preventDefault();},{ passive: false });
 
         // 登入 LOGIN
-        const loginOverlay = document.getElementById('login-page');
+        const loginOverlay = document.getElementById('login-overlay');
         const mainContent = document.getElementById('main-content');
         const usernameInput = document.getElementById('username-input');
-        const confirmBtn = document.getElementById('confirm-user');
+        const loginBtn = document.getElementById('login-button');
         const userDisplayName = document.getElementById('user-display-name');
         const loginError = document.getElementById('login-error');
-        const backBtn = document.getElementById('back-to-login');
+        const closeBtn = document.getElementById('error-close');
 
         loginError.addEventListener('click', (e) => {if (e.target === loginError) {loginError.classList.add('hidden')}});
-        backBtn.addEventListener('click', () => {loginError.classList.add('hidden')});
+        closeBtn.addEventListener('click', () => {loginError.classList.add('hidden')});
                                             
         /* 載入網頁 --> 檢查快取 --> 連接雲端 --> 執行主頁 */
             /* 自動登入 */
@@ -224,12 +223,20 @@
                 const savedPermissions = localStorage.getItem('userPermissions');
                 if (savedName) {showMainPage(savedName, savedPermissions);}
             });
- 
-            /*confirmBtn.addEventListener('click', async () => {
+             /* 重新登入 */
+            function showLoginError(msg) {const errorMsgElement = loginError.querySelector('h2'); if (errorMsgElement) errorMsgElement.innerText = msg; loginError.classList.remove('hidden');}
+            loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); if (!username) {showLoginError("請輸入名字"); return;} loginBtn.innerText = "登入中...";
+                                                              loginBtn.disabled = true; try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })}); const data = await response.json();
+                                                                                               if (data.result === "success" && data.permissions) {localStorage.setItem('studyLandUser', username); localStorage.setItem('userPermissions', data.permissions); showMainPage(username, data.permissions);} 
+                                                                                               else {showLoginError("玩家不存在"); loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}} 
+                                                              catch (error) {console.error('Error:', error); showLoginError("連線失敗"); loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
+                                                             });
+        
+            /*loginBtn.addEventListener('click', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) {
-                    loginError.classList.remove('hidden'); confirmBtn.innerText = "進入遊戲"; return;}
-                confirmBtn.innerText = "載入中...";
+                    loginError.classList.remove('hidden'); loginBtn.innerText = "進入遊戲"; return;}
+                loginBtn.innerText = "載入中...";
                 try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
                      const data = await response.json(); 
                      const permissions = data.permissions; 
@@ -271,17 +278,6 @@
         });
         
         logoutModal.addEventListener('click', (e) => {if (e.target === logoutModal) {logoutModal.classList.add('hidden');}});
-
-                   /* 重新登入 */
-
-            confirmBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); if (!username) {showLoginError("請輸入名字"); return;} confirmBtn.innerText = "登入中...";
-                                                              confirmBtn.disabled = true; try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })}); const data = await response.json();
-                                                                                               if (data.result === "success" && data.permissions) {localStorage.setItem('studyLandUser', username); localStorage.setItem('userPermissions', data.permissions); showMainPage(username, data.permissions);} 
-                                                                                               else {showLoginError("玩家不存在"); confirmBtn.innerText = "進入遊戲"; confirmBtn.disabled = false;}} 
-                                                              catch (error) {console.error('Error:', error); showLoginError("連線失敗"); confirmBtn.innerText = "進入遊戲"; confirmBtn.disabled = false;}
-                                                             });
-            function showLoginError(msg) {const errorMsgElement = loginError.querySelector('h2'); if (errorMsgElement) errorMsgElement.innerText = msg; loginError.classList.remove('hidden');}
-        
 
         // 手機旋轉提示 ORIENTATION
         function handleOrientationChange() {
