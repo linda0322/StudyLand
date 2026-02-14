@@ -48,14 +48,15 @@
             /* 🙈 隱藏圖層 HIDDEN LAYER */
             .hidden {display: none !important; }
             /* 🫵🏻 手勢禁止 DISABLE GESTURE */
-            .no-touch {-webkit-touch-callout: none; /* Safari 選單 */
-                       -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; /* 選取 */
-                       -webkit-user-drag: none; user-drag: none; /* 拖動 */}
+            .no-touch {touch-action: none;
+                       -webkit-touch-callout: none; /* Safari 選單 */
+                       -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; /* 選取 */
+                       -webkit-user-drag: none; /* 拖動 */}
             /* 🔘 按鈕效果 BUTTON EFFECT */
             a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;} 
             button:hover {background-color: rgba(255, 255, 255, 0.2);} 
-            button:active {transform: scale(0.95);}
+            button, [role="button"]:active {transform: scale(0.95);}
 
         
         /* 🌼 樣式 STYLE */
@@ -88,19 +89,19 @@
 
     <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
     <div id="orientation-noti">
-        <div class="animate-phone-portrait w-20 h-20 mb-6 flex items-center justify-center">
+        <div class="animate-phone-portrait w-20 h-20 flex items-center justify-center mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
         </div>
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">請旋轉螢幕以繼續遊戲</h2>
     </div>
 
-    <!-- 登入彈窗 LOGIN WINDOW -->
-    <div id="login-overlay" class="fixed z-[100] inset-0 bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
-        <div class="bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center w-full max-w-xs p-8">
+    <!-- 📥 登入 LOGIN -->
+    <div id="login-window" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
+        <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8">
             <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-20 h-20 mb-6">
             <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">登入</h2>
-            <input type="text" id="username-input" placeholder="請輸入你的名字" class="rounded-2xl border-2 border-slate-100 font-cubic thin-border text-center w-full px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
-            <button id="confirm-user" class="bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border w-full py-4 hover:bg-[#2da9e6] active:scale-95 transition-all">進入遊戲</button>
+            <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl font-cubic thin-border text-center px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
+            <button id="confirm-user" class="w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
         </div>
     </div>
 
@@ -201,7 +202,7 @@
                                                        if (e.cancelable) e.preventDefault();},{ passive: false });
 
         // 登入 LOGIN
-        const loginOverlay = document.getElementById('login-overlay');
+        const loginOverlay = document.getElementById('login-window');
         const mainContent = document.getElementById('main-content');
         const usernameInput = document.getElementById('username-input');
         const confirmBtn = document.getElementById('confirm-user');
