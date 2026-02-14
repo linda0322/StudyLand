@@ -202,14 +202,10 @@
                                                        if (e.cancelable) e.preventDefault();},{ passive: false });
 
         // 📥 登入 LOGIN
-            // ❇️ CONSTANT 常數
-            const usernameInput = document.getElementById('username-input');
-            const loginOverlay = document.getElementById('login-overlay');                                
-            const loginBtn = document.getElementById('login-button');
-            const errorOverlay = document.getElementById('error-overlay');
-            const loginErrorText = document.getElementById('login-error');
-            const closeBtn = document.getElementById('error-close');
-            // ✅ USERNAME 驗證
+            // ❇️ 常數 CONSTANT
+            const loginOverlay = document.getElementById('login-overlay'); const usernameInput = document.getElementById('username-input'); const loginBtn = document.getElementById('login-button');
+            const errorOverlay = document.getElementById('error-overlay'); const loginErrorText = document.getElementById('login-error'); const closeBtn = document.getElementById('error-close');
+            // ✅ 驗證 VERIFICATION
             loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); if (!username) {showLoginError("請輸入名字"); return;}
                                                             loginBtn.innerText = "載入中...";
                                                             loginBtn.disabled = true;
@@ -221,13 +217,26 @@
                                                             catch (error) {console.error('Login Error:', error); showLoginError("連線失敗"); resetLoginBtn();}});
             function showLoginError(msg) {if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
             function resetLoginBtn() {loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
-                //  ❌ 關閉錯誤彈窗 CLOSE ERROR MODAL
-                closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
-                errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
+            // ❌ 關閉彈窗 CLOSE MODAL
+            closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
+            errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
             // ✅ 自動登入 AUTO LOGIN
             window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser'); const savedPermissions = localStorage.getItem('userPermissions');
                                                        if (savedName) {showMainPage(savedName, savedPermissions);}});
-
+        // 📤 登出 LOGOUT
+            // ❇️ CONSTANT 常數
+            const logoutBtn = document.getElementById('logout-btn');
+            const logoutModal = document.getElementById('logout-modal');
+            const cancelLogout = document.getElementById('cancel-logout');
+            const confirmLogout = document.getElementById('confirm-logout');
+            // 💬 顯示彈窗 SHOW MODAL
+            logoutBtn.addEventListener('click', () => {logoutModal.classList.remove('hidden');});
+            // ❌ 關閉彈窗 CLOSE MODAL
+            cancelLogout.addEventListener('click', () => {logoutModal.classList.add('hidden');});
+            logoutModal.addEventListener('click', (e) => {if (e.target === logoutModal) {logoutModal.classList.add('hidden');}});
+            // ✅ 確定登出 CONFIRM LOGOUT
+            confirmLogout.addEventListener('click', () => {localStorage.removeItem('studyLandUser'); localStorage.removeItem('userPermissions'); window.location.reload();});
+    
         // 主頁功能 MAIN PAGE FUNCTION
         const mainContent = document.getElementById('main-content');
         const userDisplayName = document.getElementById('user-display-name');
@@ -244,22 +253,6 @@
                 pList.forEach(p => {const key = p.trim(); if (allGames[key]) {allGames[key].classList.remove('hidden');}});} /** 檢查雲端權限 **/
             window.scrollTo(0, 0); /** 將畫面拉回左上角 **/
          }
-
-        // 登出 LOGOUT
-        const logoutBtn = document.getElementById('logout-btn');
-        const logoutModal = document.getElementById('logout-modal');
-        const cancelLogout = document.getElementById('cancel-logout');
-        const confirmLogoutFinal = document.getElementById('confirm-logout');
-
-        logoutBtn.addEventListener('click', () => {logoutModal.classList.remove('hidden');});
-        cancelLogout.addEventListener('click', () => {logoutModal.classList.add('hidden');});
-        
-        confirmLogoutFinal.addEventListener('click', () => {
-            localStorage.removeItem('studyLandUser'); localStorage.removeItem('userPermissions');
-            window.location.reload();
-        });
-        
-        logoutModal.addEventListener('click', (e) => {if (e.target === logoutModal) {logoutModal.classList.add('hidden');}});
 
         // 手機旋轉提示 ORIENTATION
         function handleOrientationChange() {
