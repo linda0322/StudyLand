@@ -9,17 +9,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-
-        /* 🔠 字體 FONTS */
-        @font-face {font-family: "Cubic11";
-                    src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
-                    font-display: swap;
-        }
-        .font-cubic {font-family: 'Cubic11', sans-serif;}
-        .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
-        .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
-
-        
         /* 🏞️ 整體版面 OVERALL */
         body {height: 100vh; width: 100vw; position: fixed; margin: 0; 
               overflow: hidden; overscroll-behavior: none;
@@ -31,8 +20,7 @@
             /* 🏙️ 背景層 BACKGROUND LAYER */
             .bg-layer {position: fixed; inset: 0; z-index: -1;
                        background-size: cover; background-position: center center; background-repeat: no-repeat;
-                       background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg.png');
-            }
+                       background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg.png');}
             /* 📱 手機背景 PHONE BACKGROUND LAYER */
             @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg_phone.webp');}}
             /* 📱 手機旋轉提示 ORIENTATION NOTI */
@@ -42,12 +30,15 @@
             @media screen and (max-width: 1000px) and (orientation: landscape) {#orientation-noti {display: flex !important;} body {overflow: hidden !important;}}
             @keyframes phone-portrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
             .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
-
         
         /* 🌼 樣式 STYLE */
             /* 🥽 玻璃框 */
             .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
-
+            /* 🔠 字體 FONTS */
+            @font-face {font-family: "Cubic11"; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype'); font-display: swap;}
+            .font-cubic {font-family: 'Cubic11', sans-serif;}
+            .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+            .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
         
         /* 🐕 動畫 ANIMATION */
             /* 🤖 NPC FLOAT */
@@ -55,7 +46,6 @@
                                    50% {transform: translateY(2px); animation-timing-function: ease-in-out;}}
             .animate-text-float {animation: float-loop 3s infinite;}
             .npc-float {animation: float-loop 3s infinite; animation-delay: -1.5s; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.1)); transition: filter 1.5s ease-in-out;}
-
         
         /* ⚙️ 內部結構 INTERNAL */
             /* ⬇️ 隱藏遊戲選單捲軸 HIDE GAME SCROLLBAR */
@@ -71,7 +61,7 @@
             .game-icon-container {width: 100%; flex: 1 1 0%; display: flex; align-items: center; justify-content: center;}
             .game-icon {width: 4rem; height: 4rem; object-fit: contain; border-radius: 0.75rem;}
             .game-title {font-family: 'Cubic11', sans-serif; color: #64748b; font-size: 0.875rem; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; text-align: center; letter-spacing: 0.05em; margin-top: 0.5rem;}
-        
+
         /* ⚒️ 操作 OPERATION */
             /* 🙈 隱藏圖層 HIDDEN LAYER */
             .hidden {display: none !important;}
@@ -84,14 +74,11 @@
             a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;} 
             @media (hover: hover) {button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}
-                                   .game-button:hover {transform: translateY(-4px); background-color: rgba(255, 255, 255, 0.85);}
+                                   .game-button:hover {transform: translateY(-4px); background-color: rgba(255, 255, 255, 0.85); color: rgba(255, 255, 255, 1);}
             button:active, [role="button"]:active, .game-button:active {transform: scale(0.95); background-color: rgba(0, 0, 0, 0.1); color: rgba(255, 255, 255, 1)}
-        
     </style>
 </head>
-    
 <body>
-    
     <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
 
     <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
@@ -161,18 +148,18 @@
         <div id="grid" class="w-full max-w-[600px] max-h-[60vh] overflow-y-auto grid grid-cols-2 md:grid-cols-3 gap-6 px-6 pt-6 pb-10 -mt-6">            
             <!-- 🪪 玩家 USER -->
                 <!-- 🏝️ 我的島嶼 ISLAND -->
-                <a id="btn-island" href="user/island.html" class="game-button">
-                    <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/8f5887bd40d2d3b4b10391cf7819fd4b4256dea7/image/icon/island_favicon.svg" alt="我的島嶼" class="game-icon"></div>
+                <a id="btn-island" href="user/island.html" class="no-touch game-button">
+                    <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/8f5887bd40d2d3b4b10391cf7819fd4b4256dea7/image/icon/island_favicon.svg" alt="我的島嶼" class="no-touch game-icon"></div>
                     <h3 class="game-title">我的島嶼</h3>
                 </a>
         
-            <a id="btn-writing" href="game/writing.html" class="game-button">
-                <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/8f5887bd40d2d3b4b10391cf7819fd4b4256dea7/image/icon/writing_favicon.svg" alt="單字練習" class="game-icon"></div>
+            <a id="btn-writing" href="game/writing.html" class="no-touch game-button">
+                <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/8f5887bd40d2d3b4b10391cf7819fd4b4256dea7/image/icon/writing_favicon.svg" alt="單字練習" class="no-touch game-icon"></div>
                 <h3 class="game-title">單字練習</h3>
             </a>
         
-            <a id="btn-matching" href="game/matching.html" class="game-button">
-                <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/8f5887bd40d2d3b4b10391cf7819fd4b4256dea7/image/icon/matching_favicon.svg" alt="圖文配對" class="game-icon"></div>
+            <a id="btn-matching" href="game/matching.html" class="no-touch game-button">
+                <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/8f5887bd40d2d3b4b10391cf7819fd4b4256dea7/image/icon/matching_favicon.svg" alt="圖文配對" class="no-touch game-icon"></div>
                 <h3 class="game-title">圖文配對</h3>
             </a>          
         </div>
