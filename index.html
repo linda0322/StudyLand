@@ -3,42 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DEMO</title>
-    <link rel="icon" type="image/svg" href="https://raw.githubusercontent.com/linda0322/zung1man4/ceb8dcb548333e060b3af38e4b94140f52601fd5/image/icon/npc_favicon.svg">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/npc_favicon_phone.png">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Zung1 Man4</title>
+    <link rel="icon" type="image/svg" href="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/npc_favicon.svg">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/npc_favicon_phone.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @font-face {
-            font-family: 'Cubic11';
-            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
-            font-display: swap;
+
+        /* 🔠 字體 FONTS */
+        @font-face {font-family: "Cubic11";
+                    src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
+                    font-display: swap;
         }
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #1dc5fd;            
-            height: 100vh; width: 100vw;
-            overflow: hidden; 
-            position: fixed;
-            margin: 0;
-            overscroll-behavior: none;
-            -webkit-user-select: none;
-            touch-action: none;
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23BAE6FF'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, auto;
-        }
-        a, button, [role="button"], .npc-hover-animation {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
-        }
+        .font-cubic {font-family: 'Cubic11', sans-serif;}
+        .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
+        .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
+
         
-        .bg-layer {
-            position: fixed; inset: 0; z-index: -1;
-            background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg.png');
-            background-size: cover; background-position: center center; background-repeat: no-repeat;
+        /* 🏞️ 整體版面 OVERALL */
+        body {height: 100vh; width: 100vw; position: fixed; margin: 0; 
+              overflow: hidden; overscroll-behavior: none;
+              -webkit-user-select: none; touch-action: none;
+              font-family: 'Noto Sans TC', sans-serif;
+              background-color: #1dc5fd;            
+              cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
-        @media (max-width: 600px) {.bg-layer {
-            background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg_phone.webp');
-            background-size: 100% auto; background-position: center bottom;
-        }}
+            //* 🏙️ 背景層 BACKGROUND LAYER *//
+            .bg-layer {position: fixed; inset: 0; z-index: -1;
+                       background-size: cover; background-position: center center; background-repeat: no-repeat;
+                       background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg.png');
+            }
+            //* 📱 手機背景 PHONE BACKGROUND LAYER *//
+            @media (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg_phone.webp');}}
+
+        
+        /* 🙈 隱藏圖層 HIDDEN LAYER */
+        .hidden {display: none !important; }
+
+        /* 按鈕效果 BUTTON EFFECT */
+        a, button, [role="button"] {
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;
+        }
+        button {transition: transform 0.1s ease;}
+        button: hover {background-color: rgb(255 255 255 / 20%);}
+        button:active {transform: scale(0.95);}
 
         /* 禁止選取及拖動 */
         .no-touch {
@@ -47,14 +55,11 @@
             -webkit-user-drag: none; user-drag: none; /* 禁止拖動元素 */
         }
         
-        /* 隱藏圖層 */
-        .hidden { display: none !important; }
+
         /* 玻璃外框 */
         .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
-        /* 字體 */
-        .font-cubic { font-family: 'Cubic11', sans-serif; }
-        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
-        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
+        
+
 
         /* 隱藏遊戲選單 scrollbar */
         .grid {-webkit-overflow-scrolling: touch; overscroll-behavior: contain; -ms-overflow-style: none; scrollbar-width: none; touch-action: pan-y;}
@@ -65,7 +70,7 @@
         .animate-text-bounce {animation: float-loop 3s infinite;}
         .npc-auto-bounce {animation: float-loop 3s infinite; animation-delay: -1.5s; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.1)); transition: filter 1.5s ease-in-out;}
 
-        /* 手機旋轉提示 */
+        /* 手機旋轉提示 ORIENTATION */
         #orientation-warning {display: none; position: fixed; inset: 0; z-index: 99999; background-color: #1dc5fd; flex-direction: column; align-items: center; justify-content: center;}
         @media screen and (max-width: 1023px) and (orientation: landscape) {#orientation-warning {display: flex !important;} body {overflow: hidden !important;}}
         @keyframes phone-rotate-left {0% { transform: rotate(0deg); } 30% { transform: rotate(-90deg); } 70% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); }}
@@ -79,7 +84,7 @@
     <!-- 背景圖 BACKGROUND -->
     <div class="bg-layer"></div>
 
-    <!-- 手機旋轉提示 -->
+    <!-- 手機旋轉提示 ORIENTATION -->
     <div id="orientation-warning"><div class="w-20 h-20 mb-6 animate-phone-rotate flex items-center justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
     </div>
@@ -175,9 +180,9 @@
         // 禁止畫面互動 TOUCH
         /* 選取及拖動 */
         document.querySelectorAll('.no-touch').forEach(el => { el.addEventListener('dragstart', (e) => e.preventDefault());});
-        /* 手指與鍵盤縮放 */
-        const preventZoom = (e) => { if (e.touches?.length > 1 || e.ctrlKey || e.metaKey) { if (e.cancelable) e.preventDefault();}};
-            ['touchstart', 'wheel', 'keydown', 'gesturestart'].forEach(type => { document.addEventListener(type, preventZoom, { passive: false });});
+        /* 多指縮放 */
+        const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) { if (e.cancelable) e.preventDefault();}};
+        ['touchstart', 'wheel', 'gesturestart'].forEach(type => {document.addEventListener(type, preventZoom, { passive: false });});
         /* 雙擊縮放 */
         let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
         /* 捲動控制 */
@@ -259,7 +264,7 @@
         
         logoutModal.addEventListener('click', (e) => {if (e.target === logoutModal) {logoutModal.classList.add('hidden');}});
 
-        // 手機旋轉提示
+        // 手機旋轉提示 ORIENTATION
         function handleOrientationChange() {
             const warning = document.getElementById('orientation-warning');
             const isLandscape = window.innerWidth > window.innerHeight;
