@@ -118,15 +118,17 @@
             </div>
 
     <!-- 📤 登出 LOGOUT -->
-    <div id="logout-modal" class="fixed hidden z-[200] inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-6">
-        <div class="bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center w-full max-w-xs p-8 ">
-            <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">退出遊戲</h2>
-            <div class="flex gap-4 w-full">
-                <button id="cancel-logout" class="flex-1 py-3 bg-slate-200 rounded-2xl font-cubic text-slate-600 thin-border hover:bg-slate-300 transition-all">取消</button>
-                <button id="confirm-logout-final" class="flex-1 py-3 bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border hover:bg-[#2da9e6] active:scale-95 transition-all">登出</button>
+        <!-- ⬛️ 遮罩 OVERLAY -->
+        <div id="logout-modal" class="hidden no-touch fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex justify-center items-center p-6">
+            <!-- 💬 -->
+            <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8 ">
+                <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">退出遊戲</h2>
+                <div class="flex gap-4 w-full">
+                    <button id="cancel-logout" class="flex-1 py-3 bg-slate-200 rounded-2xl font-cubic text-slate-600 thin-border hover:bg-slate-300 transition-all">取消</button>
+                    <button id="confirm-logout" class="flex-1 py-3 bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border hover:bg-[#2da9e6] transition-all">登出</button>
+                </div>
             </div>
         </div>
-    </div>
 
     <!-- 主要內容 -->
     <main id="main-content" class="hidden container flex flex-col items-center mx-auto px-8 py-8">
@@ -255,7 +257,7 @@
         const logoutBtn = document.getElementById('logout-btn');
         const logoutModal = document.getElementById('logout-modal');
         const cancelLogout = document.getElementById('cancel-logout');
-        const confirmLogoutFinal = document.getElementById('confirm-logout-final');
+        const confirmLogoutFinal = document.getElementById('confirm-logout');
 
         logoutBtn.addEventListener('click', () => {logoutModal.classList.remove('hidden');});
         cancelLogout.addEventListener('click', () => {logoutModal.classList.add('hidden');});
