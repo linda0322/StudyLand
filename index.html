@@ -106,7 +106,7 @@
                 <button id="login-button" class="w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border px-4 py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
             </div>
         </div>
-        <!-- ❌ 錯誤彈窗 ERROR WINDOW -->
+        <!-- ❌ 錯誤彈窗 ERROR MODAL -->
             <!-- ⬜️ 遮罩 OVERLAY -->
             <div id="error-overlay" class="hidden no-touch fixed inset-0 z-[150] bg-transparent flex flex-col justify-center items-center p-6">
                 <!-- 💬 -->
@@ -206,28 +206,15 @@
                                                                                         }
                                                        if (e.cancelable) e.preventDefault();},{ passive: false });
 
-        // 登入 LOGIN
-        const loginOverlay = document.getElementById('login-overlay');
-        const mainContent = document.getElementById('main-content');
-        const usernameInput = document.getElementById('username-input');
-        const loginBtn = document.getElementById('login-button');
-        const userDisplayName = document.getElementById('user-display-name');
-                                            
-        /* 載入網頁 --> 檢查快取 --> 連接雲端 --> 執行主頁 */
-            /* 自動登入 */
-            window.addEventListener('DOMContentLoaded', () => {
-                const savedName = localStorage.getItem('studyLandUser');
-                const savedPermissions = localStorage.getItem('userPermissions');
-                if (savedName) {showMainPage(savedName, savedPermissions);}
-            });
-             /* 重新登入 */
+        // 📥 登入 LOGIN
+            // ❇️ CONSTANT 常數
+            const usernameInput = document.getElementById('username-input');
+            const loginOverlay = document.getElementById('login-overlay');                                
+            const loginBtn = document.getElementById('login-button');
             const errorOverlay = document.getElementById('error-overlay');
             const loginErrorText = document.getElementById('login-error');
             const closeBtn = document.getElementById('error-close');
-            function showLoginError(msg) {if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
-            function resetLoginBtn() {loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
-            closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
-            errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
+            // ✅ USERNAME 驗證
             loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); if (!username) {showLoginError("請輸入名字"); return;}
                                                             loginBtn.innerText = "載入中...";
                                                             loginBtn.disabled = true;
@@ -237,8 +224,18 @@
                                                                                                                      showMainPage(username, data.permissions);} 
                                                                  else {showLoginError("玩家不存在"); resetLoginBtn();}} 
                                                             catch (error) {console.error('Login Error:', error); showLoginError("連線失敗"); resetLoginBtn();}});
+            function showLoginError(msg) {if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
+            function resetLoginBtn() {loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
+                //  ❌ 關閉錯誤彈窗 CLOSE ERROR MODAL
+                closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
+                errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
+            // ✅ 自動登入 AUTO LOGIN
+            window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser'); const savedPermissions = localStorage.getItem('userPermissions');
+                                                       if (savedName) {showMainPage(savedName, savedPermissions);}});
 
         // 主頁功能 MAIN PAGE FUNCTION
+        const mainContent = document.getElementById('main-content');
+        const userDisplayName = document.getElementById('user-display-name');
         function showMainPage(name, permissions) {
             userDisplayName.textContent = name;
             loginOverlay.classList.add('hidden');
