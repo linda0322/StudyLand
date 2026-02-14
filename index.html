@@ -110,7 +110,7 @@
             <!-- ⬜️ 遮罩 OVERLAY -->
             <div id="error-overlay" class="hidden no-touch fixed inset-0 z-[150] bg-transparent flex flex-col justify-center items-center p-6">
                 <!-- 💬 -->
-                <div class="no-touch max-w-xs bg-slate-200/70 backdrop-blur-sm rounded-[30px] shadow-md flex flex-col text-center items-center p-8">
+                <div class="no-touch w-full max-w-xs bg-slate-200/70 backdrop-blur-sm rounded-[30px] shadow-md flex flex-col text-center items-center p-8 relative">
                     <button id="error-close" class="w-12 h-12 absolute top-4 right-2 text-slate-400 flex text-center justify-center hover:text-slate-600 hover:bg-transparent active:bg-transparent transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
                     <h1 class="text-4xl mb-4">🙏🏻</h1>
                     <h2 id="login-error" class="font-cubic text-slate-700 text-lg thick-border tracking-wider">...</h2>
@@ -210,11 +210,6 @@
         const usernameInput = document.getElementById('username-input');
         const loginBtn = document.getElementById('login-button');
         const userDisplayName = document.getElementById('user-display-name');
-        const loginError = document.getElementById('login-error');
-        const closeBtn = document.getElementById('error-close');
-
-        loginError.addEventListener('click', (e) => {if (e.target === loginError) {loginError.classList.add('hidden')}});
-        closeBtn.addEventListener('click', () => {loginError.classList.add('hidden')});
                                             
         /* 載入網頁 --> 檢查快取 --> 連接雲端 --> 執行主頁 */
             /* 自動登入 */
@@ -224,30 +219,23 @@
                 if (savedName) {showMainPage(savedName, savedPermissions);}
             });
              /* 重新登入 */
-            function showLoginError(msg) {const errorMsgElement = loginError.querySelector('h2'); if (errorMsgElement) errorMsgElement.innerText = msg; loginError.classList.remove('hidden');}
-            loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); if (!username) {showLoginError("請輸入名字"); return;} loginBtn.innerText = "登入中...";
-                                                              loginBtn.disabled = true; try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })}); const data = await response.json();
-                                                                                               if (data.result === "success" && data.permissions) {localStorage.setItem('studyLandUser', username); localStorage.setItem('userPermissions', data.permissions); showMainPage(username, data.permissions);} 
-                                                                                               else {showLoginError("玩家不存在"); loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}} 
-                                                              catch (error) {console.error('Error:', error); showLoginError("連線失敗"); loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
-                                                             });
-        
-            /*loginBtn.addEventListener('click', async () => {
-                const username = usernameInput.value.trim();
-                if (!username) {
-                    loginError.classList.remove('hidden'); loginBtn.innerText = "進入遊戲"; return;}
-                loginBtn.innerText = "載入中...";
-                try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
-                     const data = await response.json(); 
-                     const permissions = data.permissions; 
-                     localStorage.setItem('studyLandUser', username);
-                     localStorage.setItem('userPermissions', permissions);
-                     showMainPage(username, permissions);
-                } catch (error) {console.error('Error:', error);
-                     localStorage.setItem('studyLandUser', username); /** 顯示玩家名稱 **/
-                     showMainPage(username, "");} /** 顯示空白遊戲選單 **/
-            });*/
-        
+            const errorOverlay = document.getElementById('error-overlay');
+            const loginErrorText = document.getElementById('login-error');
+            const closeBtn = document.getElementById('error-close');
+            function showLoginError(msg) {if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
+            function resetLoginBtn() {loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
+            closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
+            errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
+            loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); if (!username) {showLoginError("請輸入名字"); return;}
+                                                            loginBtn.innerText = "登入中...";
+                                                            loginBtn.disabled = true;
+                                                            try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
+                                                                 const data = await response.json();
+                                                                 if (data.result === "success" && data.permissions) {localStorage.setItem('studyLandUser', username); localStorage.setItem('userPermissions', data.permissions);
+                                                                                                                     showMainPage(username, data.permissions);} 
+                                                                 else {showLoginError("玩家不存在"); resetLoginBtn();}} 
+                                                            catch (error) {console.error('Login Error:', error); showLoginError("連線失敗"); resetLoginBtn();}});
+
         // 主頁功能 MAIN PAGE FUNCTION
         function showMainPage(name, permissions) {
             userDisplayName.textContent = name;
