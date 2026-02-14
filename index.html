@@ -96,25 +96,26 @@
     </div>
 
     <!-- 📥 登入 LOGIN -->
-    <!-- ⬛️ 遮罩 OVERLAY -->
-    <div id="login-window" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
-        <!-- ◻️ 白框 WHITE BOX -->
-        <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8">
-            <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-20 h-20 mb-6">
-            <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">登入</h2>
-            <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl font-cubic thin-border text-center px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
-            <button id="confirm-user" class="w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border px-4 py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
+        <!-- ⬛️ 遮罩 OVERLAY -->
+        <div id="login-window" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
+            <!-- ◻️ 白框 WHITE BOX -->
+            <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8">
+                <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-20 h-20 mb-6">
+                <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">登入</h2>
+                <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl font-cubic thin-border text-center px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
+                <button id="confirm-user" class="w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border px-4 py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
+            </div>
         </div>
-    </div>
-
-    <!-- 登入錯誤彈窗 LOGIN ERROR WINDOW -->
-    <div id="login-error" class="fixed hidden z-[150] inset-0 bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
-        <div class="bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center w-full max-w-xs p-8">
-            <h1 class="text-4xl mb-4">🙏🏻</h1>
-            <h2 class="font-cubic text-slate-700 text-lg thick-border tracking-wider mb-4">請輸入名字</h2>
-            <button id="back-to-login" class="bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border w-full py-4 hover:bg-[#2da9e6] active:scale-95 transition-all">返回</button>
+        <!-- ❌ 錯誤彈窗 ERROR WINDOW -->
+        <div id="login-error" class="hidden no-touch fixed inset-0 z-[150] bg-transparent flex flex-col justify-center items-center p-6">
+            <button id="back-to-login" class="absolute top-5 right-6 w-10 h-10 text-slate-400 hover:text-slate-600 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            <div class="no-touch w-full max-w-xs glass-panel rounded-[40px] shadow-md flex flex-col text-center items-center p-8">
+                <h1 class="text-4xl mb-4">🙏🏻</h1><h2 class="font-cubic text-slate-700 text-lg thick-border tracking-wider mb-4">請輸入名字</h2>
+                <button id="back-to-login" class="bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border w-full py-4 hover:bg-[#2da9e6] active:scale-95 transition-all">返回</button>
+            </div>
         </div>
-    </div>
 
     <!-- 登出彈窗 LOGOUT WINDOW -->
     <div id="logout-modal" class="fixed hidden z-[200] inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-6">
