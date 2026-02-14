@@ -65,15 +65,16 @@
                    touch-action: pan-y;}
             .grid::-webkit-scrollbar {display: none;}
             /* 🕹️ 遊戲入口 GAME ENTRANCE */
-            @layer components {.game-button {@apply no-touch group flex flex-col items-center justify-center p-4 aspect-square; @apply bg-white/95 rounded-[30px] shadow-xl; @apply transition-all duration-300;}
-                               .game-icon-container {@apply w-full flex-1 flex items-center justify-center;}
-                               .game-icon {@apply no-touch w-16 h-16 object-contain rounded-xl;}
-                               .game-title {@apply font-cubic text-slate-500 text-sm thin-border text-center tracking-wider mt-2;}}
-
+            .game-button {display: flex; flex-direction: column; items-align: center; justify-content: center; padding: 1rem; 
+                          aspect-ratio: 1 / 1; width: 100%; background-color: rgba(255, 255, 255, 0.95); border-radius: 30px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+                          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
+            .game-icon-container {width: 100%; flex: 1 1 0%; display: flex; align-items: center; justify-content: center;}
+            .game-icon {width: 4rem; height: 4rem; object-fit: contain; border-radius: 0.75rem;}
+            .game-title {font-family: 'Cubic11', sans-serif; color: #64748b; font-size: 0.875rem; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; text-align: center; letter-spacing: 0.05em; margin-top: 0.5rem;}
         
         /* ⚒️ 操作 OPERATION */
             /* 🙈 隱藏圖層 HIDDEN LAYER */
-            .hidden {display: none !important; }
+            .hidden {display: none !important;}
             /* 🫵🏻 手勢禁止 DISABLE GESTURE */
             .no-touch {touch-action: none;
                        -webkit-touch-callout: none; /* Safari 選單 */
@@ -83,9 +84,8 @@
             a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;} 
             @media (hover: hover) {button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}
-                                   .game-button:hover {@apply -translate-y-1 bg-white/85;}}
-            button:active, [role="button"]:active {transform: scale(0.95); background-color: rgba(0, 0, 0, 0.1); color: rgba(255, 255, 255, 1)}
-            .game-button:active {@apply scale-95;}
+                                   .game-button:hover {transform: translateY(-4px); background-color: rgba(255, 255, 255, 0.85);}
+            button:active, [role="button"]:active, .game-button:active {transform: scale(0.95); background-color: rgba(0, 0, 0, 0.1); color: rgba(255, 255, 255, 1)}
         
     </style>
 </head>
