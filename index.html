@@ -125,7 +125,7 @@
             </div>
         </div>
 
-    <!-- 👩🏻‍💻 主要內容 MAIN CONTENT -->
+    <!-- 👩🏻‍💻 主頁 MAIN PAGE -->
     <main id="main-content" class="hidden container flex flex-col items-center mx-auto px-8 py-8">
         <!-- 🔝 頂欄 TOP --><nav class="w-full max-w-[550px] flex justify-between mb-8">
             <!-- ⬅️ 左邊群組 TOP LEFT-->
@@ -167,27 +167,8 @@
         </div>
     </main> 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysT9Xc5YqhubUhhlmNiZkhgwxTzYqbP25NEsx51TOH15FVtqE2cgITN_IIGICfO-Ly/exec';
-
-        // 禁止畫面互動 TOUCH
-        /* 選取及拖動 */
-        document.querySelectorAll('.no-touch').forEach(el => { el.addEventListener('dragstart', (e) => e.preventDefault());});
-        /* 多指縮放 */
-        const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) { if (e.cancelable) e.preventDefault();}};
-        ['touchstart', 'wheel', 'gesturestart'].forEach(type => {document.addEventListener(type, preventZoom, { passive: false });});
-        /* 雙擊縮放 */
-        let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
-        /* 捲動控制 */
-        let startY = 0;
-        document.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; }, { passive: false });
-        document.addEventListener('touchmove', (e) => { const menu = document.getElementById('grid'); const path = e.composedPath();
-                                                       if (menu && path.includes(menu)) { const { scrollTop, scrollHeight, clientHeight } = menu;
-                                                                                          const deltaY = startY - e.touches[0].pageY;
-                                                                                          const isAtTop = scrollTop <= 0 && deltaY < 0;
-                                                                                          const isAtBottom = scrollTop + clientHeight >= scrollHeight && deltaY > 0;
-                                                                                          if (!isAtTop && !isAtBottom) return;
-                                                                                        }
-                                                       if (e.cancelable) e.preventDefault();},{ passive: false });
+        // 🌎 GAS
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysT9Xc5YqhubUhhlmNiZkhgwxTzYqbP25NEsx51TOH15FVtqE2cgITN_IIGICfO-Ly/exec'; 
 
         // 📥 登入 LOGIN
             // ❇️ 常數 CONSTANT
@@ -211,6 +192,7 @@
             // ✅ 自動登入 AUTO LOGIN
             window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser'); const savedPermissions = localStorage.getItem('userPermissions');
                                                        if (savedName) {showMainPage(savedName, savedPermissions);}});
+        
         // 📤 登出 LOGOUT
             // ❇️ CONSTANT 常數
             const logoutBtn = document.getElementById('logout-button'); const logoutModal = document.getElementById('logout-modal');
@@ -223,34 +205,46 @@
             // ✅ 確定登出 CONFIRM LOGOUT
             confirmLogout.addEventListener('click', () => {localStorage.removeItem('studyLandUser'); localStorage.removeItem('userPermissions'); window.location.reload();});
     
-        // 主頁功能 MAIN PAGE FUNCTION
+        // 👩🏻‍💻 主頁 MAIN PAGE
         const mainContent = document.getElementById('main-content');
         const userDisplayName = document.getElementById('user-display-name');
-        function showMainPage(name, permissions) {
-            userDisplayName.textContent = name;
-            loginOverlay.classList.add('hidden');
-            mainContent.classList.remove('hidden');
-            const allGames = {
-                'island': document.getElementById('btn-island'),
-                'writing': document.getElementById('btn-writing'),
-                'matching': document.getElementById('btn-matching'),};
-            Object.values(allGames).forEach(el => el?.classList.add('hidden')); /** 隱藏所有遊戲 **/
-            if (permissions) {const pList = permissions.split(','); 
-                pList.forEach(p => {const key = p.trim(); if (allGames[key]) {allGames[key].classList.remove('hidden');}});} /** 檢查雲端權限 **/
-            window.scrollTo(0, 0); /** 將畫面拉回左上角 **/
-         }
+        function showMainPage(name, permissions) {userDisplayName.textContent = name;
+                                                  loginOverlay.classList.add('hidden'); mainContent.classList.remove('hidden');
+                                                  // 🕹️ 遊戲常數 GAME CONSTANT
+                                                  const allGames = {'island': document.getElementById('btn-island'),
+                                                                    'writing': document.getElementById('btn-writing'),
+                                                                    'matching': document.getElementById('btn-matching'),};
+                                                  // 🙈 隱藏所有遊戲 HIDE ALL GAMES
+                                                  Object.values(allGames).forEach(el => el?.classList.add('hidden'));
+                                                  // 👀 檢查遊戲權限 CHECK GAME PERMISSIONS
+                                                  if (permissions) {const pList = permissions.split(','); 
+                                                                    pList.forEach(p => {const key = p.trim(); if (allGames[key]) {allGames[key].classList.remove('hidden');}});}
+                                                  window.scrollTo(0, 0);}
+        
+        // 🫵🏻 手勢禁止 DISABLE GESTURE
+            // 選取及拖動
+            document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
+            // 多指縮放
+            const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) {if (e.cancelable) e.preventDefault();}};
+            ['touchstart', 'wheel', 'gesturestart'].forEach(type => {document.addEventListener(type, preventZoom, {passive: false});});
+            // 雙擊縮放
+            let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
+            // 捲動控制
+            let startY = 0; document.addEventListener('touchstart', (e) => {startY = e.touches[0].pageY;}, {passive: false});
+                            document.addEventListener('touchmove', (e) => {const menu = document.getElementById('grid'); const path = e.composedPath();
+                                                                           if (menu && path.includes(menu)) {const {scrollTop, scrollHeight, clientHeight} = menu;
+                                                                                                             const deltaY = startY - e.touches[0].pageY;
+                                                                                                             const isAtTop = scrollTop <= 0 && deltaY < 0; const isAtBottom = scrollTop + clientHeight >= scrollHeight && deltaY > 0;
+                                                                                                             if (!isAtTop && !isAtBottom) return;}
+                                                                           if (e.cancelable) e.preventDefault();},{ passive: false });
 
-        // 手機旋轉提示 ORIENTATION
-        function handleOrientationChange() {
-            const warning = document.getElementById('orientation-noti');
-            const isLandscape = window.innerWidth > window.innerHeight;
-            const isMobileOrTablet = window.innerWidth < 1024;
-            if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}
-        }
+        // 📱 手機旋轉提示 ORIENTATION NOTI
+        function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
+                                            const isLandscape = window.innerWidth > window.innerHeight; const isMobileOrTablet = window.innerWidth < 1024;
+                                            if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
         window.addEventListener('resize', handleOrientationChange);
         window.addEventListener('orientationchange', handleOrientationChange);
         handleOrientationChange();
-
     </script>
 </body>
 </html>
