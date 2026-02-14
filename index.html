@@ -97,8 +97,8 @@
 
     <!-- 📥 登入 LOGIN -->
         <!-- ⬛️ 遮罩 OVERLAY -->
-        <div id="login-window" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
-            <!-- ◻️ 白框 WHITE BOX -->
+        <div id="login-page" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
+            <!-- 💬 -->
             <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8">
                 <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-20 h-20 mb-6">
                 <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">登入</h2>
@@ -107,16 +107,18 @@
             </div>
         </div>
         <!-- ❌ 錯誤彈窗 ERROR WINDOW -->
-        <div id="login-error" class="hidden no-touch fixed inset-0 z-[150] bg-transparent flex flex-col justify-center items-center p-6">
-            <div class="no-touch max-w-xs bg-slate-200/70 backdrop-blur-sm rounded-[30px] shadow-md flex flex-col text-center items-center p-8">
-                <button id="back-to-login" class="w-12 h-12 absolute top-4 right-2 text-slate-400 flex text-center justify-center hover:text-slate-600 hover:bg-transparent active:bg-transparent transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                </button>
-                <h1 class="text-4xl mb-4">🙏🏻</h1><h2 class="font-cubic text-slate-700 text-lg thick-border tracking-wider">請輸入名字</h2>
+            <!-- ⬜️ 遮罩 OVERLAY -->
+            <div id="login-error" class="hidden no-touch fixed inset-0 z-[150] bg-transparent flex flex-col justify-center items-center p-6">
+                <!-- 💬 -->
+                <div class="no-touch max-w-xs bg-slate-200/70 backdrop-blur-sm rounded-[30px] shadow-md flex flex-col text-center items-center p-8">
+                    <button id="back-to-login" class="w-12 h-12 absolute top-4 right-2 text-slate-400 flex text-center justify-center hover:text-slate-600 hover:bg-transparent active:bg-transparent transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                    <h1 class="text-4xl mb-4">🙏🏻</h1><h2 class="font-cubic text-slate-700 text-lg thick-border tracking-wider">請輸入名字</h2>
+                </div>
             </div>
-        </div>
 
-    <!-- 登出彈窗 LOGOUT WINDOW -->
+    <!-- 📤 登出 LOGOUT -->
     <div id="logout-modal" class="fixed hidden z-[200] inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-6">
         <div class="bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center w-full max-w-xs p-8 ">
             <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">退出遊戲</h2>
@@ -204,7 +206,7 @@
                                                        if (e.cancelable) e.preventDefault();},{ passive: false });
 
         // 登入 LOGIN
-        const loginOverlay = document.getElementById('login-window');
+        const loginOverlay = document.getElementById('login-page');
         const mainContent = document.getElementById('main-content');
         const usernameInput = document.getElementById('username-input');
         const confirmBtn = document.getElementById('confirm-user');
