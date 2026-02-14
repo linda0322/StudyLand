@@ -28,14 +28,14 @@
               background-color: #1dc5fd;            
               cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
-            //* 🏙️ 背景層 BACKGROUND LAYER *//
+            /* 🏙️ 背景層 BACKGROUND LAYER */
             .bg-layer {position: fixed; inset: 0; z-index: -1;
                        background-size: cover; background-position: center center; background-repeat: no-repeat;
                        background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg.png');
             }
-            //* 📱 手機背景 PHONE BACKGROUND LAYER *// 
+            /* 📱 手機背景 PHONE BACKGROUND LAYER */
             @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg_phone.webp');}}
-            //* 📱 手機旋轉提示 ORIENTATION NOTI *//
+            /* 📱 手機旋轉提示 ORIENTATION NOTI */
             #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
                                background-color: #1dc5fd;
                                flex-direction: column; align-items: center; justify-content: center;}
@@ -45,13 +45,13 @@
 
         
         /* ⚒️ 操作 OPERATION */
-            //* 🙈 隱藏圖層 HIDDEN LAYER *// 
+            /* 🙈 隱藏圖層 HIDDEN LAYER */
             .hidden {display: none !important; }
-            //* 🫵🏻 手勢禁止 DISABLE GESTURE *//
-            .no-touch {-webkit-touch-callout: none; ///* Safari 選單 */// 
-                       -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; ///* 選取 */// 
-                       -webkit-user-drag: none; user-drag: none; ///* 拖動 *///}
-            //* 🔘 按鈕效果 BUTTON EFFECT *// 
+            /* 🫵🏻 手勢禁止 DISABLE GESTURE */
+            .no-touch {-webkit-touch-callout: none; /* Safari 選單 */
+                       -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; /* 選取 */
+                       -webkit-user-drag: none; user-drag: none; /* 拖動 */}
+            /* 🔘 按鈕效果 BUTTON EFFECT */
             a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;} 
             button:hover {background-color: rgba(255, 255, 255, 0.2);} 
@@ -59,12 +59,12 @@
 
         
         /* 🌼 樣式 STYLE */
-            //* 玻璃框 *//
+            /* 玻璃框 */
             .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
 
         
         /* 🐕 動畫 ANIMATION */
-            //* 🤖 NPC FLOAT *//
+            /* 🤖 NPC FLOAT */
             @keyframes float-loop {0%, 100% {transform: translateY(-2px); animation-timing-function: ease-in-out;} 
                                    50% {transform: translateY(2px); animation-timing-function: ease-in-out;}}
             .animate-text-float {animation: float-loop 3s infinite;}
@@ -72,7 +72,7 @@
 
         
         /* ⚙️ 內部結構 INTERNAL */
-            //* ⬇️ 隱藏遊戲選單 HIDE GAME SCROLLBAR *//
+            /* ⬇️ 隱藏遊戲選單 HIDE GAME SCROLLBAR */
             .grid {-ms-overflow-style: none; scrollbar-width: none;
                    -webkit-overflow-scrolling: touch; 
                    overscroll-behavior: contain; 
