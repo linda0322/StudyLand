@@ -41,7 +41,7 @@
                                flex-direction: column; align-items: center; justify-content: center;}
             @media screen and (max-width: 1000px) and (orientation: landscape) {#orientation-noti {display: flex !important;} body {overflow: hidden !important;}}
             @keyframes phone-potrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
-            .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite;}
+            .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
 
         
         /* ⚒️ 操作 OPERATION */
@@ -59,7 +59,7 @@
 
         
         /* 🌼 樣式 STYLE */
-            /* 玻璃框 */
+            /* 🥽 玻璃框 */
             .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
 
         
@@ -84,13 +84,13 @@
     
 <body>
     
-    <!-- 背景圖 BACKGROUND -->
-    <div class="bg-layer"></div>
+    <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
 
-    <!-- 手機旋轉提示 ORIENTATION -->
-    <div id="orientation-noti"><div class="w-20 h-20 mb-6 animate-phone-portrait flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-    </div>
+    <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
+    <div id="orientation-noti">
+        <div class="animate-phone-portrait w-20 h-20 mb-6 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        </div>
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">請旋轉螢幕以繼續遊戲</h2>
     </div>
 
