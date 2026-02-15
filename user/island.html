@@ -210,8 +210,15 @@
                                                                             div.style.zIndex = isBottom ? "1" : "10";
                                                                             if (isBottom) div.dataset.isBottom = "true";
                                                                             div.innerHTML = `<img src="${config.imgURL}">`;
-                                                                            div.oncontextmenu = (e) => {e.preventDefault(); if(confirm("要收回倉庫嗎？")) {div.remove(); showToast("已收回倉庫"); refreshInventory(); }};
-                                                                            document.getElementById('items-layer').appendChild(div); bindDraggable(div);}
+                                                                            //div.oncontextmenu = (e) => {e.preventDefault(); if(confirm("要收回倉庫嗎？")) {div.remove(); showToast("已收回倉庫"); refreshInventory(); }};
+                                                                            //document.getElementById('items-layer').appendChild(div); bindDraggable(div);}
+                                                                            div.oncontextmenu = (e) => {e.preventDefault(); if(confirm("要收回倉庫嗎？")) {
+                                                                                const parts = div.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
+                                                                                if (invIdx > -1) {userInventory[invIdx].available++;} 
+                                                                                else {div.remove(); showToast("已收回倉庫"); const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部';
+                                                                                      renderInventoryItems(activeTab);}};
+
+        
         // 👆🏻 拖曳物件 DRAG ITEMS
         function bindDraggable(el) {const stage = document.getElementById('game-stage'); el.onmousedown = el.ontouchstart = function(e) {
             if (e.type === 'touchstart') {} const isTouch = e.type === 'touchstart'; const clientX = isTouch ? e.touches[0].clientX : e.clientX; const clientY = isTouch ? e.touches[0].clientY : e.clientY;
@@ -242,7 +249,7 @@
                                                     userInventory = await resp.json();
                                                     const categories = ['全部', ...new Set(userInventory.map(i => i.category))];
                                                     const tabContainer = document.getElementById('storage-tabs');
-                                                    tabContainer.innerHTML = categories.map(cat => `<button onclick="filterWarehouse('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
+                                                    tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
                                                     renderInventoryItems('全部');} catch (e) {container.innerHTML = "載入失敗";}}
             function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); 
                                                    const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
@@ -250,16 +257,24 @@
                                                                                                        <span class="text-5xl mb-2">🙂‍↔️</span>
                                                                                                        <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
                                                                                                    </div>`; return;}
-                                                   container.innerHTML = items.map(item => `<div onclick="deployFromWarehouse('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
+                                                   container.innerHTML = items.map(item => `<div onclick="deployFromStorage('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
                                                                                                 <img src="${item.imgURL}" class="w-12 h-12 object-contain" draggable="false">
                                                                                                 <span class="text-[16px] font-cubic text-slate-400 thin-border">${item.available}</span>
                                                                                             </div>`).join('');}
-            function filterWarehouse(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}
-            function deployFromWarehouse(type) {const existing = document.querySelectorAll(`[id^="item_${type}_"]`);
-                                                let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
-                                                const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); toggleStorage(); showToast("已放置");
-                                                const invIdx = userInventory.findIndex(i => i.assetType === type);
-                                                if (invIdx > -1) {userInventory[invIdx].available--; if (userInventory[invIdx].available <= 0) userInventory.splice(invIdx, 1);}}
+            function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}
+            function deployFromStorage(type) {const invIdx = userInventory.findIndex(i => i.assetType === type);
+                                              if (invIdx > -1 && userInventory[invIdx].available > 0) {
+                                                  userInventory[invIdx].available--; const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部';
+                                                  const existing = document.querySelectorAll(`[id^="item_${type}_"]`);
+                                                  let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
+                                                  const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); showToast("已放置");
+                                                  renderInventoryItems(activeTab); } else {showToast("庫存不足", "error");}}
+        
+        //function deployFromStorage(type) {const existing = document.querySelectorAll(`[id^="item_${type}_"]`);
+                                                //let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
+                                                //const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); toggleStorage(); showToast("已放置");
+                                                //const invIdx = userInventory.findIndex(i => i.assetType === type);
+                                                //if (invIdx > -1) {userInventory[invIdx].available--; if (userInventory[invIdx].available <= 0) userInventory.splice(invIdx, 1);}}
 
         // 🏝️ 島嶼選單 ISLAND MENU
         const islandMenu = document.getElementById('island-menu');
