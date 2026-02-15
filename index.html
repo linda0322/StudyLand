@@ -203,11 +203,17 @@
             closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
             errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
             // ✅ 自動登入 AUTO LOGIN
-            window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser');
-                                                               if (savedName) {const savedPermissions = localStorage.getItem('userPermissions');
-                                                                               const savedWeb = localStorage.getItem('userNotionWeb'); 
-                                                                               const savedPW = localStorage.getItem('userNotionPW');
-                                                                               showMainPage(savedName, savedPermissions, savedWeb, savedPW);}});
+            window.addEventListener('DOMContentLoaded', async () => {const savedName = localStorage.getItem('studyLandUser'); if (savedName) {
+                                                                     const savedPermissions = localStorage.getItem('userPermissions'); const savedWeb = localStorage.getItem('userNotionWeb'); const savedPW = localStorage.getItem('userNotionPW');
+                                                                     showMainPage(savedName, savedPermissions, savedWeb, savedPW);
+                                                        try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({username: savedName})});
+                                                             const data = await response.json();
+                                                             if (data.result === "success") {localStorage.setItem('userPermissions', data.permissions || ""); 
+                                                                                             localStorage.setItem('userNotionWeb', data.notionWeb || "");
+                                                                                             localStorage.setItem('userNotionPW', data.notionPW || "");
+                                                                                             showMainPage(savedName, data.permissions, data.notionWeb, data.notionPW);
+                                                                                             console.log("Permissions updated from server!");}}
+                                                        catch (error) {console.error('Background Update Failed:', error);}}});
         
         // 📤 登出 LOGOUT
             // ❇️ CONSTANT 常數
