@@ -93,8 +93,8 @@
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以進入島嶼</h2>
     </div>
 
-    <!-- 倉庫彈窗 WAREHOUSE WINDOW -->
-    <div id="storage-window" class="fixed inset-0 z-[3000] p-4  bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
+    <!-- 🏠 倉庫 STORAGE -->
+    <div id="storage-modal" class="fixed inset-0 z-[3000] p-4  bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
         <div class="glass-panel w-full max-w-lg rounded-[30px] p-6 shadow-2xl relative">
             <button onclick="toggleWarehouse()" class="absolute top-5 right-6 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -287,7 +287,7 @@
             }
 
         // 倉庫 WAREHOUSE
-        function toggleWarehouse() {const win = document.getElementById('storage-window');
+        function toggleWarehouse() {const win = document.getElementById('storage-modal');
             if (win.classList.contains('hidden')) {win.classList.remove('hidden'); refreshInventory();
             } else {win.classList.add('hidden');}
         }
