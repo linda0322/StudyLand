@@ -179,16 +179,21 @@
             // ❇️ 常數 CONSTANT
             const loginOverlay = document.getElementById('login-overlay'); const usernameInput = document.getElementById('username-input'); const loginBtn = document.getElementById('login-button');
             const errorOverlay = document.getElementById('error-overlay'); const loginErrorText = document.getElementById('login-error'); const closeBtn = document.getElementById('error-close');
+            const mainContent = document.getElementById('main-content'); const userDisplayName = document.getElementById('user-display-name');
             // ✅ 驗證 VERIFICATION
-            loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); if (!username) {showLoginError("請輸入名字"); return;}
-                                                            loginBtn.innerText = "載入中...";
+            loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); 
+                                                            if (!username) { showLoginError("請輸入名字"); return; }
+                                                            loginBtn.innerText = "載入中..."; 
                                                             loginBtn.disabled = true;
-                                                            try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
+                                                            try {const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ username: username }) });
                                                                  const data = await response.json();
-                                                                 if (data.result === "success" && data.permissions) {localStorage.setItem('studyLandUser', username); localStorage.setItem('userPermissions', data.permissions);
-                                                                                                                     showMainPagewindow.addEventListener(username, data.permissions, data.notionWeb, data.notionPW);} 
-                                                                 else {showLoginError("玩家不存在"); resetLoginBtn();}} 
-                                                            catch (error) {console.error('Login Error:', error); showLoginError("連線失敗"); resetLoginBtn();}});
+                                                                 if (data.result === "success") {localStorage.setItem('studyLandUser', username); 
+                                                                                                 localStorage.setItem('userPermissions', data.permissions || "");
+                                                                                                 localStorage.setItem('userNotionWeb', data.notionWeb || "");
+                                                                                                 localStorage.setItem('userNotionPW', data.notionPW || "");
+                                                                                                 showMainPage(username, data.permissions, data.notionWeb, data.notionPW);} else {
+                                                                     showLoginError("玩家不存在"); resetLoginBtn();}} catch (error) {
+                                                                console.error('Login Error:', error); showLoginError("連線失敗"); resetLoginBtn();}});
             function showLoginError(msg) {if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
             function resetLoginBtn() {loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
             // ❌ 關閉彈窗 CLOSE MODAL
@@ -196,9 +201,10 @@
             errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
             // ✅ 自動登入 AUTO LOGIN
             window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser');
-                                                               const savedPermissions = localStorage.getItem('userPermissions');
-                                                               const savedWeb = localStorage.getItem('userNotionWeb'); const savedPW = localStorage.getItem('userNotionPW');
-                                                               if (savedName) {showMainPage(savedName, savedPermissions, savedWeb, savedPW);}});
+                                                               if (savedName) {const savedPermissions = localStorage.getItem('userPermissions');
+                                                                               const savedWeb = localStorage.getItem('userNotionWeb'); 
+                                                                               const savedPW = localStorage.getItem('userNotionPW');
+                                                                               showMainPage(savedName, savedPermissions, savedWeb, savedPW);}});
         
         // 📤 登出 LOGOUT
             // ❇️ CONSTANT 常數
@@ -213,28 +219,26 @@
             confirmLogout.addEventListener('click', () => {localStorage.removeItem('studyLandUser'); localStorage.removeItem('userPermissions'); window.location.reload();});
     
         // 👩🏻‍💻 主頁 MAIN PAGE
-        const mainContent = document.getElementById('main-content');
-        const userDisplayName = document.getElementById('user-display-name');
         function showMainPage(name, permissions, notionWeb, notionPW) {userDisplayName.textContent = name; loginOverlay.classList.add('hidden'); mainContent.classList.remove('hidden');
-                                                                       window.currentUserNotionWeb = notionWeb || localStorage.getItem('userNotionWeb');
-                                                                       window.currentUserNotionPW = notionPW || localStorage.getItem('userNotionPW');
-                                                                       if(notionWeb) localStorage.setItem('userNotionWeb', notionWeb);
-                                                                       if(notionPW) localStorage.setItem('userNotionPW', notionPW);
+                                                                       window.currentUserNotionWeb = notionWeb || localStorage.getItem('userNotionWeb'); window.currentUserNotionPW = notionPW || localStorage.getItem('userNotionPW');
                                                                        // 🕹️ 遊戲常數 GAME CONSTANT
                                                                        const allGames = {'island': document.getElementById('btn-island'),
+                                                                                         'notion': document.getElementById('btn-notion'),
                                                                                          'writing': document.getElementById('btn-writing'),
                                                                                          'matching': document.getElementById('btn-matching'),
-                                                                                         'notion': document.getElementById('btn-notion')};
+                                                                                         };
                                                                        // 🙈 隱藏所有遊戲 HIDE ALL GAMES
                                                                        Object.values(allGames).forEach(el => el?.classList.add('hidden'));
                                                                        // 👀 檢查遊戲權限 CHECK GAME PERMISSIONS
                                                                        if (permissions) {const pList = permissions.split(','); 
                                                                                          pList.forEach(p => {const key = p.trim(); if (allGames[key]) allGames[key].classList.remove('hidden');});}
                                                                        window.scrollTo(0, 0);}
-        // 📘 學習筆記 NOTION
+
+        // 📘 學習筆記 Notion
         document.getElementById('btn-notion').addEventListener('click', () => {const pw = prompt("請輸入筆記密碼");
-                                                                               if (pw === window.currentUserNotionPW) {if (window.currentUserNotionWeb) {window.location.href = window.currentUserNotionWeb;} else {
-                                                                               alert("未有學習筆記");}} else if (pw !== null) {alert("密碼錯誤！");}});
+                                                                               if (pw === String(window.currentUserNotionPW)) {if (window.currentUserNotionWeb) {
+                                                                                   window.location.href = window.currentUserNotionWeb;} else {alert("未有學習筆記");}}
+                                                                               else if (pw !== null) {alert("密碼錯誤！");}});
         
         // 🫵🏻 手勢禁止 DISABLE GESTURE
             // 選取及拖動
