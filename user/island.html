@@ -237,12 +237,14 @@
                                                                                                              document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
                                                                                     document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, { passive: false }); 
                                                                                     document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);}; el.ondragstart = function() { return false; };}
-        let currentReturningEl = null; function handleItemReturn(el) {if (!confirmModal.classList.contains('hidden')) return; currentReturningEl = el; openConfirm("要收回倉庫嗎？", () => {
-            const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
-            if (invIdx > -1) {userInventory[invIdx].available++;}
-            currentReturningEl.remove(); currentReturningEl = null; showToast("已收回倉庫");
-            const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);});}
-
+        let currentReturningEl = null; function handleItemReturn(el) {if (!confirmModal.classList.contains('hidden')) return; currentReturningEl = el; openConfirm("收回倉庫", () => {
+            const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); 
+            const invIdx = userInventory.findIndex(i => i.assetType === type);
+            if (invIdx > -1) {userInventory[invIdx].available++; showToast("已收回倉庫");} 
+            else {refreshInventory();}
+            currentReturningEl.remove(); currentReturningEl = null; const activeTabBtn = document.querySelector('.tab-active');
+            const currentTab = activeTabBtn ? activeTabBtn.innerText.trim() : '全部'; renderInventoryItems(currentTab); });}
+                                                                      
         // 🏠 倉庫 STORAGE
         const storageModal = document.getElementById('storage-modal');
         function toggleStorage() {if (storageModal.classList.contains('hidden')) {storageModal.classList.remove('hidden'); if (userInventory.length === 0) {refreshInventory();} 
