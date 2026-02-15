@@ -297,7 +297,7 @@
                                                           btn.onclick = () => {onConfirm(); closeConfirm();}; modal.classList.remove('hidden');}
             function handleSave() {openConfirm("確定要儲存嗎？", () => {saveData();});}
             function handleReload() {openConfirm("確定要重新載入嗎？", () => {location.reload();});}
-            function handleHome() {openConfirm("確定要登出嗎？", () => {window.location.href = '../index.html'});
+            function handleHome() {openConfirm("確定要登出嗎？", () => {window.location.href = '../index.html';});}
 
         // 🍞 通知 TOAST
         let toastTimer; function showToast(message, type = 'success') {const toast = document.getElementById('toast');
