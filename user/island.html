@@ -36,13 +36,6 @@
         /* 🔘 按鈕效果 BUTTON EFFECT */
         a, button, [role="button"], .draggable, .inventory-item {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
         button {transition: transform 0.1s ease;} 
-
-        /* 🎛️ 操作欄 CONTROL BAR */
-        .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
-        .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
-        @media screen and (max-width: 932px) {.fixed-controls-left, .fixed-controls-right {gap: 8px; top: 15px;}
-                                              .fixed-controls-left button, .fixed-controls-right button {padding: 12px; background: rgba(255, 255, 255, 0.9);}
-                                              .fixed-controls-left svg, .fixed-controls-right svg {width: 26px !important; height: 26px !important;}}
                                               
 
         /* 手機畫面縮小 */
@@ -60,7 +53,13 @@
             /* ☁️ 加載遮罩（飛行中）LOADING OVERLAY */
             #loading-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
             #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
-        
+            /* 🎛️ 操作欄 CONTROL BAR */
+            .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
+            .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
+            @media screen and (max-width: 932px) {.fixed-controls-left, .fixed-controls-right {gap: 8px; top: 15px;}
+                                                  .fixed-controls-left button, .fixed-controls-right button {padding: 12px; background: rgba(255, 255, 255, 0.9);}
+                                                  .fixed-controls-left svg, .fixed-controls-right svg {width: 26px !important; height: 26px !important;}}
+            
         /* 16:9 外框 FRAME */
         #game-stage { position: relative; width: 1280px; height: 720px; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.2s ease; transform-origin: center center;}
         /* 島嶼背景圖 BACKGROUND IMAGE */
