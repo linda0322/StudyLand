@@ -17,7 +17,14 @@
               background-color: #1a1a1a;            
               cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
-        
+            /* 📱 手機旋轉提示 ORIENTATION NOTI */
+                #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
+                                   background-color: #1dc5fd;
+                                   flex-direction: column; align-items: center; justify-content: center;}
+                @media screen and (max-width: 700px) and (orientation: portrait) {#orientation-noti {display: flex !important;} #game-stage {display: none;}}
+                @keyframes phone-landscape {0% { transform: rotate(0deg); } 30% { transform: rotate(90deg); } 70% { transform: rotate(90deg); } 100% { transform: rotate(0deg);}}
+                .animate-phone-landscape {animation: phone-landscape 3s ease-in-out infinite; transform-origin: center;}
+    
         /* 🌼 樣式 STYLE */
             /* 🥽 玻璃框 */
             .glass-panel {background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
@@ -70,12 +77,7 @@
         .inventory-item { transition: all 0.2s; cursor: pointer; }
         .inventory-item:hover { transform: scale(1.05); background: rgba(255,255,255,0.9); }
 
-        /* 手機旋轉提示 ORIENTATION */
-        #orientation-warning {display: none; position: fixed; inset: 0; z-index: 99999; background-color: #1dc5fd; flex-direction: column; align-items: center; justify-content: center;}
-        @media screen and (max-width: 700px) and (orientation: portrait) {#orientation-warning {display: flex !important;} #game-stage { display: none; }}
-        @keyframes phone-rotate-right {0% { transform: rotate(90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(90deg); }}
-        .animate-phone-rotate {animation: phone-rotate-right 2s ease-in-out infinite;}
-
+        
 #island-buttons-container a, #island-buttons-container img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none;}
     
 #items-layer {
@@ -97,11 +99,11 @@
     </div>
 
     <!-- 手機旋轉提示 ORIENTATION -->
-    <div id="orientation-warning">
+    <div id="orientation-noti">
         <button onclick="location.href='../index.html'" class="absolute top-5 left-6 z-[10000] glass-panel p-3 rounded-full text-slate-500 shadow-md hover:bg-white/20 active:scale-95 transition-all" title="返回">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         </button>
-        <div class="w-20 h-20 mb-6 animate-phone-rotate flex items-center justify-center">
+        <div class="w-20 h-20 mb-6 animate-phone-landscape flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
         </div>
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">請旋轉螢幕以進入島嶼</h2>
@@ -404,7 +406,7 @@
 
         // 手機旋轉提示 ORIENTATION
         function handleOrientationChange() {
-            const warning = document.getElementById('orientation-warning');
+            const warning = document.getElementById('orientation-noti');
             const isPortrait = window.innerHeight > window.innerWidth;
             const isMobileOrTablet = window.innerWidth < 700;
             if (isPortrait && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}
