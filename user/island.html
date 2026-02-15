@@ -245,7 +245,7 @@
                                     el.ondragstart = function() { return false; };}
         let currentReturningEl = null;
         function handleItemReturn(el) {if (confirmModal && !confirmModal.classList.contains('hidden')) return; currentReturningEl = el;
-                                       el.onmousedown = el.ontouchstart = null; openConfirm("要收回倉庫嗎？", () => {
+                                       el.onmousedown = el.ontouchstart = null; openConfirm("收回倉庫？", () => {
                                            if (currentReturningEl) {const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_');
                                                                     const invIdx = userInventory.findIndex(i => i.assetType === type);
                                                                     if (invIdx > -1) {userInventory[invIdx].available++;}
@@ -322,9 +322,9 @@
             const confirmModal = document.getElementById('confirm-modal');
             function closeConfirm() {confirmModal.classList.add('hidden'); if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}}
             function openConfirm(title, onConfirm) {document.getElementById('confirm-title').innerText = title; const btn = document.getElementById('confirm-button'); btn.onclick = () => {onConfirm(); confirmModal.classList.add('hidden'); currentReturningEl = null;}; confirmModal.classList.remove('hidden');}
-            function handleSave() {openConfirm("要儲存嗎？", () => {saveData();});}
-            function handleReload() {openConfirm("要重新載入嗎？", () => {location.reload();});}
-            function handleHome() {openConfirm("要回到主頁嗎？", () => {window.location.href = '../index.html';});}
+            function handleSave() {openConfirm("儲存進度", () => {saveData();});}
+            function handleReload() {openConfirm("重新載入", () => {location.reload();});}
+            function handleHome() {openConfirm("回到主頁", () => {window.location.href = '../index.html';});}
             confirmModal.addEventListener('click', (e) => {if (e.target === confirmModal) {confirmModal.classList.add('hidden');}});
 
         // 🍞 通知 TOAST
