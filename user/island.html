@@ -62,7 +62,7 @@
             .draggable {position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center;
                         cursor: move;
                         pointer-events: auto; touch-action: none; -webkit-touch-callout: none; -webkit-user-drag: none; -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none;}
-            .draggable img {width: 100%; height: auto; display: block; pointer-events: none;}
+            .draggable img {width: 100%; height: auto; display: block; pointer-events: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; -webkit-user-drag: none;}
             #items-layer {position: absolute; inset: 0; z-index: 10; pointer-events: none;}
             /* 🏠 倉庫 STORAGE */
             .tab-active {background: #38C0FF !important; color: white !important;}
@@ -215,30 +215,31 @@
 
         
         // 👆🏻 拖曳物件 DRAG ITEMS
-        function bindDraggable(el) {
-            const stage = document.getElementById('game-stage'); let longPressTimer; let isMoving = false; el.onmousedown = el.ontouchstart = function(e) {
-                if (e.button === 2) return; isMoving = false; const isTouch = e.type === 'touchstart'; const clientX = isTouch ? e.touches[0].clientX : e.clientX; const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-                longPressTimer = setTimeout(() => {if (!isMoving && !isGlobalReturning) {handleItemReturn(el);}}, 800);
-                if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
-                const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280; const itemRect = el.getBoundingClientRect(); const shiftX = (clientX - itemRect.left) / scale; const shiftY = (clientY - itemRect.top) / scale;
-                function moveAt(currentClientX, currentClientY) {isMoving = true; clearTimeout(longPressTimer); 
-                                                                 let mouseXOnStage = (currentClientX - stageRect.left) / scale; let mouseYOnStage = (currentClientY - stageRect.top) / scale;
-                                                                 let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / stage.offsetWidth * 100; let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / stage.offsetHeight * 100;
-                                                                 newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
-                                                                 el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';}
-                function onMouseMove(e) {const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-                                         moveAt(moveX, moveY);}
-                                         const onMouseUp = () => {clearTimeout(longPressTimer); 
-                                                                  document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('touchmove', onMouseMove);
-                                                                  document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
-                document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, { passive: false }); 
-                document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);}; el.ondragstart = function() { return false; };}
-        let currentReturningEl = null; 
-        function handleItemReturn(el) {if (confirmModal && !confirmModal.classList.contains('hidden')) return; currentReturningEl = el; el.onmousedown = el.ontouchstart = null; 
-                                       openConfirm("收回倉庫？", () => {if (currentReturningEl) {
-                                           const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
-                                           if (invIdx > -1) {userInventory[invIdx].available++;} currentReturningEl.remove(); currentReturningEl = null; showToast("已收回倉庫"); 
-                                           const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);}});}
+        function bindDraggable(el) {const stage = document.getElementById('game-stage'); let longPressTimer; let startX, startY; let isLongPress = false;
+                                    el.onmousedown = el.ontouchstart = function(e) {if (e.button === 2) return; const isTouch = e.type === 'touchstart'; startX = isTouch ? e.touches[0].clientX : e.clientX; startY = isTouch ? e.touches[0].clientY : e.clientY; isLongPress = false;
+                                                                                    longPressTimer = setTimeout(() => {isLongPress = true; handleItemReturn(el);}, 700);
+                                                                                    if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
+                                                                                    const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280; const itemRect = el.getBoundingClientRect();
+                                                                                    const shiftX = (startX - itemRect.left) / scale; const shiftY = (startY - itemRect.top) / scale;
+                                                                                    function moveAt(currentClientX, currentClientY) {if (Math.abs(currentClientX - startX) > 10 || Math.abs(currentClientY - startY) > 10) {clearTimeout(longPressTimer);}
+                                                                                                                                     if (isLongPress) return;
+                                                                                                                                     let mouseXOnStage = (currentClientX - stageRect.left) / scale;
+                                                                                                                                     let mouseYOnStage = (currentClientY - stageRect.top) / scale;
+                                                                                                                                     let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / stage.offsetWidth * 100;
+                                                                                                                                     let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / stage.offsetHeight * 100;
+                                                                                                                                     newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
+                                                                                                                                     el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';}
+                                                                                    function onMouseMove(e) {const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY; moveAt(moveX, moveY);}
+                                                                                    const onMouseUp = () => {clearTimeout(longPressTimer); 
+                                                                                                             document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('touchmove', onMouseMove); 
+                                                                                                             document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
+                                                                                    document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, { passive: false }); 
+                                                                                    document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);}; el.ondragstart = function() { return false; };}
+        let currentReturningEl = null; function handleItemReturn(el) {if (!confirmModal.classList.contains('hidden')) return; currentReturningEl = el; openConfirm("要收回倉庫嗎？", () => {
+            const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
+            if (invIdx > -1) {userInventory[invIdx].available++;}
+            currentReturningEl.remove(); currentReturningEl = null; showToast("已收回倉庫");
+            const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);});}
 
         // 🏠 倉庫 STORAGE
         const storageModal = document.getElementById('storage-modal');
