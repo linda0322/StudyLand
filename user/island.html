@@ -219,10 +219,10 @@
         
         // 👆🏻 拖曳物件 DRAG ITEMS
         function bindDraggable(el) {const stage = document.getElementById('game-stage'); let longPressTimer; let isMoving = false;
-                                    el.onmousedown = el.ontouchstart = function(e) {isMoving = false; const isTouch = e.type === 'touchstart'; const clientX = isTouch ? e.touches[0].clientX : e.clientX; const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-                                                                                    longPressTimer = setTimeout(() => {if (!isMoving) {handleItemReturn(el);}}, 800); 
-                                                                                    if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10");
-                                                                                                                         el.style.zIndex = "100";}
+                                    el.onmousedown = el.ontouchstart = function(e) {if (e.button === 2) return; isMoving = false; 
+                                                                                    const isTouch = e.type === 'touchstart'; const clientX = isTouch ? e.touches[0].clientX : e.clientX; const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+                                                                                    longPressTimer = setTimeout(() => {if (!isMoving && !isGlobalReturning) {handleItemReturn(el);}}, 800);
+                                                                                    if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
                                                                                     const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280; const itemRect = el.getBoundingClientRect();
                                                                                     const shiftX = (clientX - itemRect.left) / scale; const shiftY = (clientY - itemRect.top) / scale;
                                                                                     function moveAt(currentClientX, currentClientY) {isMoving = true; clearTimeout(longPressTimer); 
@@ -246,11 +246,15 @@
                                                                                     document.addEventListener('mouseup', onMouseUp);
                                                                                     document.addEventListener('touchend', onMouseUp);};
                                     el.ondragstart = function() { return false; };}
-        function handleItemReturn(el) {el.onmousedown = el.ontouchstart = null; 
-                                       if (confirm("要收回倉庫嗎？")) {const parts = el.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
-                                                                    if (invIdx > -1) {userInventory[invIdx].available++;} el.remove(); showToast("已收回倉庫");
-                                                                    const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);} 
-                                       else {bindDraggable(el);}}
+        let isGlobalReturning = false;
+        function handleItemReturn(el) {if (isGlobalReturning) return; isGlobalReturning = true; el.onmousedown = el.ontouchstart = null; 
+                                       setTimeout(() => {if (confirm("要收回倉庫嗎？")) {
+                                           const parts = el.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_');
+                                           const invIdx = userInventory.findIndex(i => i.assetType === type);
+                                           if (invIdx > -1) {userInventory[invIdx].available++;} el.remove(); showToast("已收回倉庫");
+                                           const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部';
+                                           renderInventoryItems(activeTab);} 
+                                       else {bindDraggable(el);} isGlobalReturning = false;}, 100);}
 
         // 🏠 倉庫 STORAGE
         const storageModal = document.getElementById('storage-modal');
