@@ -9,11 +9,6 @@
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/island_favicon_phone.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @font-face {
-            font-family: 'Cubic11';
-            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
-            font-display: swap;
-        }
         body {font-family: 'Noto Sans TC', sans-serif;
               background-color: #1a1a1a;
               margin: 0; padding: 0; overflow: hidden; position: fixed;
@@ -44,12 +39,6 @@
                                               button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}
                                              }
         
-        /* 玻璃外框 */
-        .glass-panel {background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
-        /* 字體 */
-        .font-cubic { font-family: 'Cubic11', sans-serif; }
-        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
-        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
 
         /* 加載遮罩（飛行中）LOADING */
         #loading-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease; }
@@ -85,13 +74,22 @@
 }
 
         
-/* 📱 手機旋轉提示 ORIENTATION NOTI */
-#orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
-                   background-color: #1dc5fd;
-                   flex-direction: column; align-items: center; justify-content: center;}
-@media screen and (max-width: 700px) and (orientation: portrait) {#orientation-noti {display: flex !important;} #game-stage {display: none;}}
-@keyframes phone-landscape {0% { transform: rotate(0deg); } 30% { transform: rotate(90deg); } 70% { transform: rotate(90deg); } 100% { transform: rotate(0deg);}}
-.animate-phone-landscape {animation: phone-landscape 3s ease-in-out infinite; transform-origin: center;}
+    /* 📱 手機旋轉提示 ORIENTATION NOTI */
+    #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
+                       background-color: #1dc5fd;
+                       flex-direction: column; align-items: center; justify-content: center;}
+    @media screen and (max-width: 700px) and (orientation: portrait) {#orientation-noti {display: flex !important;} #game-stage {display: none;}}
+    @keyframes phone-landscape {0% { transform: rotate(0deg); } 30% { transform: rotate(90deg); } 70% { transform: rotate(90deg); } 100% { transform: rotate(0deg);}}
+    .animate-phone-landscape {animation: phone-landscape 3s ease-in-out infinite; transform-origin: center;}
+
+    /* 🌼 樣式 STYLE */
+    /* 🥽 玻璃框 */
+    .glass-panel {background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
+    /* 🔠 字體 FONTS */
+    @font-face {font-family: "Cubic11"; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype'); font-display: swap;}
+    .font-cubic {font-family: 'Cubic11', sans-serif;}
+    .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+    .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
     
     </style>
 </head>
