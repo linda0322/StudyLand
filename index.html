@@ -200,6 +200,7 @@
             const errorOverlay = document.getElementById('error-overlay'); const loginErrorText = document.getElementById('login-error'); const closeBtn = document.getElementById('error-close');
             const mainContent = document.getElementById('main-content'); const userDisplayName = document.getElementById('user-display-name');
             // ✅ 驗證 VERIFICATION
+            usernameInput.addEventListener('keypress', (e) => {if (e.key === 'Enter') {loginBtn.click();}});
             loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); 
                                                             if (!username) { showAlert("請輸入名字"); return; }
                                                             loginBtn.innerText = "載入中..."; 
