@@ -113,6 +113,20 @@
             </div>
         </div>
 
+    <!-- 🔒 筆記密碼 PASSWORD INPUT -->
+        <!-- ⬛️ 遮罩 OVERLAY -->
+        <div id="password-overlay" class="hidden no-touch fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex justify-center items-center p-6">
+            <!-- 💬 -->
+            <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8 relative">
+                <h1 class="text-4xl mb-4">🔒</h1>
+                <input type="password" id="notion-pw-input" placeholder="請輸入筆記密碼" class="w-full border-2 border-slate-100 rounded-2xl font-cubic thin-border text-center px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
+                <div class="flex gap-4 w-full">
+                    <button id="pw-cancel" class="no-touch flex-1 py-3 bg-slate-200 rounded-2xl font-cubic text-slate-600 thin-border">取消</button>
+                    <button id="pw-confirm" class="no-touch flex-1 py-3 bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border">確定</button>
+                </div>
+            </div>
+        </div>
+
     <!-- 📤 登出 LOGOUT -->
         <!-- ⬛️ 遮罩 OVERLAY -->
         <div id="logout-modal" class="hidden no-touch fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex justify-center items-center p-6">
@@ -244,10 +258,17 @@
                                                                        window.scrollTo(0, 0);}
 
         // 📘 學習筆記 Notion
-        document.getElementById('btn-notion').addEventListener('click', () => {const pw = prompt("請輸入筆記密碼");
-                                                                               if (pw === String(window.currentUserNotionPW)) {if (window.currentUserNotionWeb) {
-                                                                                   window.location.href = window.currentUserNotionWeb;} else {showAlert("未有筆記", "🙂‍↔️");}}
-                                                                               else if (pw !== null) {showAlert("密碼錯誤", "🔑");}});
+            // ❇️ 常數 CONSTANT
+            const pwOverlay = document.getElementById('password-overlay'); const pwInput = document.getElementById('notion-pw-input');
+            const pwCancel = document.getElementById('pw-cancel'); const pwConfirm = document.getElementById('pw-confirm');
+            // 🔒 密碼 PASSWORD
+            document.getElementById('btn-notion').addEventListener('click', () => {pwInput.value = ""; pwOverlay.classList.remove('hidden'); pwInput.focus();});
+            pwCancel.addEventListener('click', () => {pwOverlay.classList.add('hidden');});
+            pwConfirm.addEventListener('click', () => {const inputVal = pwInput.value; const correctPW = String(window.currentUserNotionPW);
+                                                       if (inputVal === correctPW) {if (window.currentUserNotionWeb) {window.location.href = window.currentUserNotionWeb;} 
+                                                       else {showAlert("未有學習筆記", "📚");} pwOverlay.classList.add('hidden');} 
+                                                       else {pwOverlay.classList.add('hidden'); showAlert("密碼錯誤！", "🔑");}});
+            pwInput.addEventListener('keypress', (e) => {if (e.key === 'Enter') pwConfirm.click();});
         
         // 🫵🏻 手勢禁止 DISABLE GESTURE
             // 選取及拖動
