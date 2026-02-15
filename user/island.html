@@ -210,10 +210,7 @@
                                                                             div.style.zIndex = isBottom ? "1" : "10";
                                                                             if (isBottom) div.dataset.isBottom = "true";
                                                                             div.innerHTML = `<img src="${config.imgURL}">`;
-                                                                            div.oncontextmenu = (e) => {e.preventDefault(); if(confirm("要收回倉庫嗎？")) {
-                                                                                const parts = div.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
-                                                                                if (invIdx > -1) {userInventory[invIdx].available++;} 
-                                                                                else {div.remove(); showToast("已收回倉庫"); const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);}};}
+                                                                            div.oncontextmenu = (e) => {e.preventDefault(); handleItemReturn(div);};
                                                                             document.getElementById('items-layer').appendChild(div); bindDraggable(div);}
 
         
@@ -246,15 +243,15 @@
                                                                                     document.addEventListener('mouseup', onMouseUp);
                                                                                     document.addEventListener('touchend', onMouseUp);};
                                     el.ondragstart = function() { return false; };}
-        let isGlobalReturning = false;
-        function handleItemReturn(el) {if (isGlobalReturning) return; isGlobalReturning = true; el.onmousedown = el.ontouchstart = null; 
-                                       setTimeout(() => {if (confirm("要收回倉庫嗎？")) {
-                                           const parts = el.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_');
-                                           const invIdx = userInventory.findIndex(i => i.assetType === type);
-                                           if (invIdx > -1) {userInventory[invIdx].available++;} el.remove(); showToast("已收回倉庫");
-                                           const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部';
-                                           renderInventoryItems(activeTab);} 
-                                       else {bindDraggable(el);} isGlobalReturning = false;}, 100);}
+        let currentReturningEl = null;
+        function handleItemReturn(el) {if (confirmModal && !confirmModal.classList.contains('hidden')) return; currentReturningEl = el;
+                                       el.onmousedown = el.ontouchstart = null; openConfirm("要收回倉庫嗎？", () => {
+                                           if (currentReturningEl) {const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_');
+                                                                    const invIdx = userInventory.findIndex(i => i.assetType === type);
+                                                                    if (invIdx > -1) {userInventory[invIdx].available++;}
+                                                                    currentReturningEl.remove(); currentReturningEl = null; showToast("已收回倉庫");
+                                                                    const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部';
+                                                                    renderInventoryItems(activeTab);}});}
 
         // 🏠 倉庫 STORAGE
         const storageModal = document.getElementById('storage-modal');
@@ -323,8 +320,8 @@
                                    finally { btn.disabled = false; btn.style.opacity = "1";}}
             // ✅ 確認 CONFIRM
             const confirmModal = document.getElementById('confirm-modal');
-            function closeConfirm() {confirmModal.classList.add('hidden');}
-            function openConfirm(title, onConfirm) {document.getElementById('confirm-title').innerText = title; const btn = document.getElementById('confirm-button'); btn.onclick = () => {onConfirm(); closeConfirm();}; confirmModal.classList.remove('hidden');}
+            function closeConfirm() {confirmModal.classList.add('hidden'); if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}}
+            function openConfirm(title, onConfirm) {document.getElementById('confirm-title').innerText = title; const btn = document.getElementById('confirm-button'); btn.onclick = () => {onConfirm(); confirmModal.classList.add('hidden'); currentReturningEl = null;}; confirmModal.classList.remove('hidden');}
             function handleSave() {openConfirm("要儲存嗎？", () => {saveData();});}
             function handleReload() {openConfirm("要重新載入嗎？", () => {location.reload();});}
             function handleHome() {openConfirm("要回到主頁嗎？", () => {window.location.href = '../index.html';});}
