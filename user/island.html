@@ -265,10 +265,14 @@
                                                                                                        <span class="text-5xl mb-2">🙂‍↔️</span>
                                                                                                        <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
                                                                                                    </div>`; return;}
-                                                   container.innerHTML = items.map(item => `<div onclick="deployFromStorage('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
+                                                   container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0;
+                                                                                            const opacityClass = isOutOfStock ? 'opacity-40 grayscale-[50%]' : '';
+                                                                                            const pointerEvents = isOutOfStock ? 'pointer-events-none' : '';
+                                                                                            return `
+                                                                                            <div onclick="deployFromStorage('${item.assetType}')"class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all ${opacityClass} ${pointerEvents}">
                                                                                                 <img src="${item.imgURL}" class="w-12 h-12 object-contain pointer-events-none" draggable="false">
-                                                                                                <span class="text-[16px] font-cubic text-slate-400 thin-border">${item.available}</span>
-                                                                                            </div>`).join('');}
+                                                                                                <span class="text-[16px] font-cubic ${isOutOfStock ? 'text-rose-400' : 'text-slate-400'} thin-border">${item.available}</span>
+                                                                                            </div>`;}).join('');} 
             function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}                                                                                    
             function deployFromStorage(type) {const invIdx = userInventory.findIndex(i => i.assetType === type); 
                                               if (invIdx > -1 && userInventory[invIdx].available > 0) {userInventory[invIdx].available--; 
