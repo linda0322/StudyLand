@@ -34,6 +34,8 @@
             .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
 
         /* ⚒️ 操作 OPERATION */
+            /* 🙈 隱藏圖層 HIDDEN LAYER */
+            .hidden {display: none !important;}
             /* 🔘 按鈕效果 BUTTON EFFECT */
             a, button, [role="button"], .draggable, .inventory-item {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;}
@@ -96,7 +98,7 @@
     </div>
 
     <!-- 🏠 倉庫 STORAGE -->
-    <div id="storage-modal" class="fixed inset-0 z-[3000] p-4  bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
+    <div id="storage-modal" class="fixed inset-0 z-[3000] p-4 bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
         <div class="glass-panel w-full max-w-lg rounded-[30px] p-6 shadow-2xl relative">
             <button onclick="toggleStorage()" class="absolute top-5 right-6 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
