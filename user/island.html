@@ -238,7 +238,8 @@
 
         // 🏠 倉庫 STORAGE
         const storageModal = document.getElementById('storage-modal');
-        function toggleStorage() {if (storageModal.classList.contains('hidden')) {storageModal.classList.remove('hidden'); refreshInventory();} 
+        function toggleStorage() {if (storageModal.classList.contains('hidden')) {storageModal.classList.remove('hidden'); if (userInventory.length === 0) {refreshInventory();} 
+                                  else {const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);}} 
                                   else {storageModal.classList.add('hidden');}}
         storageModal.addEventListener('click', (e) => {if (e.target === storageModal) {storageModal.classList.add('hidden');}});
             // 🔢 庫存 INVENTORY
@@ -261,12 +262,15 @@
                                                                                             </div>`).join('');}
             function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}                                                                                    
             function deployFromStorage(type) {const invIdx = userInventory.findIndex(i => i.assetType === type); 
-                                              if (invIdx > -1 && userInventory[invIdx].available > 0) {userInventory[invIdx].available--;
+                                              if (invIdx > -1 && userInventory[invIdx].available > 0) {userInventory[invIdx].available--; 
                                                                                                        const existing = document.querySelectorAll(`[id^="item_${type}_"]`);
-                                                                                                       let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
-                                                                                                       const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); 
+                                                                                                       let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); 
+                                                                                                                                               if (num > maxNum) maxNum = num;});
+                                                                                                       const newId = `item_${type}_${maxNum + 1}`; 
+                                                                                                       createDraggableElement(newId, type, 50, 50); 
                                                                                                        const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部';
-                                                                                                       renderInventoryItems(activeTab); showToast("已放置");} else {showToast("庫存不足！", "error");}}
+                                                                                                       renderInventoryItems(activeTab); showToast("已放置");} 
+                                              else {showToast("庫存不足！", "error");}}
 
         // 🏝️ 島嶼選單 ISLAND MENU
         const islandMenu = document.getElementById('island-menu');
