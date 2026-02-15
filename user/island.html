@@ -157,11 +157,8 @@
     </div>
 
     <script>
+        // 🌎 GAS
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPxLzM47qozl9CJxGjjf0wMdtPppx8Kt8R1caUnAQpCX-s3ol6lERYawriMQFv6p3a/exec'; 
-
-        // 捲動控制 SCROLL
-        let startY = 0;
-        document.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; }, { passive: false });
         
         const username = localStorage.getItem('studyLandUser');
         const urlParams = new URLSearchParams(window.location.search);
@@ -169,258 +166,150 @@
         let assetLibrary = {};
         let userInventory = []; 
 
-        // 島嶼背景圖 BACKGROUND IMAGE
-        const islandConfig = {
-            'island_1': { name: '草地', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island1_grass.webp', color: 'bg-lime-200', icon: '🌳' },
-            'island_2': { name: '海洋', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island2_ocean.webp', color: 'bg-sky-200', icon: '🌊' },
-            'island_3': { name: '沙漠', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island3_desert.webp', color: 'bg-amber-200', icon: '🏜️' },
-        };
+        // 🏞️ 背景圖 BACKGROUND IMAGE
+        const islandConfig = {'island_1': { name: '草地', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island1_grass.webp', color: 'bg-lime-200', icon: '🌳' },
+                              'island_2': { name: '海洋', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island2_ocean.webp', color: 'bg-sky-200', icon: '🌊' },
+                              'island_3': { name: '沙漠', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island3_desert.webp', color: 'bg-amber-200', icon: '🏜️' },
+                             };
 
-        // 載入雲端資料 CLOUD INFORMATION
-        async function initApp() {
-            // 檢查登入狀態
-            if (!username) { window.location.href = '../index.html'; return; }
-            // 紀錄開始時間（控制 Loading 遮罩顯示時長）
-            const startTime = Date.now();
-            // 設定島嶼
-            const config = islandConfig[currentIslandId] || islandConfig['island_1'];
-            document.getElementById('background-img').src = config.bg;
-            document.getElementById('island-title').innerText = config.name;
-            try {
-                /* 載入基礎資料 */
-                const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`),
-                                                              fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
-                assetLibrary = await libResp.json();
-                const savedItems = await posResp.json();
-                /* 載入已儲存的物件 */
-                const itemsLayer = document.getElementById('items-layer'); itemsLayer.innerHTML = '';
-                if (Array.isArray(savedItems)) { 
-                    savedItems.forEach(item => {
-                        // 取得 item_ 之後，最後一個序號之前的完整名稱
-                        const parts = item.id.split('_');
-                        parts.shift(); // 移除 "item"
-                        parts.pop();   // 移除序號 (如 "1")
-                        const assetType = parts.join('_'); 
-                
-                        console.log("正在載入物件:", assetType); 
-                
-                        if (assetLibrary[assetType]) {
-                            createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);
-                        } else {
-                            console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否完全一致。");
-                        }
-                    });
-                }
-                /* 載入選單與倉庫資訊 */
-                await loadIslandList(); await refreshInventory(); 
-            } catch (err) { console.error("載入失敗:", err); showToast("請檢查網路", "error");
-                          } finally {
-                /* 隱藏遮罩 */
-                const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
-                setTimeout(() => { const loader = document.getElementById('loading-overlay'); if (loader) { loader.classList.add('fade-out');
-                setTimeout(() => loader.style.display = 'none', 500);}
-                }, remainingWait);
-            }
-        }
+        // ☁️ 載入資料 LOADING
+        async function initApp() {if (!username) { window.location.href = '../index.html'; return; }
+                                  const startTime = Date.now(); const config = islandConfig[currentIslandId] || islandConfig['island_1'];
+                                  document.getElementById('background-img').src = config.bg; document.getElementById('island-title').innerText = config.name;
+                                  try {const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`), 
+                                                                                     fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
+                                       assetLibrary = await libResp.json(); const savedItems = await posResp.json(); const itemsLayer = document.getElementById('items-layer');
+                                       itemsLayer.innerHTML = ''; if (Array.isArray(savedItems)) {savedItems.forEach(
+                                           item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); const assetType = parts.join('_');
+                                                    console.log("正在載入物件:", assetType); if (assetLibrary[assetType]) {createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);}
+                                                    else {console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否完全一致。");}});}
+                                  // 🏝️ 島嶼及倉庫資料 ISLAND & STORAGE INFO
+                                  await loadIslandList(); await refreshInventory();} catch (err) {console.error("載入失敗:", err); showToast("請檢查網路", "error");} 
+                                  finally {const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
+                                           setTimeout(() => {const loader = document.getElementById('loading-overlay'); if (loader) {loader.classList.add('fade-out'); setTimeout(() => loader.style.display = 'none', 500);}}, remainingWait);}}
+            // 🧸 物件資料 ITEMS 
+            function createDraggableElement(id, type, left = 50, top = 50) {const config = assetLibrary[type]; const div = document.createElement('div'); console.log(`正在部署 ${type}, 設定寬度為: ${config.width}`);
+                                                                            div.className = 'draggable'; div.id = id;
+                                                                            if (config && config.width) {let widthStr = String(config.width); if (widthStr.includes('%')) {
+                                                                                const percentValue = parseFloat(widthStr) / 100; const actualPixelWidth = 1280 * percentValue; div.style.width = actualPixelWidth + 'px';
+                                                                                console.log(`物件 ${type} 寬度計算：1280 * ${percentValue} = ${actualPixelWidth}px`);} else {div.style.width = widthStr.includes('px') ? widthStr : widthStr + 'px';}} 
+                                                                            else {div.style.width = '150px';} div.style.left = left + '%'; div.style.top = top + '%'; div.style.transform = 'translate(-50%, -50%)';
+                                                                            const isBottom = String(config.isBottom).toLowerCase() === 'true';
+                                                                            div.style.zIndex = isBottom ? "1" : "10";
+                                                                            if (isBottom) div.dataset.isBottom = "true";
+                                                                            div.innerHTML = `<img src="${config.imgURL}">`;
+                                                                            div.oncontextmenu = (e) => {e.preventDefault(); if(confirm("要收回倉庫嗎？")) {div.remove(); showToast("已收回倉庫"); refreshInventory(); }};
+                                                                            document.getElementById('items-layer').appendChild(div); bindDraggable(div);}
+        // 👆🏻 拖曳物件 DRAG ITEMS
+        function bindDraggable(el) {const stage = document.getElementById('game-stage'); el.onmousedown = el.ontouchstart = function(e) {
+            if (e.type === 'touchstart') {} const isTouch = e.type === 'touchstart'; const clientX = isTouch ? e.touches[0].clientX : e.clientX; const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+            if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
+            const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280;
+            const itemRect = el.getBoundingClientRect(); const shiftX = (clientX - itemRect.left) / scale; const shiftY = (clientY - itemRect.top) / scale;
+            function moveAt(currentClientX, currentClientY) {let mouseXOnStage = (currentClientX - stageRect.left) / scale; let mouseYOnStage = (currentClientY - stageRect.top) / scale;
+                                                             let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / stage.offsetWidth * 100;
+                                                             let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / stage.offsetHeight * 100;
+                                                             newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
+                                                             el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';}
+            function onMouseMove(e) {const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                                     moveAt(moveX, moveY);}
+            document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, {passive: false});
+            const onMouseUp = () => {document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('touchmove', onMouseMove);
+                                     document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
+            document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);};
+            el.ondragstart = function() {return false;};}
 
-        // 資產 ASSETS
-            /* 載入物件 */
-            function createDraggableElement(id, type, left = 50, top = 50) {
-                const config = assetLibrary[type];
-                const div = document.createElement('div');
-                console.log(`正在部署 ${type}, 設定寬度為: ${config.width}`);
-                div.className = 'draggable';
-                div.id = id;
-                if (config && config.width) {let widthStr = String(config.width); if (widthStr.includes('%')) {
-                    const percentValue = parseFloat(widthStr) / 100; const actualPixelWidth = 1280 * percentValue; div.style.width = actualPixelWidth + 'px';
-                    console.log(`物件 ${type} 寬度計算：1280 * ${percentValue} = ${actualPixelWidth}px`);} else {div.style.width = widthStr.includes('px') ? widthStr : widthStr + 'px';}} 
-                    else {div.style.width = '150px';}
-                div.style.left = left + '%';
-                div.style.top = top + '%';
-                div.style.transform = 'translate(-50%, -50%)';
-                const isBottom = String(config.isBottom).toLowerCase() === 'true';
-                div.style.zIndex = isBottom ? "1" : "10";
-                if (isBottom) div.dataset.isBottom = "true";
-                div.innerHTML = `<img src="${config.imgURL}">`;
-                div.oncontextmenu = (e) => {e.preventDefault(); if(confirm("要收回倉庫嗎？")) {div.remove(); showToast("已收回倉庫"); refreshInventory(); }};
-                document.getElementById('items-layer').appendChild(div); bindDraggable(div); 
-            }
-            /* 拖曳物件 */
-            function bindDraggable(el) {
-                const stage = document.getElementById('game-stage'); el.onmousedown = el.ontouchstart = function(e) {
-                    /* 防止手機瀏覽器觸發捲動或縮放 */
-                    if (e.type === 'touchstart') {} const isTouch = e.type === 'touchstart'; 
-                    const clientX = isTouch ? e.touches[0].clientX : e.clientX; 
-                    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-                    /* 處理 z-index */
-                    if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10");
-                                                         el.style.zIndex = "100";}
-                    /* 計算縮放倍率 */
-                    const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280;
-                    /* 計算偏移、新位置及百分比 */
-                    const itemRect = el.getBoundingClientRect(); const shiftX = (clientX - itemRect.left) / scale; const shiftY = (clientY - itemRect.top) / scale;
-                    function moveAt(currentClientX, currentClientY) { 
-                        let mouseXOnStage = (currentClientX - stageRect.left) / scale; let mouseYOnStage = (currentClientY - stageRect.top) / scale;
-                        let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / stage.offsetWidth * 100;
-                        let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / stage.offsetHeight * 100;
-                        newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
-                        el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';
-                    }
-                    function onMouseMove(e) {
-                        const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY; 
-                        moveAt(moveX, moveY);
-                    }
-                    document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, { passive: false });
-                    const onMouseUp = () => {document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('touchmove', onMouseMove);
-                                             document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
-                    document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);};
-                el.ondragstart = function() { return false; };
-            }
-
-        // 倉庫 WAREHOUSE
+        // 🏠 倉庫 STORAGE
         function toggleStorage() {const win = document.getElementById('storage-modal');
-            if (win.classList.contains('hidden')) {win.classList.remove('hidden'); refreshInventory();
-            } else {win.classList.add('hidden');}
-        }
-            /* 庫存 INVENTORY */
-            async function refreshInventory() {
-                const container = document.getElementById('storage-items');
-                try {
-                    const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
-                    userInventory = await resp.json();
-                    const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; /** 分類 TAB CATEGORY **/
-                    const tabContainer = document.getElementById('storage-tabs');
-                    tabContainer.innerHTML = categories.map(cat => `
-                        <button onclick="filterWarehouse('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">
-                            ${cat}
-                        </button>
-                    `).join('');
-                    renderInventoryItems('全部');
-                } catch (e) {container.innerHTML = "載入失敗";}
-            }
-        
-            function renderInventoryItems(filter) {
-                const container = document.getElementById('storage-items');
-                const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
-                if (items.length === 0) {container.innerHTML = `
-                    <div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
-                    <span class="text-5xl mb-2">🙂‍↔️</span>
-                    <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
-                    </div>`; return;}
-                container.innerHTML = items.map(item => `
-                    <div onclick="deployFromWarehouse('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
-                        <img src="${item.imgURL}" class="w-12 h-12 object-contain" draggable="false">
-                        <span class="text-[16px] font-cubic text-slate-400 thin-border">${item.available}</span>
-                    </div>
-                `).join('');
-            }
-
-            function filterWarehouse(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); 
-                                           renderInventoryItems(cat);}
-        
+                                  if (win.classList.contains('hidden')) {win.classList.remove('hidden'); refreshInventory();} 
+                                  else {win.classList.add('hidden');}}
+            // 🔢 庫存 INVENTORY
+            async function refreshInventory() {const container = document.getElementById('storage-items');
+                                               try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
+                                                    userInventory = await resp.json();
+                                                    const categories = ['全部', ...new Set(userInventory.map(i => i.category))];
+                                                    const tabContainer = document.getElementById('storage-tabs');
+                                                    tabContainer.innerHTML = categories.map(cat => `<button onclick="filterWarehouse('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
+                                                    renderInventoryItems('全部');} catch (e) {container.innerHTML = "載入失敗";}}
+            function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); 
+                                                   const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
+                                                   if (items.length === 0) {container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
+                                                                                                       <span class="text-5xl mb-2">🙂‍↔️</span>
+                                                                                                       <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
+                                                                                                   </div>`; return;}
+                                                   container.innerHTML = items.map(item => `<div onclick="deployFromWarehouse('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
+                                                                                                <img src="${item.imgURL}" class="w-12 h-12 object-contain" draggable="false">
+                                                                                                <span class="text-[16px] font-cubic text-slate-400 thin-border">${item.available}</span>
+                                                                                            </div>`).join('');}
+            function filterWarehouse(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}
             function deployFromWarehouse(type) {const existing = document.querySelectorAll(`[id^="item_${type}_"]`);
-                let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
-                const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); toggleStorage(); showToast("已放置");
-                const invIdx = userInventory.findIndex(i => i.assetType === type);
-                if (invIdx > -1) {userInventory[invIdx].available--; if (userInventory[invIdx].available <= 0) userInventory.splice(invIdx, 1);}
-            }
+                                                let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
+                                                const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); toggleStorage(); showToast("已放置");
+                                                const invIdx = userInventory.findIndex(i => i.assetType === type);
+                                                if (invIdx > -1) {userInventory[invIdx].available--; if (userInventory[invIdx].available <= 0) userInventory.splice(invIdx, 1);}}
 
-        // 島嶼選單 MENU
+        // 🏝️ 島嶼選單 ISLAND MENU
         function toggleIslandMenu() { document.getElementById('island-menu').classList.toggle('hidden'); }
-        
-        async function loadIslandList() {
-            try {const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
-                 const allowedIslands = await response.json();
-                 const container = document.getElementById('island-buttons-container'); container.innerHTML = ''; 
-                 if (allowedIslands.length === 0) {container.innerHTML = `
-                 <div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🏝️</span>
-                 <p class="text-slate-400 font-cubic text-center tracking-widest thin-border">目前無島可歸</p>
-                 </div>`; return;}
-                 allowedIslands.forEach(id => {const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
-                 const btnHtml = `
-                 <a href="island.html?id=${id}" class="group bg-slate-50 p-4 rounded-[25px] hover:bg-white hover:shadow-xl transition-all text-center select-none" draggable="false">
-                 <div class="${cfg.color} h-20 rounded-[20px] mb-2 flex items-center justify-center text-3xl select-none">${cfg.icon}</div>
-                 <h3 class="font-cubic text-lg text-slate-500 thin-border select-none">${cfg.name}</h3>
-                 </a>`;
-                 container.innerHTML += btnHtml;});
-            } catch (e) {console.error("載入失敗", e);}
-        }
-
-        async function loadIslandData() {try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}`); const data = await resp.json();
+        async function loadIslandList() {try {const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
+                                              const allowedIslands = await response.json(); const container = document.getElementById('island-buttons-container'); container.innerHTML = ''; 
+                                              if (allowedIslands.length === 0) {container.innerHTML = `
+                                              <div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🏝️</span>
+                                                  <p class="text-slate-400 font-cubic text-center tracking-widest thin-border">目前無島可歸</p>
+                                              </div>`; return;}
+                                              allowedIslands.forEach(id => {const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
+                                                                            const btnHtml = `
+                                                                            <a href="island.html?id=${id}" class="group bg-slate-50 rounded-[25px] text-center p-4 hover:bg-white hover:shadow-xl transition-all select-none" draggable="false">
+                                                                                <div class="${cfg.color} h-20 rounded-[20px] text-3xl flex items-center justify-center mb-2 select-none">${cfg.icon}</div>
+                                                                                <h3 class="font-cubic text-lg text-slate-500 thin-border select-none">${cfg.name}</h3>
+                                                                            </a>`; container.innerHTML += btnHtml;});} catch (e) {console.error("載入失敗", e);}}
+        async function loadIslandData() {try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}`);
+                                              const data = await resp.json();
                                               if (data && data.length > 0) { data.forEach(item => {const el = document.getElementById(item.id);
-                                                                                                   if (el) { el.style.left = item.leftPercent + '%'; el.style.top = item.topPercent + '%';}});}
-                                             } catch (e) { console.log("歡迎來到此島！"); }
-        }
+                                                                                                   if (el) { el.style.left = item.leftPercent + '%'; el.style.top = item.topPercent + '%';}});}} 
+                                         catch (e) { console.log("歡迎來到此島！"); }}
         
-        // 儲存功能 SAVE
-        async function saveData() {
-            const btn = document.getElementById('save-button'); if (btn.disabled) return;
-            const items = document.querySelectorAll('.draggable');
-            const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
-            try { await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
-                  showToast("成功儲存", "success");} catch (e) {console.error("Save Error:", e); showToast("儲存失敗", 'error');
-                } finally { btn.disabled = false; btn.style.opacity = "1";}
-        }
+        // 💾 儲存 SAVE
+        async function saveData() {const btn = document.getElementById('save-button'); if (btn.disabled) return;
+                                   const items = document.querySelectorAll('.draggable');
+                                   const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
+                                   try {await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
+                                        showToast("成功儲存", "success");} catch (e) {console.error("Save Error:", e); showToast("儲存失敗", 'error');} 
+                                   finally { btn.disabled = false; btn.style.opacity = "1";}}
 
-        // 通知 TOAST
-        let toastTimer;
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toast-icon');
-            const msg = document.getElementById('toast-msg');
-            clearTimeout(toastTimer);
-            msg.innerText = message;
-            icon.innerText = type === 'success' ? '✨' : '⚠️';        
-            toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
-            toast.classList.add('opacity-100', 'translate-y-0');
-            toastTimer = setTimeout(() => {
-                toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
-                toast.classList.remove('opacity-100', 'translate-y-0');
-            }, 2500);
-        }
+        // 🍞 通知 TOAST
+        let toastTimer; function showToast(message, type = 'success') {const toast = document.getElementById('toast');
+                                                                       const icon = document.getElementById('toast-icon');
+                                                                       const msg = document.getElementById('toast-msg');
+                                                                       clearTimeout(toastTimer); msg.innerText = message; icon.innerText = type === 'success' ? '✨' : '⚠️';        
+                                                                       toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+                                                                       toast.classList.add('opacity-100', 'translate-y-0');
+                                                                       toastTimer = setTimeout(() => {toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+                                                                                                      toast.classList.remove('opacity-100', 'translate-y-0');}, 2500);}
 
-        // 手機旋轉提示 ORIENTATION
-        function handleOrientationChange() {
-            const warning = document.getElementById('orientation-noti');
-            const isPortrait = window.innerHeight > window.innerWidth;
-            const isMobileOrTablet = window.innerWidth < 700;
-            if (isPortrait && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}
-        }
+        // 🫵🏻 手勢禁止 DISABLE GESTURE
+            // 多指縮放
+            const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) {if (e.cancelable) e.preventDefault();}};
+            ['touchstart', 'wheel', 'gesturestart'].forEach(type => {document.addEventListener(type, preventZoom, {passive: false});});
+            // 雙擊縮放
+            let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
+
+        // 📱 手機旋轉提示 ORIENTATION NOTI
+        function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
+                                            const isPortrait = window.innerHeight > window.innerWidth; const isMobileOrTablet = window.innerWidth < 700;
+                                            if (isPortrait && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
         window.addEventListener('resize', handleOrientationChange);
         window.addEventListener('orientationchange', handleOrientationChange);
         handleOrientationChange();
 
-        // 手機縮放比例 MOBILE SCALE
-        function autoScaleGame() {
-            const stage = document.getElementById('game-stage');
-            if (!stage) return;
-        
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-            
-            // 目標設計尺寸 (16:9)
-            const targetWidth = 1280;
-            const targetHeight = 720;
-            
-            // 計算寬度與高度各自的縮放比
-            const scaleX = windowWidth / targetWidth;
-            const scaleY = windowHeight / targetHeight;
-            
-            // 取較小值 (Contain 模式)：保證畫面完整，剩下部分留黑邊
-            const finalScale = Math.min(scaleX, scaleY);
-            
-            stage.style.transform = `scale(${finalScale})`;
-        }
-        
-        // 監聽各種尺寸變動事件
+        // 🔍 手機縮放比例 MOBILE SCALE
+        function autoScaleGame() {const stage = document.getElementById('game-stage'); if (!stage) return;
+                                  const windowWidth = window.innerWidth; const windowHeight = window.innerHeight;
+                                  const targetWidth = 1280; const targetHeight = 720;
+                                  const scaleX = windowWidth / targetWidth; const scaleY = windowHeight / targetHeight;
+                                  const finalScale = Math.min(scaleX, scaleY);stage.style.transform = `scale(${finalScale})`;}
         window.addEventListener('resize', autoScaleGame);
-        window.addEventListener('orientationchange', () => {
-            // 旋轉時延遲一點點，等待瀏覽器視窗數值更新完畢
-            setTimeout(autoScaleGame, 200);
-        });
-
+        window.addEventListener('orientationchange', () => {setTimeout(autoScaleGame, 200);});
         window.addEventListener('load', async () => {autoScaleGame(); setTimeout(async () => {await initApp();}, 100);});
-        
         document.getElementById('island-buttons-container').addEventListener('dragstart', function(event) { if (event.target.tagName.toLowerCase() === 'a' || event.target.tagName.toLowerCase() === 'img') {event.preventDefault();}}, false);
         
     </script>
