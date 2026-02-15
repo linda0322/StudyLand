@@ -9,11 +9,6 @@
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/island_favicon_phone.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @font-face {
-            font-family: 'Cubic11';
-            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
-            font-display: swap;
-        }
         body {font-family: 'Noto Sans TC', sans-serif;
               background-color: #1a1a1a;
               margin: 0; padding: 0; overflow: hidden; position: fixed;
@@ -26,6 +21,14 @@
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;
         }
 
+        /* 🌼 樣式 STYLE */
+            /* 🥽 玻璃框 */
+            .glass-panel {background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
+            /* 🔠 字體 FONTS */
+            @font-face {font-family: "Cubic11"; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype'); font-display: swap;}
+            .font-cubic {font-family: 'Cubic11', sans-serif;}
+            .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+            .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
         
         .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
         .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
@@ -43,13 +46,7 @@
                                               .tab-btn {padding: 10px 20px; font-size: 15px; min-width: 80px;}
                                               button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}
                                              }
-        
-        /* 玻璃外框 */
-        .glass-panel {background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
-        /* 字體 */
-        .font-cubic { font-family: 'Cubic11', sans-serif; }
-        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
-        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
+
 
         /* 加載遮罩（飛行中）LOADING */
         #loading-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease; }
