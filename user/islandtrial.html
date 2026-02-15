@@ -18,12 +18,15 @@
               cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
             /* 📱 手機旋轉提示 ORIENTATION NOTI */
-                #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
-                                   background-color: #1dc5fd;
-                                   flex-direction: column; align-items: center; justify-content: center;}
-                @media screen and (max-width: 700px) and (orientation: portrait) {#orientation-noti {display: flex !important;} #game-stage {display: none;}}
-                @keyframes phone-landscape {0% { transform: rotate(0deg); } 30% { transform: rotate(90deg); } 70% { transform: rotate(90deg); } 100% { transform: rotate(0deg);}}
-                .animate-phone-landscape {animation: phone-landscape 3s ease-in-out infinite; transform-origin: center;}
+            #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
+                               background-color: #1dc5fd;
+                               flex-direction: column; align-items: center; justify-content: center;}
+            @media screen and (max-width: 700px) and (orientation: portrait) {#orientation-noti {display: flex !important;} #game-stage {display: none;}}
+            @keyframes phone-landscape {0% { transform: rotate(0deg); } 30% { transform: rotate(90deg); } 70% { transform: rotate(90deg); } 100% { transform: rotate(0deg);}}
+            .animate-phone-landscape {animation: phone-landscape 3s ease-in-out infinite; transform-origin: center;}
+            /* ☁️ 加載遮罩（飛行中）LOADING OVERLAY */
+            #loading-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 8000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
+            #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
     
         /* 🌼 樣式 STYLE */
             /* 🥽 玻璃框 */
@@ -59,10 +62,6 @@
                                               .tab-btn {padding: 10px 20px; font-size: 15px; min-width: 80px;}
                                               button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}
                                              }
-
-        /* 加載遮罩（飛行中）LOADING */
-        #loading-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease; }
-        #loading-screen.fade-out { opacity: 0; visibility: hidden; }
         
         /* 16:9 外框 FRAME */
         #game-stage { position: relative; width: 1280px; height: 720px; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.2s ease; transform-origin: center center;}
@@ -98,7 +97,7 @@
 <body>
 
     <!-- 加載遮罩（飛行中）LOADING -->
-    <div id="loading-screen">
+    <div id="loading-overlay">
         <div class="animate-bounce text-3xl mb-4">☁️</div>
         <div class="font-cubic text-xl text-white thick-border tracking-widest">飛行中</div>
     </div>
@@ -245,7 +244,7 @@
                           } finally {
                 /* 隱藏遮罩 */
                 const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
-                setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.classList.add('fade-out');
+                setTimeout(() => { const loader = document.getElementById('loading-overlay'); if (loader) { loader.classList.add('fade-out');
                 setTimeout(() => loader.style.display = 'none', 500);}
                 }, remainingWait);
             }
