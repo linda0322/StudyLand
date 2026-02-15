@@ -257,31 +257,36 @@
                                                     const tabContainer = document.getElementById('storage-tabs');
                                                     tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
                                                     renderInventoryItems('全部');} catch (e) {container.innerHTML = "載入失敗";}}
-        function renderInventoryItems(filter) {
-            const container = document.getElementById('storage-items'); 
-            // 🔍 修改這裡：即使數量係 0，只要符合類型就繼續保留喺 list 入面
-            const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
+function renderInventoryItems(filter) {
+    const container = document.getElementById('storage-items'); 
+    
+    // 🔍 確保這裡只過濾 category，唔好過濾掉數量為 0 的項目
+    const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
+
+    if (items.length === 0) {
+        container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
+                                    <span class="text-5xl mb-2">🙂‍↔️</span>
+                                    <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
+                                </div>`; 
+        return;
+    }
+
+    container.innerHTML = items.map(item => {
+        // 💡 檢查是否用晒 (數量 <= 0)
+        const isOutOfStock = item.available <= 0;
         
-            if (items.length === 0) {
-                container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
-                                            <span class="text-5xl mb-2">🙂‍↔️</span>
-                                            <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
-                                        </div>`; 
-                return;
-            }
-        
-            container.innerHTML = items.map(item => {
-                // 💡 加一個判斷：如果數量係 0，就加個灰階效果同埋唔俾 click
-                const isOutOfStock = item.available <= 0;
-                const opacityClass = isOutOfStock ? 'opacity-40 grayscale pointer-events-none' : 'active:scale-95';
-                
-                return `<div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}" 
-                             class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${opacityClass}">
-                            <img src="${item.imgURL}" class="w-12 h-12 object-contain pointer-events-none" draggable="false">
-                            <span class="text-[16px] font-cubic ${isOutOfStock ? 'text-red-400' : 'text-slate-400'} thin-border">${item.available}</span>
-                        </div>`;
-            }).join('');
-        }
+        // 如果用晒，我哋加個 opacity-50 變半透明，同埋 pointer-events-none 唔俾再撳
+        const statusClass = isOutOfStock ? "opacity-50 grayscale pointer-events-none" : "active:scale-95";
+        const countColor = isOutOfStock ? "text-slate-300" : "text-slate-400";
+
+        return `
+            <div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}" 
+                 class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${statusClass}">
+                <img src="${item.imgURL}" class="w-12 h-12 object-contain pointer-events-none" draggable="false">
+                <span class="text-[16px] font-cubic ${countColor} thin-border">${item.available}</span>
+            </div>`;
+    }).join('');
+}
             function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}                                                                                    
             function deployFromStorage(type) {const invIdx = userInventory.findIndex(i => i.assetType === type); 
                                               if (invIdx > -1 && userInventory[invIdx].available > 0) {userInventory[invIdx].available--; 
