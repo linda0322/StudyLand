@@ -237,14 +237,12 @@
                                                                                                              document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
                                                                                     document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, { passive: false }); 
                                                                                     document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);}; el.ondragstart = function() { return false; };}
-        function handleItemReturn(el) {if (!confirmModal.classList.contains('hidden')) return; currentReturningEl = el; openConfirm("收回倉庫", () => {
-            const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); 
-            const invIdx = userInventory.findIndex(i => i.assetType === type);
-            if (invIdx > -1) {userInventory[invIdx].available++; showToast("已收回倉庫");} 
-            else {refreshInventory();}
-            currentReturningEl.remove(); currentReturningEl = null; const activeTabBtn = document.querySelector('.tab-active');
-            const currentTab = activeTabBtn ? activeTabBtn.innerText.trim() : '全部'; renderInventoryItems(currentTab); });}
-                                                                      
+        let currentReturningEl = null; function handleItemReturn(el) {if (!confirmModal.classList.contains('hidden')) return; currentReturningEl = el; openConfirm("要收回倉庫嗎？", () => {
+            const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
+            if (invIdx > -1) {userInventory[invIdx].available++;}
+            currentReturningEl.remove(); currentReturningEl = null; showToast("已收回倉庫");
+            const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);});}
+
         // 🏠 倉庫 STORAGE
         const storageModal = document.getElementById('storage-modal');
         function toggleStorage() {if (storageModal.classList.contains('hidden')) {storageModal.classList.remove('hidden'); if (userInventory.length === 0) {refreshInventory();} 
@@ -259,18 +257,16 @@
                                                     const tabContainer = document.getElementById('storage-tabs');
                                                     tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
                                                     renderInventoryItems('全部');} catch (e) {container.innerHTML = "載入失敗";}}
-           function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
-                                                  if (!items || items.length === 0) {container.innerHTML = `
-                                                  <div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
-                                                      <span class="text-5xl mb-2">🙂‍↔️</span>
-                                                      <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
-                                                  </div>`; return;}
-                                                  container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0; const opacityClass = isOutOfStock ? 'opacity-40 grayscale-[50%]' : '';
-                                                                                           const pointerEvents = isOutOfStock ? 'pointer-events-none' : 'cursor-pointer'; return `
-                                                                                           <div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all ${opacityClass} ${pointerEvents}">
-                                                                                               <img src="${item.imgURL}" class="w-12 h-12 object-contain pointer-events-none" draggable="false">
-                                                                                               <span class="text-[16px] font-cubic ${isOutOfStock ? 'text-rose-400' : 'text-slate-400'} thin-border">${item.available}</span>
-                                                                                           </div>`;}).join('');}
+            function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); 
+                                                   const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
+                                                   if (items.length === 0) {container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
+                                                                                                       <span class="text-5xl mb-2">🙂‍↔️</span>
+                                                                                                       <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
+                                                                                                   </div>`; return;}
+                                                   container.innerHTML = items.map(item => `<div onclick="deployFromStorage('${item.assetType}')" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
+                                                                                                <img src="${item.imgURL}" class="w-12 h-12 object-contain pointer-events-none" draggable="false">
+                                                                                                <span class="text-[16px] font-cubic text-slate-400 thin-border">${item.available}</span>
+                                                                                            </div>`).join('');}
             function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}                                                                                    
             function deployFromStorage(type) {const invIdx = userInventory.findIndex(i => i.assetType === type); 
                                               if (invIdx > -1 && userInventory[invIdx].available > 0) {userInventory[invIdx].available--; 
