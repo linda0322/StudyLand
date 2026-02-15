@@ -101,16 +101,17 @@
                 <button id="login-button" class="no-touch w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border px-4 py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
             </div>
         </div>
-        <!-- ❌ 錯誤彈窗 ERROR MODAL -->
-            <!-- ⬜️ 遮罩 OVERLAY -->
-            <div id="error-overlay" class="hidden no-touch fixed inset-0 z-[150] bg-transparent flex flex-col justify-center items-center p-6">
-                <!-- 💬 -->
-                <div class="no-touch max-w-xs bg-slate-200/70 backdrop-blur-sm rounded-[30px] shadow-md flex flex-col text-center items-center p-8 relative">
-                    <button id="error-close" class="no-touch w-12 h-12 absolute top-4 right-2 text-slate-400 flex text-center justify-center hover:text-slate-600 hover:bg-transparent active:bg-transparent transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-                    <h1 class="text-4xl mb-4">🙏🏻</h1>
-                    <h2 id="login-error" class="font-cubic text-slate-700 text-lg thick-border tracking-wider">...</h2>
-                </div>
+    
+    <!-- ❌ 錯誤彈窗 ERROR MODAL -->
+        <!-- ⬜️ 遮罩 OVERLAY -->
+        <div id="error-overlay" class="hidden no-touch fixed inset-0 z-[150] bg-transparent flex flex-col justify-center items-center p-6">
+            <!-- 💬 -->
+            <div class="no-touch max-w-xs bg-slate-200/70 backdrop-blur-sm rounded-[30px] shadow-md flex flex-col text-center items-center p-8 relative">
+                <button id="error-close" class="no-touch w-12 h-12 absolute top-4 right-2 text-slate-400 flex text-center justify-center hover:text-slate-600 hover:bg-transparent active:bg-transparent transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                <h1 class="text-4xl mb-4">🙏🏻</h1>
+                <h2 id="login-error" class="font-cubic text-slate-700 text-lg thick-border tracking-wider">...</h2>
             </div>
+        </div>
 
     <!-- 📤 登出 LOGOUT -->
         <!-- ⬛️ 遮罩 OVERLAY -->
@@ -182,7 +183,7 @@
             const mainContent = document.getElementById('main-content'); const userDisplayName = document.getElementById('user-display-name');
             // ✅ 驗證 VERIFICATION
             loginBtn.addEventListener('click', async () => {const username = usernameInput.value.trim(); 
-                                                            if (!username) { showLoginError("請輸入名字"); return; }
+                                                            if (!username) { showAlert("請輸入名字"); return; }
                                                             loginBtn.innerText = "載入中..."; 
                                                             loginBtn.disabled = true;
                                                             try {const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ username: username }) });
@@ -192,10 +193,12 @@
                                                                                                  localStorage.setItem('userNotionWeb', data.notionWeb || "");
                                                                                                  localStorage.setItem('userNotionPW', data.notionPW || "");
                                                                                                  showMainPage(username, data.permissions, data.notionWeb, data.notionPW);} else {
-                                                                     showLoginError("玩家不存在"); resetLoginBtn();}} catch (error) {
-                                                                console.error('Login Error:', error); showLoginError("連線失敗"); resetLoginBtn();}});
-            function showLoginError(msg) {if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
+                                                                     showAlert("玩家不存在"); resetLoginBtn();}} catch (error) {
+                                                                console.error('Login Error:', error); showAlert("連線失敗"); resetLoginBtn();}});
             function resetLoginBtn() {loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
+            // ⚠️ 錯誤警告 ALERT
+            function showAlert(msg, emoji = "🙏🏻") {const emojiH1 = errorOverlay.querySelector('h1'); if (emojiH1) emojiH1.innerText = emoji; if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
+
             // ❌ 關閉彈窗 CLOSE MODAL
             closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
             errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
@@ -237,8 +240,8 @@
         // 📘 學習筆記 Notion
         document.getElementById('btn-notion').addEventListener('click', () => {const pw = prompt("請輸入筆記密碼");
                                                                                if (pw === String(window.currentUserNotionPW)) {if (window.currentUserNotionWeb) {
-                                                                                   window.location.href = window.currentUserNotionWeb;} else {alert("未有學習筆記");}}
-                                                                               else if (pw !== null) {alert("密碼錯誤！");}});
+                                                                                   window.location.href = window.currentUserNotionWeb;} else {showAlert("未有筆記", "🙂‍↔️");}}
+                                                                               else if (pw !== null) {showAlert("密碼錯誤", "🔑");}});
         
         // 🫵🏻 手勢禁止 DISABLE GESTURE
             // 選取及拖動
