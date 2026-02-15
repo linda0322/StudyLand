@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+教吓你，早唞和<!DOCTYPE html>
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
@@ -121,8 +121,8 @@
                 <h1 class="text-4xl mb-4">🔒</h1>
                 <input type="password" id="notion-pw-input" placeholder="請輸入筆記密碼" class="w-full border-2 border-slate-100 rounded-2xl font-cubic thin-border text-center px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
                 <div class="flex gap-4 w-full">
-                    <button id="pw-cancel" class="no-touch flex-1 py-3 bg-slate-200 rounded-2xl font-cubic text-slate-600 thin-border">取消</button>
-                    <button id="pw-confirm" class="no-touch flex-1 py-3 bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border">確定</button>
+                    <button id="pw-cancel" class="no-touch flex-1 py-3 bg-slate-200 rounded-2xl font-cubic text-slate-600 thin-border hover:bg-slate-300 transition-all">取消</button>
+                    <button id="pw-confirm" class="no-touch flex-1 py-3 bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border hover:bg-[#2da9e6] transition-all">確定</button>
                 </div>
             </div>
         </div>
@@ -212,7 +212,6 @@
             function resetLoginBtn() {loginBtn.innerText = "進入遊戲"; loginBtn.disabled = false;}
             // ⚠️ 錯誤警告 ALERT
             function showAlert(msg, emoji = "🙏🏻") {const emojiH1 = errorOverlay.querySelector('h1'); if (emojiH1) emojiH1.innerText = emoji; if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
-
             // ❌ 關閉彈窗 CLOSE MODAL
             closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
             errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
@@ -264,10 +263,11 @@
             // 🔒 密碼 PASSWORD
             document.getElementById('btn-notion').addEventListener('click', () => {pwInput.value = ""; pwOverlay.classList.remove('hidden'); pwInput.focus();});
             pwCancel.addEventListener('click', () => {pwOverlay.classList.add('hidden');});
+            pwOverlay.addEventListener('click', (e) => {if (e.target === pwOverlay) {pwOverlay.classList.add('hidden');}});
             pwConfirm.addEventListener('click', () => {const inputVal = pwInput.value; const correctPW = String(window.currentUserNotionPW);
                                                        if (inputVal === correctPW) {if (window.currentUserNotionWeb) {window.location.href = window.currentUserNotionWeb;} 
-                                                       else {showAlert("未有學習筆記", "📚");} pwOverlay.classList.add('hidden');} 
-                                                       else {pwOverlay.classList.add('hidden'); showAlert("密碼錯誤！", "🔑");}});
+                                                       else {showAlert("未有學習筆記", "📚");}} 
+                                                       else {showAlert("密碼錯誤！", "🔑")}});
             pwInput.addEventListener('keypress', (e) => {if (e.key === 'Enter') pwConfirm.click();});
         
         // 🫵🏻 手勢禁止 DISABLE GESTURE
