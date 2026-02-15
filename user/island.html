@@ -140,7 +140,7 @@
         <!-- ⬅️ 左邊群組 TOP LEFT -->
         <div class="fixed-controls-left">
             <!-- 🔘📤 主頁按鈕 MAIN PAGE BUTTON -->
-            <button onclick="location.href='../index.html'" class="glass-panel rounded-full text-slate-500 shadow-md p-2" title="返回"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-open-icon lucide-door-open"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg></button>
+            <button onclick="handleHome()" class="glass-panel rounded-full text-slate-500 shadow-md p-2" title="返回"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-open-icon lucide-door-open"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg></button>
             <!-- 🔘🏝️ 島嶼按鈕及地點顯示 ISLAND BUTTON & LOCATION DISPLAY -->
             <button onclick="toggleIslandMenu()" class="group glass-panel rounded-full shadow-md text-slate-500 flex items-center px-4 py-2 gap-3" title="地點">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pinned-icon lucide-map-pinned group-hover:text-white transition-colors""><path d="M18 8c0 3.613-3.869 7.429-5.393 8.795a1 1 0 0 1-1.214 0C9.87 15.429 6 11.613 6 8a6 6 0 0 1 12 0"/><circle cx="12" cy="8" r="2"/><path d="M8.714 14h-3.71a1 1 0 0 0-.948.683l-2.004 6A1 1 0 0 0 3 22h18a1 1 0 0 0 .948-1.316l-2-6a1 1 0 0 0-.949-.684h-3.712"/></svg> 
@@ -152,9 +152,9 @@
         <!-- ➡️ 右邊群組 TOP RIGHT -->
         <div class="fixed-controls-right">
             <!-- 🔘💾 儲存按鈕 SAVE BUTTON -->
-            <button id="save-button" onclick="saveData()" class="glass-panel rounded-full text-sky-700 shadow-md p-2" title="儲存"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg></button>
+            <button id="save-button" onclick="handleSave()" class="glass-panel rounded-full text-sky-700 shadow-md p-2" title="儲存"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg></button>
             <!-- 🔘🔄 重新整理按鈕 RELOAD BUTTON -->
-            <button id="reload-button" onclick="location.reload()" class="glass-panel rounded-full text-sky-700 shadow-md p-2" title="重新整理"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>  
+            <button id="reload-button" onclick="handleReload()" class="glass-panel rounded-full text-sky-700 shadow-md p-2" title="重新整理"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>  
         </div>
         </nav>
         <!-- 🏞️ 背景圖 BACKGROUND IMAGE -->
@@ -283,19 +283,21 @@
                                                                                                    if (el) { el.style.left = item.leftPercent + '%'; el.style.top = item.topPercent + '%';}});}} 
                                          catch (e) { console.log("歡迎來到此島！"); }}
         
-        // 💾 儲存 SAVE
-        function closeConfirm() {document.getElementById('confirm-modal').classList.add('hidden');}
-        function openConfirm(title, onConfirm) {const modal = document.getElementById('confirm-modal'); document.getElementById('confirm-title').innerText = title;
-                                                      const btn = document.getElementById('confirm-button');
-                                                      btn.onclick = () => {onConfirm(); closeConfirm();}; modal.classList.remove('hidden');}
-        function handleSave() {openConfirm("確定要儲存嗎？", () => {saveData();});}
-        function handleReload() {openConfirm("確定要重新載入嗎？", () => {location.reload();});}
+        // 💾 儲存 SAVE    
         async function saveData() {const btn = document.getElementById('save-button'); if (btn.disabled) return;
                                    const items = document.querySelectorAll('.draggable');
                                    const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
                                    try {await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
                                         showToast("成功儲存", "success");} catch (e) {console.error("Save Error:", e); showToast("儲存失敗", 'error');} 
                                    finally { btn.disabled = false; btn.style.opacity = "1";}}
+            // ✅ 確認 CONFIRM    
+            function closeConfirm() {document.getElementById('confirm-modal').classList.add('hidden');}
+            function openConfirm(title, onConfirm) {const modal = document.getElementById('confirm-modal'); document.getElementById('confirm-title').innerText = title;
+                                                          const btn = document.getElementById('confirm-button');
+                                                          btn.onclick = () => {onConfirm(); closeConfirm();}; modal.classList.remove('hidden');}
+            function handleSave() {openConfirm("確定要儲存嗎？", () => {saveData();});}
+            function handleReload() {openConfirm("確定要重新載入嗎？", () => {location.reload();});}
+            function handleHome() {openConfirm("確定要登出嗎？", () => {window.location.href = '../index.html'});
 
         // 🍞 通知 TOAST
         let toastTimer; function showToast(message, type = 'success') {const toast = document.getElementById('toast');
