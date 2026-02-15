@@ -220,9 +220,10 @@
             el.ondragstart = function() {return false;};}
 
         // 🏠 倉庫 STORAGE
-        function toggleStorage() {const win = document.getElementById('storage-modal');
-                                  if (win.classList.contains('hidden')) {win.classList.remove('hidden'); refreshInventory();} 
-                                  else {win.classList.add('hidden');}}
+        const storageModal = document.getElementById('storage-modal');
+        function toggleStorage() {if (storageModal.classList.contains('hidden')) {storageModal.classList.remove('hidden'); refreshInventory();} 
+                                  else {storageModal.classList.add('hidden');}}
+        storageModal.addEventListener('click', (e) => {if (e.target === storageModal) {storageModal.classList.add('hidden');}});
             // 🔢 庫存 INVENTORY
             async function refreshInventory() {const container = document.getElementById('storage-items');
                                                try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
