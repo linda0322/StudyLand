@@ -98,12 +98,10 @@
     </div>
 
     <!-- 🏠 倉庫 STORAGE -->
-    <div id="storage-modal" class="fixed inset-0 z-[3000] p-4 bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
-        <div class="glass-panel w-full max-w-lg rounded-[30px] p-6 shadow-2xl relative">
-            <button onclick="toggleStorage()" class="absolute top-5 right-6 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-            <h2 class="font-cubic thick-border text-xl text-slate-600 mb-6 text-center tracking-widest">倉庫</h2>
+    <div id="storage-modal" class="hidden fixed z-[3000] inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 ease-in-out">
+        <div class="w-[80%] max-w-lg glass-panel rounded-[30px] shadow-2xl border-white/50 p-8 relative">
+            <button onclick="toggleStorage()" class="absolute top-5 right-6 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            <h2 class="font-cubic text-xl text-slate-600 thick-border text-center tracking-wider mb-6">倉庫</h2>
             <div id="storage-tabs" class="flex gap-2 mb-4 mt-4 mx-2 overflow-x-auto pb-2 no-scrollbar"></div>
             <div id="storage-items" class="grid grid-cols-3 sm:grid-cols-4 gap-4 max-h-[40vh] overflow-y-auto p-2 border-t border-slate-200 pt-4">
                 <p class="col-span-full text-center py-10 text-slate-400 font-cubic">正在尋找鑰匙...</p>
@@ -111,17 +109,14 @@
         </div>
     </div>
         
-    <!-- 島嶼選單 MENU -->
-    <div id="island-menu" class="fixed inset-0 z-[2000] bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
-        <div class="glass-panel p-8 rounded-[40px] w-[80%] max-w-2xl relative shadow-2xl border-white/50">
-            <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-2xl text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-            <h2 class="font-cubic text-xl thick-border text-center mb-8 text-slate-600 tracking-widest">想去哪裡？</h2>
-            <div id="island-buttons-container" class="grid grid-cols-3 gap-6 w-full select-none" draggable="false">
-                <div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4">
-                    <span class="text-5xl">🗺️</span>
-                    <p class="w-full col-span-full text-center tracking-widest thin-border text-slate-400 font-cubic py-8 flex justify-center items-center">正在打開地圖</p>
+    <!-- 🏝️ 島嶼 ISLAND -->
+    <div id="island-menu" class="hidden fixed z-[2000] inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 ease-in-out">
+        <div class="w-[80%] max-w-2xl glass-panel rounded-[30px] shadow-2xl border-white/50 p-8 relative">
+            <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-2xl text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            <h2 class="font-cubic text-xl text-slate-600 thick-border text-center tracking-wider mb-6">想去哪裡？</h2>
+            <div id="island-buttons-container" class="w-full grid grid-cols-3 gap-6">
+                <div class="col-span-3 w-full flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🗺️</span>
+                    <p class="w-full col-span-full font-cubic text-slate-400 thin-border tracking-wider flex justify-center text-center items-center py-8">正在打開地圖</p>
                 </div>
             </div>
         </div>
