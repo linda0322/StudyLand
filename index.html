@@ -274,7 +274,7 @@
                                                                  if (window.currentUserNotionWeb) {pwConfirm.innerHTML = "成功"; pwConfirm.style.backgroundColor = "#45b56e";
                                                                                                    pwConfirm.disabled = true; pwInput.disabled = true;
                                                                                                    setTimeout(() => {window.location.href = window.currentUserNotionWeb;}, 1200);}
-                                                                 else {showAlert("未有學習筆記", "📚");}} else {showAlert("密碼錯誤！", "🔑");}});
+                                                                 else {showAlert("未有學習筆記", "📚");}} else {showAlert("密碼錯誤", "🔑");}});
             pwInput.addEventListener('keypress', (e) => {if (e.key === 'Enter') pwConfirm.click();});
         
         // 🫵🏻 手勢禁止 DISABLE GESTURE
