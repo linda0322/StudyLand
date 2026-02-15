@@ -47,11 +47,6 @@
         /* 手機畫面縮小 */
         @media screen and (max-width: 932px) {#island-title {font-size: 18px; margin-left: 2px;}
                                               button[onclick="toggleIslandMenu()"] {padding-left: 16px; padding-right: 16px; height: 50px;}
-                                              #warehouse-items {grid-template-columns: repeat(3, 1fr); gap: 12px;}
-                                              .inventory-item {padding: 15px 10px; border-radius: 20px;} 
-                                              .inventory-item img {width: 70px; height: 70px;}
-                                              .inventory-item span {font-size: 12px;}
-                                              .tab-btn {padding: 10px 20px; font-size: 15px; min-width: 80px;}
                                               button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}
                                              }
 
@@ -76,6 +71,11 @@
             .tab-active:hover {transform: scale(0.95);}
             .inventory-item {transition: all 0.2s; cursor: pointer;}
             .inventory-item:hover {transform: scale(1.05); background: rgba(255,255,255,0.9);}
+            @media screen and (max-width: 932px) {#warehouse-items {grid-template-columns: repeat(3, 1fr); gap: 12px;}
+                                                  .inventory-item {padding: 15px 10px; border-radius: 20px;} 
+                                                  .inventory-item img {width: 70px; height: 70px;}
+                                                  .inventory-item span {font-size: 12px;}
+                                                  .tab-btn {padding: 10px 20px; font-size: 15px; min-width: 80px;}}
 
 #island-buttons-container a, #island-buttons-container img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none;}
     
