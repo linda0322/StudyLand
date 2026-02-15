@@ -259,20 +259,18 @@
                                                     const tabContainer = document.getElementById('storage-tabs');
                                                     tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
                                                     renderInventoryItems('全部');} catch (e) {container.innerHTML = "載入失敗";}}
-            function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); 
-                                                   const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
-                                                   if (items.length === 0) {container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
-                                                                                                       <span class="text-5xl mb-2">🙂‍↔️</span>
-                                                                                                       <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
-                                                                                                   </div>`; return;}
-                                                   container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0;
-                                                                                            const opacityClass = isOutOfStock ? 'opacity-40 grayscale-[50%]' : '';
-                                                                                            const pointerEvents = isOutOfStock ? 'pointer-events-none' : '';
-                                                                                            return `
-                                                                                            <div onclick="deployFromStorage('${item.assetType}')"class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all ${opacityClass} ${pointerEvents}">
-                                                                                                <img src="${item.imgURL}" class="w-12 h-12 object-contain pointer-events-none" draggable="false">
-                                                                                                <span class="text-[16px] font-cubic ${isOutOfStock ? 'text-rose-400' : 'text-slate-400'} thin-border">${item.available}</span>
-                                                                                            </div>`;}).join('');} 
+           function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
+                                                  if (!items || items.length === 0) {container.innerHTML = `
+                                                  <div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
+                                                      <span class="text-5xl mb-2">🙂‍↔️</span>
+                                                      <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
+                                                  </div>`; return;}
+                                                  container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0; const opacityClass = isOutOfStock ? 'opacity-40 grayscale-[50%]' : '';
+                                                                                           const pointerEvents = isOutOfStock ? 'pointer-events-none' : 'cursor-pointer'; return `
+                                                                                           <div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}" class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all ${opacityClass} ${pointerEvents}">
+                                                                                               <img src="${item.imgURL}" class="w-12 h-12 object-contain pointer-events-none" draggable="false">
+                                                                                               <span class="text-[16px] font-cubic ${isOutOfStock ? 'text-rose-400' : 'text-slate-400'} thin-border">${item.available}</span>
+                                                                                           </div>`;}).join('');}
             function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}                                                                                    
             function deployFromStorage(type) {const invIdx = userInventory.findIndex(i => i.assetType === type); 
                                               if (invIdx > -1 && userInventory[invIdx].available > 0) {userInventory[invIdx].available--; 
