@@ -250,7 +250,9 @@
                                                 if (invIdx > -1) {userInventory[invIdx].available--; if (userInventory[invIdx].available <= 0) userInventory.splice(invIdx, 1);}}
 
         // 🏝️ 島嶼選單 ISLAND MENU
-        function toggleIslandMenu() { document.getElementById('island-menu').classList.toggle('hidden'); }
+        const islandMenu = document.getElementById('island-menu');
+        function toggleIslandMenu() { islandMenu.classList.toggle('hidden'); }
+        islandMenu.addEventListener('click', (e) => {if (e.target === islandMenu) {islandMenu.classList.add('hidden');}});
         async function loadIslandList() {try {const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
                                               const allowedIslands = await response.json(); const container = document.getElementById('island-buttons-container'); container.innerHTML = ''; 
                                               if (allowedIslands.length === 0) {container.innerHTML = `
