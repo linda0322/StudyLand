@@ -39,8 +39,8 @@
             /* 🔘 按鈕效果 BUTTON EFFECT */
             a, button, [role="button"], .draggable, .inventory-item {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;}
-            .fixed-controls-left button:hover, .fixed-controls-right button:hover, #orientation-noti button:hover, #confirm-modal button:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}
-            .fixed-controls-left button:active, .fixed-controls-right button:active, #orientation-noti button:active, #confirm-modal button:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
+            .fixed-controls-left button:hover, .fixed-controls-right button:hover, #orientation-noti button:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}
+            .fixed-controls-left button:active, .fixed-controls-right button:active, #orientation-noti button:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
             .fixed-controls-left button:hover svg, .fixed-controls-right button:hover svg, .fixed-controls-left button:active svg, .fixed-controls-right button:active svg {stroke: white !important;}
             .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
             .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
@@ -128,8 +128,8 @@
         <div class="w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8 ">
             <h2 id="confirm-title" class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">確定要儲存嗎？</h2>
             <div class="flex gap-4 w-full">
-                <button onclick="closeConfirm()" class="no-touch flex-1 py-3 bg-slate-200 rounded-2xl font-cubic text-slate-600 thin-border hover:bg-slate-300 transition-all">取消</button>
-                <button id="confirm-button" class="no-touch flex-1 py-3 bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border hover:bg-[#2da9e6] transition-all">確定</button>
+                <button onclick="closeConfirm()" class="no-touch flex-1 py-3 bg-slate-200 rounded-2xl font-cubic text-slate-600 thin-border hover:bg-slate-300 hover:text-white active:bg-slate-300 active:text-white active:scale-95 transition-all">取消</button>
+                <button id="confirm-button" class="no-touch flex-1 py-3 bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border hover:bg-[#2da9e6] active:bg-[#2da9e6] active:scale-95 transition-all">確定</button>
             </div>
         </div>
     </div>
