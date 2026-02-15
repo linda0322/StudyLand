@@ -250,13 +250,18 @@
                                   else {storageModal.classList.add('hidden');}}
         storageModal.addEventListener('click', (e) => {if (e.target === storageModal) {storageModal.classList.add('hidden');}});
             // 🔢 庫存 INVENTORY
-            async function refreshInventory() {const container = document.getElementById('storage-items');
-                                               try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
-                                                    userInventory = await resp.json();
-                                                    const categories = ['全部', ...new Set(userInventory.map(i => i.category))];
-                                                    const tabContainer = document.getElementById('storage-tabs');
-                                                    tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
-                                                    renderInventoryItems('全部');} catch (e) {container.innerHTML = "載入失敗";}}
+           async function refreshInventory() {const container = document.getElementById('storage-items');
+                                              try {const allAssetTypes = Object.keys(assetLibrary); 
+                                                   const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
+                                                   const serverInventory = await resp.json(); 
+                                                   userInventory = allAssetTypes.map(type => {const libraryInfo = assetLibrary[type];
+                                                                                              const inventoryItem = serverInventory.find(i => i.assetType === type); return {
+                                                                                                  assetType: type, imgURL: libraryInfo.imgURL, category: libraryInfo.category || '其他', available: inventoryItem ? inventoryItem.available : 0};
+                                                                                             });
+                                                   const categories = ['全部', ...new Set(userInventory.map(i => i.category))];
+                                                   const tabContainer = document.getElementById('storage-tabs');
+                                                   tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
+                                                   renderInventoryItems('全部');} catch (e) {console.error("更新倉庫失敗:", e); container.innerHTML = "載入失敗";}}
             function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
                                                    if (items.length === 0) {container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
                                                                                                        <span class="text-5xl mb-2">🙂‍↔️</span>
