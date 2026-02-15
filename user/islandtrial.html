@@ -51,8 +51,15 @@
             button {transition: transform 0.1s ease;} 
             @media (hover: hover) {button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
             button:active, [role="button"]:active {transform: scale(0.95); background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1)}
+            @media screen and (max-width: 932px) {button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}
 
-        /* ⚙️ 內部結構 INTERNAL */
+        /* ⚙️ 內部結構 INTERNAL */  
+            /* 🎛️ 頂部操作欄 CONTROL */                                       
+            .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
+            .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
+            @media screen and (max-width: 932px) {.fixed-controls-left, .fixed-controls-right {gap: 8px; top: 15px;}
+                                                  .fixed-controls-left button, .fixed-controls-right button {padding: 12px; background: rgba(255, 255, 255, 0.9);}
+                                                  .fixed-controls-left svg, .fixed-controls-right svg {width: 26px !important; height: 26px !important;}}
             /* 🧱 物品 ITEMS */
                 /* 👆🏻 可拖曳物品 DRAGGABLE ITEMS */
                 #items-layer {position: absolute; inset: 0; z-index: 10; pointer-events: none;}
@@ -66,31 +73,18 @@
                 @media screen and (max-width: 932px) {.storage-item {padding: 15px 10px; border-radius: 20px;} 
                                                       .storage-item img {width: 70px; height: 70px;}
                                                       .storage-item span {font-size: 12px;}}
-                
-
-        .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
-        .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
-
-        /* 手機畫面縮小 */
-        @media screen and (max-width: 932px) {.fixed-controls-left, .fixed-controls-right { gap: 8px; top: 15px;}
-                                              .fixed-controls-left button, .fixed-controls-right button {padding: 12px; background: rgba(255, 255, 255, 0.9);}
-                                              .fixed-controls-left svg, .fixed-controls-right svg {width: 26px !important; height: 26px !important;}
-                                              #island-title {font-size: 18px; margin-left: 2px;}
-                                              button[onclick="toggleIslandMenu()"] {padding-left: 16px; padding-right: 16px; height: 50px;}
-                                              #inventory {grid-template-columns: repeat(3, 1fr); gap: 12px;}
-                                              .tab-btn {padding: 10px 20px; font-size: 15px; min-width: 80px;}
-                                              button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}
-                                             }
-     
-    
-        /* 倉庫 WAREHOUSE */
-        .tab-active { background: #38C0FF !important; color: white !important; }
-        .tab-btn:hover {transform: scale(0.95); z-index: 10; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);}
-        .tab-active:hover {transform: scale(0.95);}
-        
-#island-buttons-container a, #island-buttons-container img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none;}
-
-    
+            /* 🏠 倉庫 STORAGE */
+            .tab-active {background: #38C0FF !important; color: white !important;}
+            .tab-btn:hover {transform: scale(0.95); z-index: 10; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);}
+            .tab-active:hover {transform: scale(0.95);}
+            @media screen and (max-width: 932px) {#inventory {grid-template-columns: repeat(3, 1fr); gap: 12px;}
+                                                  .tab-btn {padding: 10px 20px; font-size: 15px; min-width: 80px;}}
+            /* 🏝️ 島嶼選單 ISLAND MENU */
+            #island-buttons-container a, #island-buttons-container img {touch-action: none; -webkit-touch-callout: none; /* Safari 選單 */
+                                                                        -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; /* 選取 */
+                                                                        -webkit-user-drag: none; user-drag: none; /* 拖動 */}
+            @media screen and (max-width: 932px) {#island-title {font-size: 18px; margin-left: 2px;} 
+                                                  button[onclick="toggleIslandMenu()"] {padding-left: 16px; padding-right: 16px; height: 50px;}}
     </style>
 </head>
 <body>
