@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
@@ -362,17 +361,6 @@
             }, 2500);
         }
 
-        // 手機旋轉提示 ORIENTATION
-        function handleOrientationChange() {
-            const warning = document.getElementById('orientation-noti');
-            const isPortrait = window.innerHeight > window.innerWidth;
-            const isMobileOrTablet = window.innerWidth < 700;
-            if (isPortrait && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}
-        }
-        window.addEventListener('resize', handleOrientationChange);
-        window.addEventListener('orientationchange', handleOrientationChange);
-        handleOrientationChange();
-
         // 手機縮放比例 MOBILE SCALE
         function autoScaleGame() {
             const stage = document.getElementById('game-stage');
@@ -405,6 +393,14 @@
         window.addEventListener('load', async () => {autoScaleGame(); setTimeout(async () => {await initApp();}, 100);});
         
         document.getElementById('island-buttons-container').addEventListener('dragstart', function(event) { if (event.target.tagName.toLowerCase() === 'a' || event.target.tagName.toLowerCase() === 'img') {event.preventDefault();}}, false);
+
+        // 📱 手機旋轉提示 ORIENTATION NOTI
+        function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
+                                            const isPortrait = window.innerHeight > window.innerWidth; const isMobileOrTablet = window.innerWidth < 700;
+                                            if (isPortrait && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
+        window.addEventListener('resize', handleOrientationChange);
+        window.addEventListener('orientationchange', handleOrientationChange);
+        handleOrientationChange();
         
     </script>
 </body>
