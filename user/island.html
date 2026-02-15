@@ -287,7 +287,7 @@
                                                                                                        createDraggableElement(newId, type, 50, 50); 
                                                                                                        const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部';
                                                                                                        renderInventoryItems(activeTab); showToast("已放置");} 
-                                              else {showToast("庫存不足！", "error");}}
+                                              else {showToast("庫存不足", "error");}}
 
         // 🏝️ 島嶼選單 ISLAND MENU
         const islandMenu = document.getElementById('island-menu');
@@ -309,7 +309,7 @@
                                               const data = await resp.json();
                                               if (data && data.length > 0) { data.forEach(item => {const el = document.getElementById(item.id);
                                                                                                    if (el) { el.style.left = item.leftPercent + '%'; el.style.top = item.topPercent + '%';}});}} 
-                                         catch (e) { console.log("歡迎來到此島！"); }}
+                                         catch (e) { console.log("歡迎來到此島"); }}
         
         // 💾 儲存 SAVE    
         async function saveData() {const btn = document.getElementById('save-button'); if (btn.disabled) return;
