@@ -44,10 +44,6 @@
                                                   .fixed-controls-left button, .fixed-controls-right button {padding: 12px; background: rgba(255, 255, 255, 0.9);}
                                                   .fixed-controls-left svg, .fixed-controls-right svg {width: 26px !important; height: 26px !important;}
                                                   button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}}
-                                              
-        /* 手機畫面縮小 */
-        @media screen and (max-width: 932px) {#island-title {font-size: 18px; margin-left: 2px;}
-                                              button[onclick="toggleIslandMenu()"] {padding-left: 16px; padding-right: 16px; height: 50px;}}
 
         /* ⚙️ 內部結構 INTERNAL */
             /* ☁️ 加載遮罩（飛行中）LOADING OVERLAY */
@@ -75,9 +71,10 @@
                                                   .inventory-item img {width: 70px; height: 70px;}
                                                   .inventory-item span {font-size: 12px;}
                                                   .tab-btn {padding: 10px 20px; font-size: 15px; min-width: 80px;}}
-
-#island-buttons-container a, #island-buttons-container img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none;}
-    
+            /* 🏝️ 島嶼 ISLAND */
+            #island-buttons-container a, #island-buttons-container img {-webkit-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; touch-action: none; -webkit-touch-callout: none;}
+            @media screen and (max-width: 932px) {#island-title {font-size: 18px; margin-left: 2px;}
+                                                  button[onclick="toggleIslandMenu()"] {padding-left: 16px; padding-right: 16px; height: 50px;}}
     </style>
 </head>
 <body>
