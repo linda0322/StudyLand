@@ -29,6 +29,10 @@
             #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
             /* 🖼️ 16:9 外框 FRAME */
             #game-stage {position: relative; width: 1280px; height: 720px; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.2s ease; transform-origin: center center;}
+            /* 🏞️ 背景圖 BACKGROUND IMAGE */
+            #background-img {z-index: 0 !important; position: absolute; top: 50%; left: 50%; 
+                             width: 100.2%; height: 100.2%; object-fit: cover; transform: translate(-50%, -50%); 
+                             -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none;}
     
         /* 🌼 樣式 STYLE */
             /* 🥽 玻璃框 */
@@ -43,11 +47,27 @@
             /* 🙈 隱藏圖層 HIDDEN LAYER */
             .hidden {display: none !important;}
             /* 🔘 按鈕效果 BUTTON EFFECT */
-            a, button, [role="button"], .draggable, .inventory-item {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+            a, button, [role="button"], .draggable-item, .storage-item {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;} 
             @media (hover: hover) {button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
             button:active, [role="button"]:active {transform: scale(0.95); background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1)}
-     
+
+        /* ⚙️ 內部結構 INTERNAL */
+            /* 🧱 物品 ITEMS */
+                /* 👆🏻 可拖曳物品 DRAGGABLE ITEMS */
+                #items-layer {position: absolute; inset: 0; z-index: 10; pointer-events: none;}
+                .draggable-item {position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center;
+                                 pointer-events: auto; cursor: move; touch-action: none; -webkit-touch-callout: none; 
+                                 -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none; webkit-user-drag: none;}
+                .draggable-item img {width: 100%; height: auto; display: block; pointer-events: none;}
+                /* 📦 倉庫物品 STORAGE ITEMS */
+                .storage-item {transition: all 0.2s; cursor: pointer;}
+                .storage-item:hover {transform: scale(1.05); background: rgba(255,255,255,0.9);}
+                @media screen and (max-width: 932px) {.storage-item {padding: 15px 10px; border-radius: 20px;} 
+                                                      .storage-item img {width: 70px; height: 70px;}
+                                                      .storage-item span {font-size: 12px;}}
+                
+
         .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
         .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
 
@@ -57,40 +77,18 @@
                                               .fixed-controls-left svg, .fixed-controls-right svg {width: 26px !important; height: 26px !important;}
                                               #island-title {font-size: 18px; margin-left: 2px;}
                                               button[onclick="toggleIslandMenu()"] {padding-left: 16px; padding-right: 16px; height: 50px;}
-                                              #warehouse-items {grid-template-columns: repeat(3, 1fr); gap: 12px;}
-                                              .inventory-item {padding: 15px 10px; border-radius: 20px;} 
-                                              .inventory-item img {width: 70px; height: 70px;}
-                                              .inventory-item span {font-size: 12px;}
+                                              #inventory {grid-template-columns: repeat(3, 1fr); gap: 12px;}
                                               .tab-btn {padding: 10px 20px; font-size: 15px; min-width: 80px;}
                                               button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}
                                              }
-        
-        
-        /* 島嶼背景圖 BACKGROUND IMAGE */
-        #background-img { width: 100.2%; height: 100.2%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0 !important;
-                        -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none;}
+     
     
-        /* 拖曳物件 DRAGGABLE ITEMS */
-        .draggable { position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center; pointer-events: auto;
-                     cursor: move; user-select: none; -webkit-user-drag: -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none; -webkit-touch-callout: none; touch-action: none; }
-        .draggable img { width: 100%; height: auto; display: block; pointer-events: none; }
-
         /* 倉庫 WAREHOUSE */
         .tab-active { background: #38C0FF !important; color: white !important; }
         .tab-btn:hover {transform: scale(0.95); z-index: 10; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);}
         .tab-active:hover {transform: scale(0.95);}
-        .inventory-item { transition: all 0.2s; cursor: pointer; }
-        .inventory-item:hover { transform: scale(1.05); background: rgba(255,255,255,0.9); }
-
         
 #island-buttons-container a, #island-buttons-container img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none;}
-    
-#items-layer {
-    position: absolute;
-    inset: 0;
-    z-index: 10; 
-    pointer-events: none; /* 讓點擊穿透到物件本身 */
-}
 
     
     </style>
@@ -117,7 +115,7 @@
             </button>
             <h2 class="font-cubic thick-border text-xl text-slate-600 mb-6 text-center tracking-widest">倉庫</h2>
             <div id="warehouse-tabs" class="flex gap-2 mb-4 mt-4 mx-2 overflow-x-auto pb-2 no-scrollbar"></div>
-            <div id="warehouse-items" class="grid grid-cols-3 sm:grid-cols-4 gap-4 max-h-[40vh] overflow-y-auto p-2 border-t border-slate-200 pt-4">
+            <div id="inventory" class="grid grid-cols-3 sm:grid-cols-4 gap-4 max-h-[40vh] overflow-y-auto p-2 border-t border-slate-200 pt-4">
                 <p class="col-span-full text-center py-10 text-slate-400 font-cubic">正在尋找鑰匙...</p>
             </div>
         </div>
@@ -278,7 +276,7 @@
                     const clientX = isTouch ? e.touches[0].clientX : e.clientX; 
                     const clientY = isTouch ? e.touches[0].clientY : e.clientY;
                     /* 處理 z-index */
-                    if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10");
+                    if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable-item:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10");
                                                          el.style.zIndex = "100";}
                     /* 計算縮放倍率 */
                     const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280;
@@ -309,7 +307,7 @@
         }
             /* 庫存 INVENTORY */
             async function refreshInventory() {
-                const container = document.getElementById('warehouse-items');
+                const container = document.getElementById('inventory');
                 try {
                     const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
                     userInventory = await resp.json();
@@ -325,7 +323,7 @@
             }
         
             function renderInventoryItems(filter) {
-                const container = document.getElementById('warehouse-items');
+                const container = document.getElementById('inventory');
                 const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
                 if (items.length === 0) {container.innerHTML = `
                     <div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
@@ -380,7 +378,7 @@
         // 儲存功能 SAVE
         async function saveData() {
             const btn = document.getElementById('save-btn'); if (btn.disabled) return;
-            const items = document.querySelectorAll('.draggable');
+            const items = document.querySelectorAll('.draggable-item');
             const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
             try { await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
                   showToast("成功儲存", "success");} catch (e) {console.error("Save Error:", e); showToast("儲存失敗", 'error');
