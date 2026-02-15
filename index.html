@@ -153,6 +153,11 @@
                     <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/8f5887bd40d2d3b4b10391cf7819fd4b4256dea7/image/icon/island_favicon.svg" alt="我的島嶼" class="no-touch game-icon"></div>
                     <h3 class="game-title">我的島嶼</h3>
                 </a>
+                <!-- 📘 學習筆記 NOTION -->
+                <button id="btn-notion" class="no-touch game-button hidden">
+                    <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/8f5887bd40d2d3b4b10391cf7819fd4b4256dea7/image/icon/island_favicon.svg" alt="學習筆記" class="no-touch game-icon"></div>
+                    <h3 class="game-title">學習筆記</h3>
+                </button>
             <!-- 👾 遊戲 GAME -->
                 <!-- ✍🏻 單字練習 WRITING -->
                 <a id="btn-writing" href="game/writing.html" class="no-touch game-button">
@@ -168,7 +173,7 @@
     </main> 
     <script>
         // 🌎 GAS
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOqbjrNBk7LbdOTS2lQi8gBGrcxdAGuvp28xhotxL7OApplMmQ_Q6TWumUMlT4-_nG/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEumd1LFQrap1grNNqL9gywqdlttz9NEIVpRGGtkCTxTWc0Rmzzf1g3OB3c6KCp1iD/exec'; 
 
         // 📥 登入 LOGIN
             // ❇️ 常數 CONSTANT
@@ -181,7 +186,7 @@
                                                             try {const response = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({ username: username })});
                                                                  const data = await response.json();
                                                                  if (data.result === "success" && data.permissions) {localStorage.setItem('studyLandUser', username); localStorage.setItem('userPermissions', data.permissions);
-                                                                                                                     showMainPage(username, data.permissions);} 
+                                                                                                                     showMainPagewindow.addEventListener(username, data.permissions, data.notionWeb, data.notionPW);} 
                                                                  else {showLoginError("玩家不存在"); resetLoginBtn();}} 
                                                             catch (error) {console.error('Login Error:', error); showLoginError("連線失敗"); resetLoginBtn();}});
             function showLoginError(msg) {if (loginErrorText) loginErrorText.innerText = msg; errorOverlay.classList.remove('hidden');}
@@ -190,8 +195,10 @@
             closeBtn.addEventListener('click', () => {errorOverlay.classList.add('hidden');});
             errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
             // ✅ 自動登入 AUTO LOGIN
-            window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser'); const savedPermissions = localStorage.getItem('userPermissions');
-                                                       if (savedName) {showMainPage(savedName, savedPermissions);}});
+            window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser');
+                                                               const savedPermissions = localStorage.getItem('userPermissions');
+                                                               const savedWeb = localStorage.getItem('userNotionWeb'); const savedPW = localStorage.getItem('userNotionPW');
+                                                               if (savedName) {showMainPage(savedName, savedPermissions, savedWeb, savedPW);}});
         
         // 📤 登出 LOGOUT
             // ❇️ CONSTANT 常數
@@ -208,18 +215,26 @@
         // 👩🏻‍💻 主頁 MAIN PAGE
         const mainContent = document.getElementById('main-content');
         const userDisplayName = document.getElementById('user-display-name');
-        function showMainPage(name, permissions) {userDisplayName.textContent = name;
-                                                  loginOverlay.classList.add('hidden'); mainContent.classList.remove('hidden');
-                                                  // 🕹️ 遊戲常數 GAME CONSTANT
-                                                  const allGames = {'island': document.getElementById('btn-island'),
-                                                                    'writing': document.getElementById('btn-writing'),
-                                                                    'matching': document.getElementById('btn-matching'),};
-                                                  // 🙈 隱藏所有遊戲 HIDE ALL GAMES
-                                                  Object.values(allGames).forEach(el => el?.classList.add('hidden'));
-                                                  // 👀 檢查遊戲權限 CHECK GAME PERMISSIONS
-                                                  if (permissions) {const pList = permissions.split(','); 
-                                                                    pList.forEach(p => {const key = p.trim(); if (allGames[key]) {allGames[key].classList.remove('hidden');}});}
-                                                  window.scrollTo(0, 0);}
+        function showMainPage(name, permissions, notionWeb, notionPW) {userDisplayName.textContent = name; loginOverlay.classList.add('hidden'); mainContent.classList.remove('hidden');
+                                                                       window.currentUserNotionWeb = notionWeb || localStorage.getItem('userNotionWeb');
+                                                                       window.currentUserNotionPW = notionPW || localStorage.getItem('userNotionPW');
+                                                                       if(notionWeb) localStorage.setItem('userNotionWeb', notionWeb);
+                                                                       if(notionPW) localStorage.setItem('userNotionPW', notionPW);
+                                                                       // 🕹️ 遊戲常數 GAME CONSTANT
+                                                                       const allGames = {'island': document.getElementById('btn-island'),
+                                                                                         'writing': document.getElementById('btn-writing'),
+                                                                                         'matching': document.getElementById('btn-matching'),
+                                                                                         'notion': document.getElementById('btn-notion')};
+                                                                       // 🙈 隱藏所有遊戲 HIDE ALL GAMES
+                                                                       Object.values(allGames).forEach(el => el?.classList.add('hidden'));
+                                                                       // 👀 檢查遊戲權限 CHECK GAME PERMISSIONS
+                                                                       if (permissions) {const pList = permissions.split(','); 
+                                                                                         pList.forEach(p => {const key = p.trim(); if (allGames[key]) allGames[key].classList.remove('hidden');});}
+                                                                       window.scrollTo(0, 0);}
+        // 📘 學習筆記 NOTION
+        document.getElementById('btn-notion').addEventListener('click', () => {const pw = prompt("請輸入筆記密碼");
+                                                                               if (pw === window.currentUserNotionPW) {if (window.currentUserNotionWeb) {window.location.href = window.currentUserNotionWeb;} else {
+                                                                               alert("未有學習筆記");}} else if (pw !== null) {alert("密碼錯誤！");}});
         
         // 🫵🏻 手勢禁止 DISABLE GESTURE
             // 選取及拖動
