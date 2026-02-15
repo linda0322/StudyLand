@@ -66,7 +66,7 @@
                 .draggable-item {position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center;
                                  pointer-events: auto; cursor: move; touch-action: none; -webkit-touch-callout: none; 
                                  -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none;}
-                .draggable-item img {width: 100%; height: auto; display: block; pointer-events: none;}
+                .draggable-item img {width: 100%; height: auto; display: block; pointer-events: none; -webkit-user-drag: none}
                 /* 📦 倉庫物品 STORAGE ITEMS */
                 .storage-item {transition: all 0.2s; cursor: pointer;}
                 .storage-item:hover {transform: scale(1.05); background: rgba(255,255,255,0.9);}
@@ -101,10 +101,38 @@
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以進入島嶼</h2>
     </div>
 
+    <!-- 🖼️ 16:9 外框 FRAME -->
+    <div id="game-stage">
+        <!-- 🎛️ 頂部操作欄 CONTROL -->
+        <nav>
+            <!-- ⬅️ 左邊群組 LEFT -->
+            <div class="fixed-controls-left">
+                <!-- 🔘🔙 返回按鈕 BACK BUTTON -->
+                <button onclick="location.href='../index.html'" class="glass-panel rounded-full shadow-md text-red-600 p-2" title="返回"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-open-icon lucide-door-open"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg></button>
+                <!-- 🔘🏝️ 島嶼選單按鈕及地點顯示 ISLAND MENU BUTTON & LOCATION DISPLAY -->
+                <button onclick="toggleIslandMenu()" class="glass-panel group rounded-full text-slate-500 shadow-md flex items-center px-4 py-2 gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pinned-icon lucide-map-pinned group-hover:text-white transition-colors""><path d="M18 8c0 3.613-3.869 7.429-5.393 8.795a1 1 0 0 1-1.214 0C9.87 15.429 6 11.613 6 8a6 6 0 0 1 12 0"/><circle cx="12" cy="8" r="2"/><path d="M8.714 14h-3.71a1 1 0 0 0-.948.683l-2.004 6A1 1 0 0 0 3 22h18a1 1 0 0 0 .948-1.316l-2-6a1 1 0 0 0-.949-.684h-3.712"/></svg> 
+                    <span id="island-title" class="text-[13px] text-slate-500 font-cubic thin-border text-center tracking-wider translate-y-[1px] group-hover:text-white transition-colors"">將抵達...</span>
+                </button>     
+                <!-- 🔘🏠 倉庫按鈕 STORAGE BUTTON -->
+                <button onclick="toggleStorage()" class="glass-panel rounded-full shadow-md text-red-600 p-2" title="倉庫"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-warehouse-icon lucide-warehouse"><path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/></svg></button>
+            </div>
+            <!-- ➡️ 右邊群組 RIGHT -->
+            <div class="fixed-controls-right">
+                <!-- 🔘💾 儲存按鈕 SAVE BUTTON -->
+                <button id="save-button" onclick="saveData()" class="glass-panel rounded-full shadow-md text-sky-700 p-2" title="儲存"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg></button>
+                <!-- 🔘🔄 重新整理 RELOAD BUTTON -->
+                <button id="reload-button" onclick="location.reload()" class="glass-panel rounded-full shadow-md text-sky-700 p-2" title="重新整理"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>  
+            </div>
+        </nav>
+        <!-- 🏞️ 背景圖 BACKGROUND IMAGE --><div id="background-layer"><img id="background-img" src="" alt="background" class="pointer-events-none;"></div>
+        <!-- 🧱 物品 ITEMS --><div id="items-layer"></div>
+    </div>
+
     <!-- 倉庫彈窗 WAREHOUSE WINDOW -->
     <div id="warehouse-window" class="fixed inset-0 z-[3000] p-4  bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
         <div class="glass-panel w-full max-w-lg rounded-[30px] p-6 shadow-2xl relative">
-            <button onclick="toggleWarehouse()" class="absolute top-5 right-6 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all">
+            <button onclick="toggleStorage()" class="absolute top-5 right-6 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
             <h2 class="font-cubic thick-border text-xl text-slate-600 mb-6 text-center tracking-widest">倉庫</h2>
@@ -129,43 +157,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- 16:9 外框及物件 FRAME & ITEMS -->
-    <div id="game-stage">
-        <!-- 導覽及按鈕 BUTTONS -->
-        <nav>
-            <!-- 左邊群組 LEFT -->
-            <div class="fixed-controls-left">
-                <!-- 返回主頁 MAIN PAGE -->
-                <button onclick="location.href='../index.html'" class="glass-panel p-2 rounded-full text-slate-500 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="返回">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-open-icon lucide-door-open"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg>
-                </button>
-                <!-- 島嶼選單及地點顯示 ISLAND MENU & LOCATION -->
-                <button onclick="toggleIslandMenu()" class="glass-panel group rounded-full text-slate-500 shadow-md flex items-center px-4 py-2 gap-3 hover:bg-white/20 active:scale-95 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pinned-icon lucide-map-pinned group-hover:text-white transition-colors""><path d="M18 8c0 3.613-3.869 7.429-5.393 8.795a1 1 0 0 1-1.214 0C9.87 15.429 6 11.613 6 8a6 6 0 0 1 12 0"/><circle cx="12" cy="8" r="2"/><path d="M8.714 14h-3.71a1 1 0 0 0-.948.683l-2.004 6A1 1 0 0 0 3 22h18a1 1 0 0 0 .948-1.316l-2-6a1 1 0 0 0-.949-.684h-3.712"/></svg> 
-                    <span id="island-title" class="text-[13px] text-slate-500 font-cubic thin-border text-center tracking-wider translate-y-[1px] group-hover:text-white transition-colors"">將抵達...</span>
-                </button>     
-                <!-- 倉庫按鈕 WAREHOUSE BUTTON -->
-                <button onclick="toggleWarehouse()" class="glass-panel p-2 rounded-full text-slate-500 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="倉庫">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-warehouse-icon lucide-warehouse"><path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/></svg>
-                </button>
-            </div>
-            <!-- 右邊群組 RIGHT -->
-            <div class="fixed-controls-right">
-                <!-- 儲存進度 SAVE -->
-                <button id="save-btn" onclick="saveData()" class="glass-panel p-2 rounded-full text-sky-700 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="儲存">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-                </button>
-                <!-- 重新整理 RELOAD -->
-                <button id="reload-btn" onclick="location.reload()" class="glass-panel p-2 rounded-full text-sky-700 shadow-md hover:bg-white/20 hover:text-white active:scale-95 transition-all" title="重新整理">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                </button>  
-            </div>
-        </nav>
-        <div id="background-layer"><img id="background-img" src="" alt="background" class="pointer-events-none;"></div>
-        <div id="items-layer"></div>
-    </div>
+    </div
 
     <!-- 通知 TOAST -->
     <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[9999] px-6 py-3 rounded-2xl glass-panel shadow-2xl transition-all duration-500 opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
@@ -174,71 +166,44 @@
     </div>
 
     <script>
+        // 🌎 GAS
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPxLzM47qozl9CJxGjjf0wMdtPppx8Kt8R1caUnAQpCX-s3ol6lERYawriMQFv6p3a/exec'; 
+
+        // 📥 資料 DATA
+            // ❇️ 常數 CONSTANT
+            const username = localStorage.getItem('studyLandUser');
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentIslandId = urlParams.get('id') || 'island_1';
+            let assetLibrary = {};
+            let userInventory = []; 
+            // 🏞️ 背景圖 BACKGROUND IMAGE
+            const islandConfig = {
+                'island_1': { name: '草地', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island1_grass.webp', color: 'bg-lime-200', icon: '🌳' },
+                'island_2': { name: '海洋', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island2_ocean.webp', color: 'bg-sky-200', icon: '🌊' },
+                'island_3': { name: '沙漠', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island3_desert.webp', color: 'bg-amber-200', icon: '🏜️' },
+            };
+            // ☁️ 雲端同步 DRIVE SYNC
+            async function initApp() {if (!username) { window.location.href = '../index.html'; return; }
+                                      const startTime = Date.now();
+                                      const config = islandConfig[currentIslandId] || islandConfig['island_1'];
+                                      document.getElementById('background-img').src = config.bg;
+                                      document.getElementById('island-title').innerText = config.name;
+                                      try {const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`),
+                                                                                         fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
+                                      assetLibrary = await libResp.json(); const savedItems = await posResp.json(); const itemsLayer = document.getElementById('items-layer'); itemsLayer.innerHTML = '';
+                                           if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop();
+                                                                                                       const assetType = parts.join('_'); console.log("正在載入物件:", assetType); 
+                                                                                                       if (assetLibrary[assetType]) {createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);} 
+                                                                                                       else {console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否完全一致。");}});
+                                                                           await loadIslandList(); await refreshInventory();}} 
+                                           catch (err) { console.error("載入失敗:", err); showToast("請檢查網路", "error");} 
+                                           finally {const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
+                                                    setTimeout(() => { const loader = document.getElementById('loading-overlay'); if (loader) {loader.classList.add('fade-out'); setTimeout(() => loader.style.display = 'none', 500);}}, remainingWait);}}
 
         // 捲動控制 SCROLL
         let startY = 0;
         document.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; }, { passive: false });
         
-        const username = localStorage.getItem('studyLandUser');
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentIslandId = urlParams.get('id') || 'island_1';
-        let assetLibrary = {};
-        let userInventory = []; 
-
-        // 島嶼背景圖 BACKGROUND IMAGE
-        const islandConfig = {
-            'island_1': { name: '草地', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island1_grass.webp', color: 'bg-lime-200', icon: '🌳' },
-            'island_2': { name: '海洋', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island2_ocean.webp', color: 'bg-sky-200', icon: '🌊' },
-            'island_3': { name: '沙漠', bg: 'https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/user/island%20image/background/island3_desert.webp', color: 'bg-amber-200', icon: '🏜️' },
-        };
-
-        // 載入雲端資料 CLOUD INFORMATION
-        async function initApp() {
-            // 檢查登入狀態
-            if (!username) { window.location.href = '../index.html'; return; }
-            // 紀錄開始時間（控制 Loading 遮罩顯示時長）
-            const startTime = Date.now();
-            // 設定島嶼
-            const config = islandConfig[currentIslandId] || islandConfig['island_1'];
-            document.getElementById('background-img').src = config.bg;
-            document.getElementById('island-title').innerText = config.name;
-            try {
-                /* 載入基礎資料 */
-                const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`),
-                                                              fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
-                assetLibrary = await libResp.json();
-                const savedItems = await posResp.json();
-                /* 載入已儲存的物件 */
-                const itemsLayer = document.getElementById('items-layer'); itemsLayer.innerHTML = '';
-                if (Array.isArray(savedItems)) { 
-                    savedItems.forEach(item => {
-                        // 取得 item_ 之後，最後一個序號之前的完整名稱
-                        const parts = item.id.split('_');
-                        parts.shift(); // 移除 "item"
-                        parts.pop();   // 移除序號 (如 "1")
-                        const assetType = parts.join('_'); 
-                
-                        console.log("正在載入物件:", assetType); 
-                
-                        if (assetLibrary[assetType]) {
-                            createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);
-                        } else {
-                            console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否完全一致。");
-                        }
-                    });
-                }
-                /* 載入選單與倉庫資訊 */
-                await loadIslandList(); await refreshInventory(); 
-            } catch (err) { console.error("載入失敗:", err); showToast("請檢查網路", "error");
-                          } finally {
-                /* 隱藏遮罩 */
-                const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
-                setTimeout(() => { const loader = document.getElementById('loading-overlay'); if (loader) { loader.classList.add('fade-out');
-                setTimeout(() => loader.style.display = 'none', 500);}
-                }, remainingWait);
-            }
-        }
 
         // 資產 ASSETS
             /* 載入物件 */
@@ -295,7 +260,7 @@
             }
 
         // 倉庫 WAREHOUSE
-        function toggleWarehouse() {const win = document.getElementById('warehouse-window');
+        function toggleStorage() {const win = document.getElementById('warehouse-window');
             if (win.classList.contains('hidden')) {win.classList.remove('hidden'); refreshInventory();
             } else {win.classList.add('hidden');}
         }
@@ -337,7 +302,7 @@
         
             function deployFromWarehouse(type) {const existing = document.querySelectorAll(`[id^="item_${type}_"]`);
                 let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
-                const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); toggleWarehouse(); showToast("已放置");
+                const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); toggleStorage(); showToast("已放置");
                 const invIdx = userInventory.findIndex(i => i.assetType === type);
                 if (invIdx > -1) {userInventory[invIdx].available--; if (userInventory[invIdx].available <= 0) userInventory.splice(invIdx, 1);}
             }
@@ -371,7 +336,7 @@
         
         // 儲存功能 SAVE
         async function saveData() {
-            const btn = document.getElementById('save-btn'); if (btn.disabled) return;
+            const btn = document.getElementById('save-button'); if (btn.disabled) return;
             const items = document.querySelectorAll('.draggable-item');
             const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
             try { await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
