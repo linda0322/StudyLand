@@ -121,6 +121,18 @@
             </div>
         </div>
     </div>
+
+    <!-- ✅ 確認視窗 CONFIRM MODAL -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex justify-center items-center p-6">
+        <!-- 💬 -->
+        <div class="w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8 ">
+            <h2 id="confirm-title" class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">確定要儲存嗎？</h2>
+            <div class="flex gap-4 w-full">
+                <button onclick="closeConfirm()" class="no-touch flex-1 py-3 bg-slate-200 rounded-2xl font-cubic text-slate-600 thin-border hover:bg-slate-300 transition-all">取消</button>
+                <button id="confirm-button" class="no-touch flex-1 py-3 bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border hover:bg-[#2da9e6] transition-all">確定</button>
+            </div>
+        </div>
+    </div>
     
     <!-- 🖼️ 16:9 外框 FRAME -->
     <div id="game-stage">
@@ -272,6 +284,12 @@
                                          catch (e) { console.log("歡迎來到此島！"); }}
         
         // 💾 儲存 SAVE
+        function closeConfirm() {document.getElementById('confirm-modal').classList.add('hidden');}
+        function openConfirm(title, onConfirm) {const modal = document.getElementById('confirm-modal'); document.getElementById('confirm-title').innerText = title;
+                                                      const btn = document.getElementById('confirm-button');
+                                                      btn.onclick = () => {onConfirm(); closeConfirm();}; modal.classList.remove('hidden');}
+        function handleSave() {openConfirm("確定要儲存嗎？", () => {saveData();});}
+        function handleReload() {openConfirm("確定要重新載入嗎？", () => {location.reload();});}
         async function saveData() {const btn = document.getElementById('save-button'); if (btn.disabled) return;
                                    const items = document.querySelectorAll('.draggable');
                                    const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
