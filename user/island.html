@@ -258,7 +258,7 @@
                                               </div>`; return;}
                                               allowedIslands.forEach(id => {const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
                                                                             const btnHtml = `
-                                                                            <a href="island.html?id=${id}" class="group bg-slate-50 rounded-[25px] text-center p-4 hover:bg-white hover:shadow-xl transition-all select-none" draggable="false">
+                                                                            <a href="island.html?id=${id}" class="group bg-slate-50 rounded-[25px] text-center p-4 hover:bg-white hover:shadow-xl active:scale-95 transition-all select-none" draggable="false">
                                                                                 <div class="${cfg.color} h-20 rounded-[20px] text-3xl flex items-center justify-center mb-2 select-none">${cfg.icon}</div>
                                                                                 <h3 class="font-cubic text-lg text-slate-500 thin-border select-none">${cfg.name}</h3>
                                                                             </a>`; container.innerHTML += btnHtml;});} catch (e) {console.error("載入失敗", e);}}
