@@ -27,6 +27,8 @@
             /* ☁️ 加載遮罩（飛行中）LOADING OVERLAY */
             #loading-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 8000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
             #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
+            /* 🖼️ 16:9 外框 FRAME */
+            #game-stage {position: relative; width: 1280px; height: 720px; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.2s ease; transform-origin: center center;}
     
         /* 🌼 樣式 STYLE */
             /* 🥽 玻璃框 */
@@ -63,8 +65,7 @@
                                               button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}
                                              }
         
-        /* 16:9 外框 FRAME */
-        #game-stage { position: relative; width: 1280px; height: 720px; background-color: #333; overflow: hidden; flex-shrink: 0; transition: transform 0.2s ease; transform-origin: center center;}
+        
         /* 島嶼背景圖 BACKGROUND IMAGE */
         #background-img { width: 100.2%; height: 100.2%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0 !important;
                         -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none;}
@@ -96,11 +97,8 @@
 </head>
 <body>
 
-    <!-- 加載遮罩（飛行中）LOADING -->
-    <div id="loading-overlay">
-        <div class="animate-bounce text-3xl mb-4">☁️</div>
-        <div class="font-cubic text-xl text-white thick-border tracking-widest">飛行中</div>
-    </div>
+    <!-- ☁️ 加載遮罩（飛行中）LOADING OVERLAY -->
+    <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">☁️</div><div class="font-cubic text-xl text-white thick-border tracking-widest">飛行中</div></div>
 
     <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
     <div id="orientation-noti">
