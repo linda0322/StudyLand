@@ -66,7 +66,7 @@
             .tab-active:hover {transform: scale(0.95);}
             .inventory-item {transition: all 0.2s; cursor: pointer;}
             .inventory-item:hover {transform: scale(1.05); background: rgba(255,255,255,0.9);}
-            @media screen and (max-width: 932px) {#warehouse-items {grid-template-columns: repeat(3, 1fr); gap: 12px;}
+            @media screen and (max-width: 932px) {#storage-items {grid-template-columns: repeat(3, 1fr); gap: 12px;}
                                                   .inventory-item {padding: 15px 10px; border-radius: 20px;} 
                                                   .inventory-item img {width: 70px; height: 70px;}
                                                   .inventory-item span {font-size: 12px;}
@@ -97,14 +97,14 @@
     </div>
 
     <!-- 倉庫彈窗 WAREHOUSE WINDOW -->
-    <div id="warehouse-window" class="fixed inset-0 z-[3000] p-4  bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
+    <div id="storage-window" class="fixed inset-0 z-[3000] p-4  bg-black/20 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 ease-in-out">
         <div class="glass-panel w-full max-w-lg rounded-[30px] p-6 shadow-2xl relative">
             <button onclick="toggleWarehouse()" class="absolute top-5 right-6 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
             <h2 class="font-cubic thick-border text-xl text-slate-600 mb-6 text-center tracking-widest">倉庫</h2>
-            <div id="warehouse-tabs" class="flex gap-2 mb-4 mt-4 mx-2 overflow-x-auto pb-2 no-scrollbar"></div>
-            <div id="warehouse-items" class="grid grid-cols-3 sm:grid-cols-4 gap-4 max-h-[40vh] overflow-y-auto p-2 border-t border-slate-200 pt-4">
+            <div id="storage-tabs" class="flex gap-2 mb-4 mt-4 mx-2 overflow-x-auto pb-2 no-scrollbar"></div>
+            <div id="storage-items" class="grid grid-cols-3 sm:grid-cols-4 gap-4 max-h-[40vh] overflow-y-auto p-2 border-t border-slate-200 pt-4">
                 <p class="col-span-full text-center py-10 text-slate-400 font-cubic">正在尋找鑰匙...</p>
             </div>
         </div>
@@ -290,18 +290,18 @@
             }
 
         // 倉庫 WAREHOUSE
-        function toggleWarehouse() {const win = document.getElementById('warehouse-window');
+        function toggleWarehouse() {const win = document.getElementById('storage-window');
             if (win.classList.contains('hidden')) {win.classList.remove('hidden'); refreshInventory();
             } else {win.classList.add('hidden');}
         }
             /* 庫存 INVENTORY */
             async function refreshInventory() {
-                const container = document.getElementById('warehouse-items');
+                const container = document.getElementById('storage-items');
                 try {
                     const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
                     userInventory = await resp.json();
                     const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; /** 分類 TAB CATEGORY **/
-                    const tabContainer = document.getElementById('warehouse-tabs');
+                    const tabContainer = document.getElementById('storage-tabs');
                     tabContainer.innerHTML = categories.map(cat => `
                         <button onclick="filterWarehouse('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">
                             ${cat}
@@ -312,7 +312,7 @@
             }
         
             function renderInventoryItems(filter) {
-                const container = document.getElementById('warehouse-items');
+                const container = document.getElementById('storage-items');
                 const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
                 if (items.length === 0) {container.innerHTML = `
                     <div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
