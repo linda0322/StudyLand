@@ -251,46 +251,32 @@
         storageModal.addEventListener('click', (e) => {if (e.target === storageModal) {storageModal.classList.add('hidden');}});
             // 🔢 庫存 INVENTORY
             async function refreshInventory() {const container = document.getElementById('storage-items');
-                try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`);
-                     const serverInventory = await resp.json();
-                     const islandIds = ['island_1', 'island_2', 'island_3'];
-                     const allPositionsResponses = await Promise.all(
-                        islandIds.map(id => fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${id}&action=getPositions`).then(r => r.json())));
-                        const activeTypesAcrossIslands = new Set();
-                        allPositionsResponses.forEach(savedItems => {
-                            if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); activeTypesAcrossIslands.add(parts.join('_'));});}});
-                            const serverTypes = serverInventory.map(i => i.assetType);
-                            const combinedTypes = [...new Set([...serverTypes, ...Array.from(activeTypesAcrossIslands)])];
-                            userInventory = combinedTypes.map(type => {const libraryInfo = assetLibrary[type];
-                                if (!libraryInfo) return null; const invItem = serverInventory.find(i => i.assetType === type); 
-                                return {assetType: type, imgURL: libraryInfo.imgURL, category: libraryInfo.category || '其他', available: invItem ? invItem.available : 0};}).filter(item => item !== null);
-                                const categories = ['全部', ...new Set(userInventory.map(i => i.category))];
-                                const tabContainer = document.getElementById('storage-tabs');
-                                tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
-                                renderInventoryItems('全部'); } catch (e) {console.error("跨島更新倉庫失敗:", e); container.innerHTML = "載入失敗";}}
+                try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`); const serverInventory = await resp.json();
+                     const islandIds = ['island_1', 'island_2', 'island_3']; const allPositionsResponses = await Promise.all(islandIds.map(id => fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${id}&action=getPositions`).then(r => r.json())));
+                     const activeTypesAcrossIslands = new Set(); allPositionsResponses.forEach(savedItems => {if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); activeTypesAcrossIslands.add(parts.join('_'));});}});
+                     const serverTypes = serverInventory.map(i => i.assetType); const combinedTypes = [...new Set([...serverTypes, ...Array.from(activeTypesAcrossIslands)])];
+                     userInventory = combinedTypes.map(type => {const libraryInfo = assetLibrary[type]; if (!libraryInfo) return null; const invItem = serverInventory.find(i => i.assetType === type); 
+                                                                return {assetType: type, imgURL: libraryInfo.imgURL, category: libraryInfo.category || '其他', available: invItem ? invItem.available : 0};}).filter(item => item !== null);
+                     const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; const tabContainer = document.getElementById('storage-tabs');
+                     tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
+                     renderInventoryItems('全部'); } catch (e) {console.error("跨島更新倉庫失敗:", e); container.innerHTML = "載入失敗";}}
             function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
                                                    if (items.length === 0) {container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-20 gap-4">
                                                                                                        <span class="text-5xl mb-2">🙂‍↔️</span>
                                                                                                        <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
                                                                                                    </div>`; return;}
-                                                   container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0;
-                                                                                            const statusClass = isOutOfStock ? "opacity-50 grayscale pointer-events-none" : "active:scale-95";
+                                                   container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0; const statusClass = isOutOfStock ? "opacity-50 grayscale pointer-events-none" : "active:scale-95";
                                                                                             const countColor = isOutOfStock ? "text-slate-300" : "text-slate-400";
-                                                                                            return `<div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}" 
-                                                                                                    class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${statusClass}">
+                                                                                            return `<div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}"  class="inventory-item glass-panel p-2 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${statusClass}">
                                                                                                         <img src="${item.imgURL}" class="w-12 h-12 object-contain pointer-events-none" draggable="false">
                                                                                                         <span class="text-[16px] font-cubic ${countColor} thin-border">${item.available}</span>
                                                                                                     </div>`;}).join('');}
             function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}                                                                                    
             function deployFromStorage(type) {const invIdx = userInventory.findIndex(i => i.assetType === type); 
                                               if (invIdx > -1 && userInventory[invIdx].available > 0) {userInventory[invIdx].available--; 
-                                                                                                       const existing = document.querySelectorAll(`[id^="item_${type}_"]`);
-                                                                                                       let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); 
-                                                                                                                                               if (num > maxNum) maxNum = num;});
-                                                                                                       const newId = `item_${type}_${maxNum + 1}`; 
-                                                                                                       createDraggableElement(newId, type, 50, 50); 
-                                                                                                       const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部';
-                                                                                                       renderInventoryItems(activeTab); showToast("已放置");} 
+                                                                                                       const existing = document.querySelectorAll(`[id^="item_${type}_"]`); let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
+                                                                                                       const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); 
+                                                                                                       const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab); showToast("已放置");} 
                                               else {showToast("庫存不足", "error");}}
 
         // 🏝️ 島嶼選單 ISLAND MENU
