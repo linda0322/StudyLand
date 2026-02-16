@@ -71,7 +71,7 @@
             /* 🙈 隱藏圖層 HIDDEN LAYER */
             .hidden {display: none !important;}
             /* 🫵🏻 手勢禁止 DISABLE GESTURE */
-            .no-touch {touch-action: none;
+            .no-touch {touch-action: none; pointer-events: none;
                        -webkit-touch-callout: none; /* Safari 選單 */
                        -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; /* 選取 */
                        -webkit-user-drag: none; /* 拖動 */}
@@ -100,7 +100,7 @@
         <div id="login-overlay" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
             <!-- 💬 -->
             <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8">
-                <img src="https://lh3.googleusercontent.com/d/1dCdxRN0oNjOz5lg7rwajTtYZb077zePp" alt="NPC" class="no-touch pointer-events-none w-20 h-20 mb-6">
+                <img src="https://lh3.googleusercontent.com/d/1dCdxRN0oNjOz5lg7rwajTtYZb077zePp" alt="NPC" class="no-touch w-20 h-20 mb-6">
                 <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">登入</h2>
                 <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl font-cubic thin-border text-center px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
                 <button id="login-button" class="no-touch w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border px-4 py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
@@ -161,7 +161,7 @@
         <!-- 🤖 NPC 動畫 ANIMATION -->
         <header class="flex flex-col items-center text-center mb-6">
             <div class="relative mb-4">
-                <img src="https://lh3.googleusercontent.com/d/1dCdxRN0oNjOz5lg7rwajTtYZb077zePp" alt="NPC" class="no-touch pointer-events-none npc-float w-[140px] h-auto drop-shadow-md">
+                <img src="https://lh3.googleusercontent.com/d/1dCdxRN0oNjOz5lg7rwajTtYZb077zePp" alt="NPC" class="no-touch npc-float w-[140px] h-auto drop-shadow-md">
                 <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border text-shadow-md tracking-widest animate-text-float">GO!</div>
             </div>
         </header>
