@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Zung1 Man4</title>
-    <link rel="icon" type="image/svg" href="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/npc_favicon.svg">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/npc_favicon_phone.png">
+    <link rel="icon" type="image/svg" href="https://img.notionusercontent.com/s3/prod-files-secure%2Fb5612d08-a3aa-81b5-b31f-00038f7e4f9a%2F7d076539-b1f2-4e49-9af7-a01e41bccaf1%2Fnpc_favicon.svg/size/?exp=1771321065&sig=-741b1LuiquDxUyLf_R7Di6R3ywfLDWv8IWKvq7z7Zc&id=30912d08-a3aa-8084-b04e-c4cc62883048&table=block">
+    <link rel="apple-touch-icon" href="https://img.notionusercontent.com/s3/prod-files-secure%2Fb5612d08-a3aa-81b5-b31f-00038f7e4f9a%2F5180d890-a0d6-4e91-a2a9-98e1ad952a52%2Fnpc_favicon_phone.png/size/w=130?exp=1771321089&sig=BqHd5En6E0kP5bF0UiztogSa46sWlKMpw1tP0j8rIas&id=30912d08-a3aa-80b4-8d91-c33b6a39f5e7&table=block">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -20,9 +20,9 @@
             /* 🏙️ 背景層 BACKGROUND LAYER */
             .bg-layer {position: fixed; inset: 0; z-index: -1;
                        background-size: cover; background-position: center center; background-repeat: no-repeat;
-                       background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg.png');}
+                       background-image: url('https://img.notionusercontent.com/s3/prod-files-secure%2Fb5612d08-a3aa-81b5-b31f-00038f7e4f9a%2F843251a4-7a14-4af0-aa39-30e5098a947a%2Fskybg.png/size/w=1470?exp=1771321209&sig=HWjAFCUGxleAL81p-cFL0c9I4wPetX3PqDYNChFGD-U&id=30912d08-a3aa-8022-92e9-cf7dfc0bba8b&table=block');}
             /* 📱 手機背景 PHONE BACKGROUND LAYER */
-            @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/skybg_phone.webp');}}
+            @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://img.notionusercontent.com/s3/prod-files-secure%2Fb5612d08-a3aa-81b5-b31f-00038f7e4f9a%2F72a4dfbf-be43-4204-ab08-8e05b175bb76%2Fskybg_phone.webp/size/w=1470?exp=1771321306&sig=VsJVztc34EVw9liYQV2MDmWJI6iD_-R3UWDjeyVHT7U&id=30912d08-a3aa-8022-92e9-cf7dfc0bba8b&table=block');}}
             /* 📱 手機旋轉提示 ORIENTATION NOTI */
             #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
                                background-color: #1dc5fd;
@@ -100,7 +100,7 @@
         <div id="login-overlay" class="no-touch fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col justify-center items-center p-6">
             <!-- 💬 -->
             <div class="no-touch w-full max-w-xs bg-white rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8">
-                <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-20 h-20 mb-6">
+                <img src="https://file.notion.so/f/f/b5612d08-a3aa-81b5-b31f-00038f7e4f9a/641a3092-702a-48ba-aa82-6dc0eea0eae0/NPC.gif?table=block&id=30912d08-a3aa-80f1-b895-f3be0324ecdb&spaceId=b5612d08-a3aa-81b5-b31f-00038f7e4f9a&expirationTimestamp=1771257600000&signature=UMGn39SFtMEON-sAI6beSd3kyKy1coY7vN_7tGoSH_0" alt="NPC" class="no-touch w-20 h-20 mb-6">
                 <h2 class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-4">登入</h2>
                 <input type="text" id="username-input" placeholder="請輸入你的名字" class="w-full border-2 border-slate-100 rounded-2xl font-cubic thin-border text-center px-4 py-4 mb-4 outline-none focus:border-[#38C0FF] transition-all">
                 <button id="login-button" class="no-touch w-full bg-[#38C0FF] rounded-2xl font-cubic text-white thin-border px-4 py-4 hover:bg-[#2da9e6] transition-all">進入遊戲</button>
@@ -161,7 +161,7 @@
         <!-- 🤖 NPC 動畫 ANIMATION -->
         <header class="flex flex-col items-center text-center mb-6">
             <div class="relative mb-4">
-                <img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/NPC.gif" alt="NPC" class="no-touch w-[140px] h-auto drop-shadow-md npc-float">
+                <img src="https://file.notion.so/f/f/b5612d08-a3aa-81b5-b31f-00038f7e4f9a/641a3092-702a-48ba-aa82-6dc0eea0eae0/NPC.gif?table=block&id=30912d08-a3aa-80f1-b895-f3be0324ecdb&spaceId=b5612d08-a3aa-81b5-b31f-00038f7e4f9a&expirationTimestamp=1771257600000&signature=UMGn39SFtMEON-sAI6beSd3kyKy1coY7vN_7tGoSH_0" alt="NPC" class="no-touch w-[140px] h-auto drop-shadow-md npc-float">
                 <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border text-shadow-md tracking-widest animate-text-float">GO!</div>
             </div>
         </header>
@@ -170,23 +170,23 @@
             <!-- 🪪 玩家 USER -->
                 <!-- 🏝️ 我的島嶼 ISLAND -->
                 <a id="btn-island" href="user/island.html" class="no-touch game-button">
-                    <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/island_favicon.svg" alt="我的島嶼" class="no-touch game-icon"></div>
+                    <div class="game-icon-container"><img src="https://img.notionusercontent.com/s3/prod-files-secure%2Fb5612d08-a3aa-81b5-b31f-00038f7e4f9a%2F50db6878-f1d6-4eaa-8baf-ecb7ab6e94af%2Fisland_favicon.svg/size/?exp=1771321431&sig=Q8u386giK_WOLEWnjf8N3tTgW-OAnvXOAiNPZOfz8RA&id=30912d08-a3aa-8006-bf10-e675b3a8c734&table=block" alt="我的島嶼" class="no-touch game-icon"></div>
                     <h3 class="game-title">我的島嶼</h3>
                 </a>
                 <!-- 📘 學習筆記 NOTION -->
                 <button id="btn-notion" class="no-touch game-button hidden">
-                    <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/notion_favicon.svg" alt="學習筆記" class="no-touch game-icon"></div>
+                    <div class="game-icon-container"><img src="https://img.notionusercontent.com/s3/prod-files-secure%2Fb5612d08-a3aa-81b5-b31f-00038f7e4f9a%2F13fb9c16-3d94-477b-a5f7-fd417fde12d6%2Fnotion_favicon.svg/size/?exp=1771321457&sig=Kha3ioaIZsJTy69jtMt02suPjRw5hlEgJoD0f1jyszs&id=30912d08-a3aa-80d3-9f55-c32004b89e35&table=block" alt="學習筆記" class="no-touch game-icon"></div>
                     <h3 class="game-title">學習筆記</h3>
                 </button>
             <!-- 👾 遊戲 GAME -->
                 <!-- ✍🏻 單字練習 WRITING -->
                 <a id="btn-writing" href="game/writing.html" class="no-touch game-button">
-                    <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/writing_favicon.svg" alt="單字練習" class="no-touch game-icon"></div>
+                    <div class="game-icon-container"><img src="https://img.notionusercontent.com/s3/prod-files-secure%2Fb5612d08-a3aa-81b5-b31f-00038f7e4f9a%2F75747831-3f89-4fa4-b291-51a3c90e5de4%2Fwriting_favicon.svg/size/?exp=1771321490&sig=zFCAZq_bzOpBeVyiNjNzDyCsZ85YJZ_tpl8JEsx84OU&id=30912d08-a3aa-8068-a4b7-c1d7b1b36469&table=block" alt="單字練習" class="no-touch game-icon"></div>
                     <h3 class="game-title">單字練習</h3>
                 </a>
                 <!-- 🃏 圖文配對 MATCHING -->
                 <a id="btn-matching" href="game/matching.html" class="no-touch game-button">
-                    <div class="game-icon-container"><img src="https://raw.githubusercontent.com/linda0322/zung1man4/refs/heads/main/image/icon/matching_favicon.svg" alt="圖文配對" class="no-touch game-icon"></div>
+                    <div class="game-icon-container"><img src="https://img.notionusercontent.com/s3/prod-files-secure%2Fb5612d08-a3aa-81b5-b31f-00038f7e4f9a%2F711ffa02-f0b0-4bf0-ad4a-aff1a59d3c37%2Fmatching_favicon.svg/size/?exp=1771321494&sig=mrapg69uQ_u5VBViwrKjJegwSMPBzijXDCxiXFRhTuM&id=30912d08-a3aa-8012-8f28-f00757dc129c&table=block" alt="圖文配對" class="no-touch game-icon"></div>
                     <h3 class="game-title">圖文配對</h3>
                 </a>          
         </div>
