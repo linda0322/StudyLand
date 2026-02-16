@@ -261,7 +261,7 @@
                      tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
                      renderInventoryItems('全部'); } catch (e) {console.error("跨島更新倉庫失敗:", e); container.innerHTML = "載入失敗";}}
             function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
-                                                   if (items.length === 0) {container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-10 gap-4">
+                                                   if (items.length === 0) {container.innerHTML = `<div class="col-span-full w-full flex flex-col items-center justify-center py-5 gap-4">
                                                                                                        <span class="text-5xl mb-2">🙂‍↔️</span>
                                                                                                        <p class="text-slate-400 font-cubic text-center tracking-widest thin-border w-full">一無所有</p>
                                                                                                    </div>`; return;}
