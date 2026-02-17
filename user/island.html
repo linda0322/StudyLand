@@ -219,7 +219,7 @@
         // 👆🏻 拖曳物件 DRAG ITEMS
         function bindDraggable(el) {const stage = document.getElementById('game-stage'); let longPressTimer; let startX, startY; let isLongPress = false;
                                     el.onmousedown = el.ontouchstart = function(e) {if (e.button === 2) return; const isTouch = e.type === 'touchstart'; startX = isTouch ? e.touches[0].clientX : e.clientX; startY = isTouch ? e.touches[0].clientY : e.clientY; isLongPress = false;
-                                                                                    longPressTimer = setTimeout(() => {isLongPress = true; handleItemReturn(el);}, 700);
+                                                                                    longPressTimer = setTimeout(() => {isLongPress = true; handleItemReturn(el);}, 1000);
                                                                                     if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
                                                                                     const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280; const itemRect = el.getBoundingClientRect();
                                                                                     const shiftX = (startX - itemRect.left) / scale; const shiftY = (startY - itemRect.top) / scale;
