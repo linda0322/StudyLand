@@ -55,7 +55,8 @@
                    touch-action: pan-y;
                    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 2%, rgba(0, 0, 0, 0.25) 6%, rgba(0, 0, 0, 0.6) 12%, black 25%, black 80%, rgba(0, 0, 0, 0.5) 92%, transparent 100%);
                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 2%, rgba(0, 0, 0, 0.25) 6%, rgba(0, 0, 0, 0.6) 12%, black 25%, black 80%, rgba(0, 0, 0, 0.5) 92%, transparent 100%);
-                   padding-top: 3rem !important;
+                   margin-top: -4rem !important;
+                   padding-top: 5rem !important;
                    padding-bottom: 5rem !important;
                   }
             .grid::-webkit-scrollbar {display: none;}
@@ -65,10 +66,9 @@
                           background-color: rgba(255, 255, 255, 0.95); border-radius: 25px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
                           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
             .game-icon-container {width: 100%; display: flex; align-items: center; justify-content: center;}
-            .game-icon {width: 4rem; height: 4rem; object-fit: contain; border-radius: 0.75rem; pointer-events: none;}
+            .game-icon {width: 3rem; height: 3rem; object-fit: contain; border-radius: 0.75rem; pointer-events: none;}
             .game-title {font-family: 'Cubic11', sans-serif; color: #64748b; font-size: 0.875rem; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; text-align: center; letter-spacing: 0.05em;}
-            @media screen and (max-width: 600px) {.game-button {padding: 0.8rem;}
-                                                  .game-icon {width: 3rem; height: 3rem;}}
+            @media screen and (max-width: 600px) {.game-button {padding: 0.8rem;}}
             /* 🔒 密碼 PASSWORD */
             #notion-pw-input {font-size: 1rem; letter-spacing: 0.3em; text-align: center; vertical-align: middle;}
             #notion-pw-input::placeholder {letter-spacing: normal; -webkit-text-stroke: 0.5px currentColor; font-size: 1rem; text-indent: 0;}     
