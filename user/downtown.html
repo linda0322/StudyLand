@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>Zung1 Man4 - Downtown 市中心</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>大街小巷</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap">
+    <link rel="icon" type="image/webp" href="https://lh3.googleusercontent.com/d/1dEOyNT7D5TQfiV0i2BbfLR6nQIcEylP1">
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1cVkUL5LapuLvtBYyw_CHgejOCflFRYyB">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: "PingFang HK", "Microsoft JhengHei", sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
+    <style>
+        /* 🏞️ 整體版面 OVERALL */
+        body {height: 100vh; width: 100vw; position: fixed; margin: 0; 
+              overflow: hidden; overscroll-behavior: none;
+              -webkit-user-select: none; touch-action: none;
+              font-family: 'Noto Sans TC', sans-serif;
+              background-color: #1dc5fd;            
+              cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
+        }
         header { background: #2c3e50; color: white; padding: 15px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .balance-group { display: flex; gap: 15px; font-size: 1.1em; }
         .coin-display { color: #f1c40f; }
@@ -66,7 +78,7 @@
 <script>
 
     //🌎 GAS
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwXsziOoC8d4VtlxAio3XDunBdyhTXjIaqcGsyU3WJHblOE39qxRYJeFvf5gKpjrPVh/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw2j0NpK6kAuMP3rl-q6qXY731-jQOeRN8zKOOp96hDnA_zebL7Z-WiZr2nFBRlS7G6/exec";
     let USERNAME = "";
     
     let allProducts = [];
