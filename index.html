@@ -55,13 +55,13 @@
                    touch-action: pan-y;}
             .grid::-webkit-scrollbar {display: none;}
             /* 🕹️ 遊戲入口 GAME ENTRANCE */
-            .game-button {display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.8rem; gap: 8px; margin: 0 auto;
+            .game-button {display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.2rem; gap: 8px; margin: 0 auto;
                           aspect-ratio: 1 / 1; width: 100%; max-width: 160px; 
                           background-color: rgba(255, 255, 255, 0.95); border-radius: 30px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
                           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
             .game-icon-container {width: 100%; display: flex; align-items: center; justify-content: center;}
-            .game-icon {width: 3rem; height: 3rem; object-fit: contain; border-radius: 0.75rem; pointer-events: none;}
-            .game-title {font-family: 'Cubic11', sans-serif; color: #64748b; font-size: 0.8rem; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; text-align: center; letter-spacing: 0.05em;}
+            .game-icon {width: 4rem; height: 4rem; object-fit: contain; border-radius: 0.75rem; pointer-events: none;}
+            .game-title {font-family: 'Cubic11', sans-serif; color: #64748b; font-size: 0.875rem; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; text-align: center; letter-spacing: 0.05em;}
             /* 🔒 密碼 PASSWORD */
             #notion-pw-input {font-size: 1rem; letter-spacing: 0.3em; text-align: center; vertical-align: middle;}
             #notion-pw-input::placeholder {letter-spacing: normal; -webkit-text-stroke: 0.5px currentColor; font-size: 1rem; text-indent: 0;}     
@@ -166,7 +166,7 @@
             </div>
         </header>
         <!-- 🕹️ 遊戲選單 GAME MENU -->
-        <div id="grid" class="w-full max-w-[600px] max-h-[60vh] overflow-y-auto grid grid-cols-3 md:grid-cols-4 gap-6 px-6 pt-6 pb-10 -mt-6">            
+        <div id="grid" class="w-full max-w-[600px] max-h-[60vh] overflow-y-auto grid grid-cols-2 md:grid-cols-3 gap-6 px-6 pt-6 pb-10 -mt-6">            
             <!-- 🪪 玩家 USER -->
                 <!-- 🏝️ 我的島嶼 ISLAND -->
                 <a id="btn-island" href="user/islandmode.html" class="no-touch game-button">
