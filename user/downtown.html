@@ -44,8 +44,8 @@
         
         .container {padding: 20px; max-width: 1200px; margin: auto; }
         .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-        .tab { background: #ddd; padding: 8px 15px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
-        .tab.active { background: #e67e22; color: white; }
+        .tab {padding: 8px 15px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
+        .tab.active {background: #1dc5fd; color: white;}
 
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
         
@@ -163,7 +163,7 @@
 
 
     function setupCategories() {const categories = ["全部", ...new Set(allProducts.map(p => p.Category))]; const tabContainer = document.getElementById('category-tabs');
-        tabContainer.innerHTML = categories.map(cat => `<div class="font-cubic tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
+        tabContainer.innerHTML = categories.map(cat => `<div class="font-cubic bg-white/80 tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
 
     function filterCategory(cat) {currentCategory = cat; setupCategories(); renderShop();}
 
