@@ -53,8 +53,8 @@
                    -webkit-overflow-scrolling: touch; 
                    overscroll-behavior: contain; 
                    touch-action: pan-y;
-                   mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-                   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+                   mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 5%, rgba(0, 0, 0, 0.8) 12%, black 20%, black 85%, rgba(0, 0, 0, 0.5) 95%, transparent 100%);
+                   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 5%, rgba(0, 0, 0, 0.8) 12%, black 20%, black 85%, rgba(0, 0, 0, 0.5) 95%, transparent 100%);
                    padding-top: 3rem !important;
                    padding-bottom: 5rem !important;
                   }
@@ -166,7 +166,7 @@
             </div>
         </nav>
         <!-- 🤖 NPC 動畫 ANIMATION -->
-        <header class="flex flex-col items-center text-center mb-3">
+        <header class="flex flex-col items-center text-center mb-4">
             <div class="relative mb-4">
                 <img src="https://lh3.googleusercontent.com/d/1dCdxRN0oNjOz5lg7rwajTtYZb077zePp" alt="NPC" class="no-touch pointer-events-none npc-float w-[140px] h-auto drop-shadow-md">
                 <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border text-shadow-md tracking-widest animate-text-float">GO!</div>
