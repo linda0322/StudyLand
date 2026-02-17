@@ -49,15 +49,18 @@
         .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
         a, button {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
         @media (hover: hover) {button, a, .mode-button:hover {transform: translateY(-4px); background-color: rgba(255, 255, 255, 0.85);}}
-        .mode-button:active {transform: scale(0.95); background-color: rgba(56, 192, 255, 0.8);}
+        a, .mode-button:active {transform: scale(0.95); background-color: rgba(56, 192, 255, 0.8);}
         .mode-button:active .mode-title {color: white; -webkit-text-stroke: 0.5px white;}
     </style>
 </head>
 <body>
-    <div class="bg-layer"></div>
+    <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
+    
     <main id="main-content" class="container flex flex-col items-center mx-auto px-8 py-8">
-        <nav class="w-full max-w-[550px] flex justify-between mb-8">
+        <!-- 🔝 頂欄 TOP --><nav class="w-full max-w-[550px] flex justify-between mb-8">
+            <!-- ⬅️ 左邊群組 TOP LEFT-->
             <div class="flex items-center gap-2">
+                <!-- 📛 用户名稱 USERNAME -->
                 <div class="glass-panel rounded-full shadow-md flex items-center px-4 py-1.5 gap-2">
                     <span class="font-cubic text-slate-500 text-[10px] thin-border tracking-wider">玩家</span>
                     <span id="user-display-name" class="font-cubic text-slate-700 text-sm thin-border">載入中...</span>
@@ -67,23 +70,17 @@
                 </a>
             </div>
         </nav>
-
+        <!-- 🤖 NPC 動畫 ANIMATION -->
         <header class="flex flex-col items-center text-center mb-6">
             <div class="relative mb-4">
                 <img src="https://lh3.googleusercontent.com/d/1dCdxRN0oNjOz5lg7rwajTtYZb077zePp" alt="NPC" class="no-touch pointer-events-none npc-float w-[140px] h-auto">
                 <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border tracking-widest animate-text-float">GO!</div>
             </div>
         </header>
-
-        <div class="w-full max-w-[600px] grid grid-cols-2 md:grid-cols-3 gap-6 px-6">
-            <a href="island.html" class="no-touch mode-button">
-                <h2 class="text-5xl pointer-events-none no-touch">👆🏻</h2>
-                <h3 class="mode-title">設定模式</h3>
-            </a>
-            <a id="btn-preview" href="#" class="no-touch mode-button">
-                <h2 class="text-5xl pointer-events-none no-touch">👀</h2>
-                <h3 class="mode-title">預覽模式</h3>
-            </a>
+        <!-- ⚙️ 選項 CHOICE -->
+        <div class="w-full max-w-[600px] grid grid-cols-2 gap-6 px-6">
+            <a href="island.html" class="no-touch mode-button"><h2 class="text-5xl pointer-events-none no-touch">👆🏻</h2><h3 class="mode-title">設定模式</h3></a>
+            <a id="preview-button" href="#" class="no-touch mode-button"><h2 class="text-5xl pointer-events-none no-touch">👀</h2><h3 class="mode-title">預覽模式</h3></a>
         </div>
     </main>
 
@@ -91,7 +88,7 @@
         // 🔄 載入網頁 LOADING PAGE
         window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) {window.location.href = 'index.html'; return;}
                                                            document.getElementById('user-display-name').textContent = savedName;
-                                                           const previewBtn = document.getElementById('btn-preview');
+                                                           const previewBtn = document.getElementById('preview-button');
                                                            // 👀 預覽模式 PREVIEW MODE
                                                            previewBtn.href = `islanddisplay.html?user=${encodeURIComponent(savedName)}`;});
 
