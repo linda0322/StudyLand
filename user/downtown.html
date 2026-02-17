@@ -73,7 +73,7 @@
 </head>
 <body>
     <!-- ☁️ 加載遮罩（飛行中）LOADING OVERLAY -->
-    <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">🚘</div><div class="font-cubic text-xl text-white thick-border tracking-widest">移動中</div></div>
+    <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">🚘</div><div id="loading-text" class="font-cubic text-xl text-white thick-border tracking-widest">移動中</div></div>
     <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
     <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
     <div id="orientation-noti">
@@ -235,10 +235,10 @@
     toggleLoading(false);
 }
 
-    function toggleLoading(show, text) {
-        document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
-        document.getElementById('loading-text').innerText = text || "連線中...";
-    }
+    function toggleLoading(show, text) {const overlay = document.getElementById('loading-overlay'); const textEl = document.getElementById('loading-text');
+                                        if (!overlay) return;
+                                        if (show) {overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); if (textEl) textEl.innerText = text || "移動中...";} 
+                                        else {overlay.style.display = 'none'; overlay.classList.add('fade-out'); setTimeout(() => {overlay.style.display = 'none';}, 500);}}
 
     window.onload = init;
 
