@@ -320,7 +320,7 @@
             function openConfirm(title, onConfirm) {document.getElementById('confirm-title').innerText = title; const btn = document.getElementById('confirm-button'); btn.onclick = () => {onConfirm(); confirmModal.classList.add('hidden'); currentReturningEl = null;}; confirmModal.classList.remove('hidden');}
             function handleSave() {openConfirm("儲存進度", () => {saveData();});}
             function handleReload() {openConfirm("重新載入", () => {location.reload();});}
-            function handlePreview() {openConfirm("切換至預覽模式", () => {window.location.href = 'islanddisplay.html?user=${encodeURIComponent(savedName)}';}
+            function handlePreview() {openConfirm("切換至預覽模式", () => {window.location.href = `islanddisplay.html?user=${encodeURIComponent(username)}`;});}
             function handleHome() {openConfirm("回到主頁", () => {window.location.href = '../index.html';});}
             confirmModal.addEventListener('click', (e) => {if (e.target === confirmModal) {confirmModal.classList.add('hidden');}});
 
