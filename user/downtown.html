@@ -67,7 +67,7 @@
 
         /* ⚙️ 內部結構 INTERNAL */
             /* ☁️ 加載遮罩（飛行中）LOADING OVERLAY */
-            #loading-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
+            #loading-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
             #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
     </style>
 </head>
@@ -89,8 +89,8 @@
             <div class="flex items-center gap-2">
                 <!-- 💰 餘額 BALANCE -->
                 <div class="group glass-panel shadow-md rounded-full flex items-center px-3 py-1.5 gap-1">
-                    <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5" alt="金幣" class="pointer-events-none h-[15px] w-auto px-1"><span id="coin-val" class="font-cubic text-sm text-slate-500 thin-border">0</span></span>
-                    <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l" alt="寶石" class="pointer-events-none h-[15px] w-auto px-1"><span id="gem-val" class="font-cubic text-sm text-slate-500 thin-border">0</span></span>
+                    <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5" alt="金幣" class="pointer-events-none h-[15px] w-auto px-1"><span id="coin-val" class="font-cubic text-sm text-slate-500 thin-border tracking-wider">0</span></span>
+                    <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l" alt="寶石" class="pointer-events-none h-[15px] w-auto px-1"><span id="gem-val" class="font-cubic text-sm text-slate-500 thin-border tracking-wider">0</span></span>
                 </div>
             </div>
             <!-- ➡️ 右邊群組 TOP RIGHT -->
