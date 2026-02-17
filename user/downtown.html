@@ -85,7 +85,7 @@
 <script>
 
     //🌎 GAS
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyKgy4DcKIvmUdtB7sBzEOySUlmWRU-NZHGwGCKffHd4jcBtWGJXKO88VHA6VSBQWhy/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbySW_G3ZM8wx0_9YytpEZXz7PD5KfYaAfjkm7jQH62LTv7a9IwCuT-0Px3Wt9dogfX1/exec";
     let USERNAME = "";
     
     let allProducts = [];
@@ -176,31 +176,35 @@
 
     // 購買動作
     async function buy(assetType) {
-        if (!confirm(`確定要購買 ${assetType} 嗎？`)) return;
+    if (!confirm(`確定要購買 ${assetType} 嗎？`)) return;
 
-        toggleLoading(true, "交易處理中，請稍候...");
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    username: USERNAME,
-                    assetType: assetType,
-                    quantity: 1
-                })
-            });
-            const result = await response.json();
-            
-            if (result.success) {
-                alert("購買成功！");
-                init(); // 重新整理餘額與清單
-            } else {
-                alert("失敗: " + result.message);
-            }
-        } catch (e) {
-            alert("通訊失敗，請重試。");
+    toggleLoading(true, "交易處理中，請稍候...");
+    try {
+        const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            // 關鍵：不要設定 Content-Type: application/json，這樣可以避開 Preflight CORS 檢查
+            body: JSON.stringify({
+                username: USERNAME,
+                assetType: assetType,
+                quantity: 1
+            })
+        });
+        
+        // GAS 即使出錯也可能回傳 200，所以要解析內容
+        const result = await response.json();
+        
+        if (result.success) {
+            alert("購買成功！");
+            await init(); // 重新載入數據
+        } else {
+            alert("失敗: " + result.message);
         }
-        toggleLoading(false);
+    } catch (e) {
+        console.error(e);
+        alert("通訊失敗，請檢查 GAS 部署設定是否為「任何人」。");
     }
+    toggleLoading(false);
+}
 
     function toggleLoading(show, text) {
         document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
