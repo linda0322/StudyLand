@@ -17,6 +17,13 @@
               background-color: #1dc5fd;            
               cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
+            /* 🏙️ 背景層 BACKGROUND LAYER */
+            .bg-layer {position: fixed; inset: 0; z-index: -1;
+                       background-size: cover; background-position: center center; background-repeat: no-repeat;
+                       background-image: url('https://lh3.googleusercontent.com/d/1WZPUn9UYK1xsLwXmo4QfSr1LG2-poCxc');}
+            /* 📱 手機背景 PHONE BACKGROUND LAYER */
+            @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');}}
+        
         header { background: #2c3e50; color: white; padding: 15px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .balance-group { display: flex; gap: 15px; font-size: 1.1em; }
         .coin-display { color: #f1c40f; }
