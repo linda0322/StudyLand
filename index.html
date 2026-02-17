@@ -52,23 +52,16 @@
             .grid {-ms-overflow-style: none; scrollbar-width: none;
                    -webkit-overflow-scrolling: touch; 
                    overscroll-behavior: contain; 
-                   touch-action: pan-y;
-                   mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 2%, rgba(0, 0, 0, 0.25) 6%, rgba(0, 0, 0, 0.6) 12%, black 25%, black 80%, rgba(0, 0, 0, 0.5) 92%, transparent 100%);
-                   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 2%, rgba(0, 0, 0, 0.25) 6%, rgba(0, 0, 0, 0.6) 12%, black 25%, black 80%, rgba(0, 0, 0, 0.5) 92%, transparent 100%);
-                   margin-top: -4rem !important;
-                   padding-top: 5rem !important;
-                   padding-bottom: 8rem !important;
-                  }
+                   touch-action: pan-y;}
             .grid::-webkit-scrollbar {display: none;}
             /* 🕹️ 遊戲入口 GAME ENTRANCE */
-            .game-button {display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; gap: 8px; margin: 0 auto;
+            .game-button {display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.2rem; gap: 8px; margin: 0 auto;
                           aspect-ratio: 1 / 1; width: 100%; max-width: 160px; 
-                          background-color: rgba(255, 255, 255, 0.95); border-radius: 25px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+                          background-color: rgba(255, 255, 255, 0.95); border-radius: 30px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
                           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
             .game-icon-container {width: 100%; display: flex; align-items: center; justify-content: center;}
-            .game-icon {width: 3rem; height: 3rem; object-fit: contain; border-radius: 0.75rem; pointer-events: none;}
+            .game-icon {width: 4rem; height: 4rem; object-fit: contain; border-radius: 0.75rem; pointer-events: none;}
             .game-title {font-family: 'Cubic11', sans-serif; color: #64748b; font-size: 0.875rem; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; text-align: center; letter-spacing: 0.05em;}
-            @media screen and (max-width: 600px) {.game-button {padding: 0.8rem;}}
             /* 🔒 密碼 PASSWORD */
             #notion-pw-input {font-size: 1rem; letter-spacing: 0.3em; text-align: center; vertical-align: middle;}
             #notion-pw-input::placeholder {letter-spacing: normal; -webkit-text-stroke: 0.5px currentColor; font-size: 1rem; text-indent: 0;}     
@@ -154,7 +147,7 @@
 
     <!-- 👩🏻‍💻 主頁 MAIN PAGE -->
     <main id="main-content" class="hidden container flex flex-col items-center mx-auto px-8 py-8">
-        <!-- 🔝 頂欄 TOP --><nav class="w-full max-w-[550px] flex justify-between mb-5">
+        <!-- 🔝 頂欄 TOP --><nav class="w-full max-w-[550px] flex justify-between mb-8">
             <!-- ⬅️ 左邊群組 TOP LEFT-->
             <div class="flex items-center gap-2">
                 <!-- 📛 用户名稱 USERNAME -->
@@ -166,7 +159,7 @@
             </div>
         </nav>
         <!-- 🤖 NPC 動畫 ANIMATION -->
-        <header class="flex flex-col items-center text-center mt-3 mb-6">
+        <header class="flex flex-col items-center text-center mb-6">
             <div class="relative mb-4">
                 <img src="https://lh3.googleusercontent.com/d/1dCdxRN0oNjOz5lg7rwajTtYZb077zePp" alt="NPC" class="no-touch pointer-events-none npc-float w-[140px] h-auto drop-shadow-md">
                 <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border text-shadow-md tracking-widest animate-text-float">GO!</div>
