@@ -54,7 +54,9 @@
         }
 
         .font-cubic { font-family: 'Cubic11', sans-serif; }
-        .thick-border { -webkit-text-stroke: 1px #4a5568; paint-order: stroke fill; }
+        .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+        .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+
 
         /* 動畫 */
         @keyframes fadeInUp {
