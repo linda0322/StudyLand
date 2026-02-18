@@ -130,46 +130,20 @@
     let allProducts = [];
     let currentCategory = "全部";
 
-    // 初始化
-    async function init() {
-        // 1. 檢查 localStorage 身份
-        const savedName = localStorage.getItem('studyLandUser');
-        if (!savedName) {
-            alert("請先登入！");
-            window.location.href = 'index.html';
-            return;
-        }
-        USERNAME = savedName;
-        
-        // 更新 UI 上的用戶名 (假設你在 HTML 裡有個 id="user-display-name" 的標籤)
-        const userDisplay = document.getElementById('user-display-name');
-        if (userDisplay) userDisplay.textContent = USERNAME;
-
-        toggleLoading(true, "移動中");
-        
-        try {
-            // 2. 呼叫 GAS 的 doGet 獲取資料
-            const res = await fetch(`${WEB_APP_URL}?username=${encodeURIComponent(USERNAME)}`);
-            const data = await res.json();
-            
-            if (data.success) {
-                // 更新餘額
-                document.getElementById('coin-val').innerText = data.userBalance.coin.toLocaleString();
-                document.getElementById('gem-val').innerText = data.userBalance.gem.toLocaleString();
-                
-                allProducts = data.productList;
-                
-                setupCategories();
-                renderShop();
-            } else {
-                alert("獲取商店資料失敗: " + data.message);
-            }
-        } catch (e) {
-            console.error(e);
-            alert("伺服器連線失敗，請稍後再試。");
-        }
-        toggleLoading(false);
-    }
+    
+    //🔄 載入網頁 LOADING PAGE
+    async function init() {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) {window.location.href = 'index.html'; return;}
+                           USERNAME = savedName;
+                           toggleLoading(true, "移動中");
+                           try {const res = await fetch(`${WEB_APP_URL}?username=${encodeURIComponent(USERNAME)}`);
+                                const data = await res.json();
+                                if (data.success) {document.getElementById('coin-val').innerText = data.userBalance.coin.toLocaleString();
+                                                   document.getElementById('gem-val').innerText = data.userBalance.gem.toLocaleString();
+                                                   allProducts = data.productList;
+                                                   setupCategories(); renderShop();} 
+                                else {alert("獲取商店資料失敗: " + data.message);}} 
+                           catch (e) {console.error(e); alert("伺服器連線失敗，請稍後再試。");}
+                           toggleLoading(false);}
 
 
     function setupCategories() {const categories = ["全部", ...new Set(allProducts.map(p => p.Category))]; const tabContainer = document.getElementById('category-tabs');
