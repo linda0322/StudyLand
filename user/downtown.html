@@ -70,7 +70,6 @@
                 .img-container {width: 100%; aspect-ratio: 1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
                 .product-img {max-width: 100%; max-height: 100%; object-fit: contain; }
                 .info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
-                .name { font-weight: bold; font-size: 1.1em; margin-bottom: 5px; }
                 .desc { color: #7f8c8d; font-size: 0.85em; margin-bottom: 10px; flex-grow: 1; }
         
         .price-btn { width: 100%; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 5px; transition: 0.2s; }
@@ -179,15 +178,14 @@
 
     function filterCategory(cat) {currentCategory = cat; setupCategories(); renderShop();}
 
-    // 🛍️ 商品 PRODUCTS
+    // 🧸 商品 PRODUCTS
     function renderShop() {const grid = document.getElementById('shop-grid'); 
                            const filtered = currentCategory === "全部" ? allProducts : allProducts.filter(p => p.Category === currentCategory);
                            grid.innerHTML = filtered.map(p => {const isGem = p.PriceGem > 0; const price = isGem ? p.PriceGem : p.PriceCoin; const unit = isGem ? "💎" : "💰";
                                                                return ` <div class="product-card">
-                                                                           <div class="img-container">
-                                                                           <img src="${p.ImgURL}" class="product-img" title="${p.AssetType}">
-                                                                           </div>
-                                                                           <div class="info"><div class="name">${p.AssetType}</div>
+                                                                           <div class="img-container"><img src="${p.ImgURL}" class="product-img" title="${p.AssetType}"></div>
+                                                                           <div class="info">
+                                                                               <div class="font-cubic text-slate-600 thin-border text-[13px] mb-[5px]">${p.AssetType}</div>
                                                                            <div class="desc">${p.Description || ''}</div>
                                                                            <button class="price-btn ${isGem ? 'gem' : 'coin'}" onclick="buy('${p.AssetType}')">${unit} ${price.toLocaleString()} 購買</button>
                                                                            </div>
