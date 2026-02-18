@@ -193,7 +193,7 @@
 
     // 🛍️ 購買 SHOPPING
     async function buy(assetType) {if (!confirm(`確定要購買 ${assetType} 嗎？`)) return;
-    toggleLoading(true, "交易處理中，請稍候...");
+    toggleLoading(true, "交易處理中");
     try {const response = await fetch(WEB_APP_URL, {method: "POST", body: JSON.stringify({username: USERNAME, assetType: assetType, quantity: 1})});
          const result = await response.json();
          if (result.success) {alert("購買成功！"); await init();} else {alert("失敗: " + result.message);}
@@ -203,7 +203,7 @@
     // 🚘 加載遮罩 LOADING OVERLAY
     function toggleLoading(show, text) {const overlay = document.getElementById('loading-overlay'); const textEl = document.getElementById('loading-text');
                                         if (!overlay) return;
-                                        if (show) {overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); if (textEl) textEl.innerText = text || "移動中...";} 
+                                        if (show) {overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); if (textEl) textEl.innerText = text || "移動中";} 
                                         else {overlay.style.display = 'none'; overlay.classList.add('fade-out'); setTimeout(() => {overlay.style.display = 'none';}, 500);}}
     window.onload = init;
 
