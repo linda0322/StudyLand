@@ -28,18 +28,21 @@
                 background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');
             }
         }
-
+       
         /* 🏞️ 整體版面 OVERALL */
         body {height: 100vh; width: 100vw; margin: 0; overflow: hidden; overscroll-behavior: none; font-family: 'Noto Sans TC', sans-serif;}
 
         /* 🥽 玻璃框 GLASS PANEL */
         .glass-panel {background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 24px;}
 
+        /* 🔠 字體 FONTS */
         @font-face {font-family: "Cubic11"; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');}
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
         .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
 
+        /* 🔘 按鈕效果 BUTTON EFFECTS */
+        button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
 
         /* 🐕 動畫 ANIMATION */
         @keyframes fadeInUp {from {opacity: 0; transform: translateY(20px);}
@@ -70,7 +73,7 @@
         </div>
 
         <div class="p-4 bg-white/10 text-center">
-            <button onclick="window.location.href='downtown.html'" class="font-cubic text-white bg-white/20 hover:bg-white/30 thin-border tracking-wider px-6 py-2 rounded-full transition-all text-sm border border-white/20 select-none" draggable="false">返回</button>
+            <button onclick="window.location.href='downtown.html'" class="font-cubic text-white bg-white/20 hover:bg-white/30 active:bg-white/30 active:scale-95 thin-border tracking-wider px-6 py-2 rounded-full transition-all text-sm border border-white/20 select-none" draggable="false">返回</button>
         </div>
     </div>
 
