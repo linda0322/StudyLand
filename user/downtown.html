@@ -152,18 +152,21 @@
     function filterCategory(cat) {currentCategory = cat; setupCategories(); renderShop();}
 
     // 🧸 商品 PRODUCTS
-    function renderShop() {const grid = document.getElementById('shop-grid'); 
+    const COIN_ICON = 'https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5'; 
+    const GEM_ICON = 'https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l';
+    function renderShop() {const grid = document.getElementById('shop-grid');
                            const filtered = currentCategory === "全部" ? allProducts : allProducts.filter(p => p.Category === currentCategory);
-                           grid.innerHTML = filtered.map(p => {const isGem = p.PriceGem > 0; const price = isGem ? p.PriceGem : p.PriceCoin; const unit = isGem ? "💎" : "💰";
-                                                               return ` <div class="product-card">
-                                                                           <div class="img-container"><img src="${p.ImgURL}" class="product-img" title="${p.AssetType}"></div>
-                                                                           <div class="info">
-                                                                               <div class="font-cubic text-slate-600 thin-border text-[15px] tracking-wider text-center mb-[5px]">${p.AssetType}</div>
-                                                                               <div class="font-cubic text-slate-400 text-[13px] mb-[10px] tracking-wider text-center">${p.Description || ''}</div>
-                                                                           <button class="price-btn ${isGem ? 'gem' : 'coin'}" onclick="buy('${p.AssetType}')">${unit} ${price.toLocaleString()}</button>
-                                                                           </div>
-                                                                       </div>`;}).join('');
-                          }
+                           grid.innerHTML = filtered.map(p => {const isGem = p.PriceGem > 0; const price = isGem ? p.PriceGem : p.PriceCoin;
+                                                               const iconUrl = isGem ? GEM_ICON : COIN_ICON;
+                                                               const unitHtml = `<img src="${iconUrl}" class="inline-block w-4 h-4 mr-1 mb-1" alt="icon">`; return `
+                           <div class="product-card">
+                               <div class="img-container"><img src="${p.ImgURL}" class="product-img" title="${p.AssetType}"></div>
+                               <div class="info">
+                                    <div class="font-cubic text-slate-600 thin-border text-[15px] tracking-wider text-center mb-[5px]">${p.AssetType}</div>
+                                    <div class="font-cubic text-slate-400 text-[13px] mb-[10px] tracking-wider text-center">${p.Description || ''}</div>
+                                    <button class="price-btn ${isGem ? 'gem' : 'coin'}" onclick="buy('${p.AssetType}')">${unitHtml}${price.toLocaleString()}</button>
+                               </div>
+                           </div>`;}).join('');}
 
     // 🛍️ 購買 SHOPPING
     async function buy(assetType) {if (!confirm(`確定要購買 ${assetType} 嗎？`)) return;
