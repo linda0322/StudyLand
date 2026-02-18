@@ -165,7 +165,7 @@
 
 
     function setupCategories() {const categories = ["全部", ...new Set(allProducts.map(p => p.Category))]; const tabContainer = document.getElementById('category-tabs');
-        tabContainer.innerHTML = categories.map(cat => `<div class="font-cubic text-white bg-[#1dc5fd]/80 tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
+        tabContainer.innerHTML = categories.map(cat => `<div class="bg-[#1dc5fd]/80 font-cubic text-white text-[20px] tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
 
     function filterCategory(cat) {currentCategory = cat; setupCategories(); renderShop();}
 
