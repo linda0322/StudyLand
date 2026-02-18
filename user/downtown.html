@@ -212,7 +212,7 @@
                                                                        <button class="price-btn ${isGem ? 'gem' : 'coin'}" 
                                                                            onclick="addToCart('${p.AssetType}')" 
                                                                            ${isOutOfStock ? 'disabled' : ''}>
-                                                                           ${isOutOfStock ? '缺貨' : `<img src="${iconUrl}" class="h-[15px] w-auto"> ${price.toLocaleString()}`}
+                                                                           ${isOutOfStock ? '缺貨' : `<img src="${iconUrl}" class="h-[15px] w-auto" draggable="false"> ${price.toLocaleString()}`}
                                                                        </button>
                                                                    </div>
                                                                </div>`;}).join('');}
@@ -239,7 +239,7 @@
                                          const unitIcon = item.isGem ? GEM_ICON : COIN_ICON; return`<div class="cart-item">
                                                                                                         <div class="flex flex-col max-w-[150px]">
                                                                                                         <span class="truncate">${item.assetType}</span>
-                                                                                                        <span class="text-[9px] text-slate-400 flex items-center gap-1">單價 <img src="${unitIcon}" class="h-2.5 w-auto"> ${item.price.toLocaleString()}</span>
+                                                                                                        <span class="text-[9px] text-slate-400 flex items-center gap-1">單價 <img src="${unitIcon}" class="h-2.5 w-auto" draggable="false"> ${item.price.toLocaleString()}</span>
                                                                                                         </div>
                                                                                                         <div class="flex items-center gap-2">
                                                                                                             <button onclick="updateCartQty(${index}, -1)" class="w-6 h-6 bg-white/50 rounded-full shadow-inner">-</button>
@@ -248,8 +248,8 @@
                                                                                                         </div>
                                                                                                     </div>`;}).join('');
                                      totalDisplay.innerHTML = `
-                                     ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${COIN_ICON}" class="h-3 w-auto">${totalCoin}</span>` : ''}
-                                     ${totalGem > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${GEM_ICON}" class="h-3 w-auto">${totalGem}</span>` : ''}`;}} 
+                                     ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${COIN_ICON}" class="h-3 w-auto" draggable="false">${totalCoin}</span>` : ''}
+                                     ${totalGem > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${GEM_ICON}" class="h-3 w-auto" draggable="false">${totalGem}</span>` : ''}`;}} 
         // 💳 結帳 CHECKOUT
         async function checkout() {const confirmed = await showConfirm(`確定購買這 ${cart.length} 項商品嗎？`);
                                    if (!confirmed) return; toggleLoading(true, "運送中");
