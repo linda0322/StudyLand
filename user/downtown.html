@@ -237,15 +237,12 @@
 
 
     // 🫵🏻 手勢禁止 DISABLE GESTURE
-        // 捲動控制
-        const topBar = document.getElementById('top-bar');
-        let startY = 0; topBar.addEventListener('touchstart', (e) => {startY = e.touches[0].pageY;}, {passive: true});
-        topBar.addEventListener('touchmove', (e) => {const moveY = e.touches[0].pageY; const isAtTop = topBar.scrollTop <= 0; const isPullingDown = moveY > startY;
-                                                      if (isAtTop && isPullingDown) {if (e.cancelable) e.preventDefault();}}, {passive: false}); 
-        const content = document.getElementById('main-content');
-        let startY = 0; content.addEventListener('touchstart', (e) => {startY = e.touches[0].pageY;}, {passive: true});
-        content.addEventListener('touchmove', (e) => {const moveY = e.touches[0].pageY; const isAtTop = content.scrollTop <= 0; const isPullingDown = moveY > startY;
-                                                      if (isAtTop && isPullingDown) {if (e.cancelable) e.preventDefault();}}, {passive: false}); 
+    let touchStartY = 0;
+    const preventPullToRefresh = (e) => {const moveY = e.touches[0].pageY; const target = e.currentTarget; const isAtTop = target.scrollTop <= 0; const isPullingDown = moveY > touchStartY;
+                                         if (isAtTop && isPullingDown) {if (e.cancelable) e.preventDefault();}};
+    const scrollElements = [document.getElementById('main-content'), document.body];
+    scrollElements.forEach(el => {if (!el) return; el.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].pageY; }, {passive: true}); 
+                                  el.addEventListener('touchmove', preventPullToRefresh, {passive: false});});
         
     // 📱 手機旋轉提示 ORIENTATION NOTI
     function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
