@@ -130,6 +130,10 @@
                     <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5" alt="金幣" class="pointer-events-none h-[15px] w-auto px-1"><span id="coin-val" class="font-cubic text-sm text-slate-500 thin-border tracking-wider">0</span></span>
                     <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l" alt="寶石" class="pointer-events-none h-[15px] w-auto px-1"><span id="gem-val" class="font-cubic text-sm text-slate-500 thin-border tracking-wider">0</span></span>
                 </div>
+                <!-- 🧾 紀錄 PURCHASE HISTORY -->
+                <a id="purchase-history" href="#" class="glass-panel rounded-full shadow-md text-slate-500 p-2 hover:bg-white/20 hover:text-white active:scale-95 active:bg-white/30 active:text-white" title="購物紀錄" draggable="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-receipt-icon lucide-receipt"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>
+                </a>
             </div>
             <!-- ➡️ 右邊群組 TOP RIGHT -->
             <div class="flex items-center gap-2">
@@ -187,6 +191,8 @@
                            toggleLoading(true, "移動中");
                            try {const res = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(USERNAME)}`);
                                 const data = await res.json();
+                                const history = document.getElementById('purchase-history');
+                                history.href = `purchasehistory.html?user=${encodeURIComponent(savedName)}`;
                                 if (data.success) {document.getElementById('coin-val').innerText = data.userBalance.coin.toLocaleString();
                                                    document.getElementById('gem-val').innerText = data.userBalance.gem.toLocaleString();
                                                    allProducts = data.productList;
