@@ -49,10 +49,10 @@
 
             /* 🛍️ 主要內容 MAIN CONTENT */
             #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 80px;} 
-             /* 🗂️ 分類 CATEGORY TABS */
-             .category-tabs {z-index: 500; display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;}
-             .tab {padding: 8px 8px; border-radius: 20px; cursor: pointer; white-space: nowrap;}
-             .tab.active {background: white; color: #1dc5fd;}
+                /* 🗂️ 分類 CATEGORY TABS */
+                .category-tabs {z-index: 500; display: flex;  justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 5px; width: 100%;}
+                .tab {padding: 8px 8px; border-radius: 20px; cursor: pointer; white-space: nowrap;}
+                .tab.active {background: white; color: #1dc5fd;}
         
         .container {padding: 20px; max-width: 1200px; margin: auto; }
        
@@ -112,16 +112,12 @@
         </nav>
 
     <main id="main-content" class="container flex flex-col items-center mx-auto px-8 pt-24 pb-8">
-        
-    <div class="container">
-        <div class="category-tabs" id="category-tabs">
-            <div class="tab active" onclick="filterCategory('全部')">全部</div>
+        <div class="container w-full">
+            <div class="category-tabs" id="category-tabs"><div class="tab active" onclick="filterCategory('全部')">全部</div></div>
+            <div class="shop-grid" id="shop-grid"></div>
         </div>
-    
-        <div class="shop-grid" id="shop-grid">
-            </div>
-    </div>
     </main>
+        
 <script>
 
     //🌎 GAS
