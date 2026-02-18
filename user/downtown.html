@@ -306,6 +306,9 @@
         content.addEventListener('touchmove', (e) => {const moveY = e.touches[0].pageY; const isAtTop = content.scrollTop <= 0; const isPullingDown = moveY > startY;
                                                       if (e.target.closest('.category-tabs')) return; if (isAtTop && isPullingDown) {if (e.cancelable) e.preventDefault();}
                                                      }, { passive: false });
+        // 雙擊縮放
+        let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
+                                                    
         
     // 📱 手機旋轉提示 ORIENTATION NOTI
     function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
