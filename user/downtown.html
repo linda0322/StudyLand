@@ -41,7 +41,8 @@
                 .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
             
             /* ⚒️ 操作 OPERATION */
-                a, button, [role="button"], .tab {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+                a, button, [role="button"], .tab {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;
+                                                  transition: transform 0.1s ease;}
 
             /* 🛍️ 主要內容 MAIN CONTENT */
             #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 0; padding-bottom: 120px;}
@@ -52,9 +53,10 @@
                                 overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none;}
                 .category-tabs::-webkit-scrollbar {display: none;}
                 .tab {padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 0.7em; flex-shrink: 0;}
-                .tab.active {background: white; color: #1dc5fd;}
+                .tab.active {background: white; color: #1dc5fd; transform: scale(0.95);}
                 @media screen and (min-width: 600px) {.category-tabs {justify-content: center; overflow-x: hidden;}
-                                                      .tab {padding: 8px 16px; font-size: 0.85em;}}
+                                                      .tab {padding: 8px 16px; font-size: 0.85em;}
+                                                      .tab:hover {transform: translateY(-2px);}}
         
         .container {padding: 20px; max-width: 1200px; margin: auto; }
        
