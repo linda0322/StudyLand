@@ -30,42 +30,23 @@
         }
 
         /* 🏞️ 整體版面 OVERALL */
-        body {
-            height: 100vh; 
-            width: 100vw; 
-            margin: 0; 
-            overflow: hidden; 
-            overscroll-behavior: none;
-            font-family: 'Noto Sans TC', sans-serif;
-        }
+        body {height: 100vh; width: 100vw; margin: 0; overflow: hidden; overscroll-behavior: none; font-family: 'Noto Sans TC', sans-serif;}
 
-        /* 🌼 樣式 STYLE */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 24px;
-        }
+        /* 🥽 玻璃框 GLASS PANEL */
+        .glass-panel {background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 24px;}
 
-        @font-face {
-            font-family: "Cubic11";
-            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
-        }
-
+        @font-face {font-family: "Cubic11"; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');}
         .font-cubic { font-family: 'Cubic11', sans-serif; }
         .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
         .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
 
 
-        /* 動畫 */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* 🐕 動畫 ANIMATION */
+        @keyframes fadeInUp {from {opacity: 0; transform: translateY(20px);}
+                             to {opacity: 1; transform: translateY(0);}}
         .record-item { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
 
-        /* 客製化捲軸 */
+        /* 🎚️ 捲軸 SCROLLER */
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); border-radius: 10px; }
@@ -94,63 +75,38 @@
     </div>
 
     <script>
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwyk_UVjukSLRWYv22LwSegOm0_Q1ICMoHdtn9qA-T6jXmJ1UI_MKNWHk9EWBz2j9kz/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyk_UVjukSLRWYv22LwSegOm0_Q1ICMoHdtn9qA-T6jXmJ1UI_MKNWHk9EWBz2j9kz/exec";
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedName = localStorage.getItem('studyLandUser');
-            
-            if (!savedName) {
-                window.location.href = 'index.html';
-                return;
-            }
+        window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser');
+                                                           if (!savedName) {window.location.href = 'index.html'; return;}
+                                                           fetchHistory(savedName);});
 
-            // 僅執行抓取，不再顯示用戶名
-            fetchHistory(savedName);
-        });
-
-        async function fetchHistory(username) {
-            const container = document.getElementById('record-container');
-            
-            try {
-                const response = await fetch(`${GAS_WEB_APP_URL}?user=${encodeURIComponent(username)}`);
-                const data = await response.json();
-
-                if (data.records && data.records.length > 0) {
-                    container.innerHTML = ''; 
-
-                    data.records.forEach((item, index) => {
-                        const card = document.createElement('div');
-                        card.className = "record-item glass-panel bg-white/10 p-4 border border-white/20 mb-4";
-                        card.style.animationDelay = `${index * 0.1}s`;
-
-                        card.innerHTML = `
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="font-cubic text-slate-700 text-lg thin-border">${item.itemName}</h3>
-                                    <p class="font-cubic text-xs text-slate-500 thin-border mt-1">📍 ${item.location}</p>
-                                </div>
-                                <span class="bg-white/80 text-cyan-600 font-cubic text-sm thin-border px-3 py-1 rounded-xl shadow-sm">x${item.quantity}</span>
-                            </div>
-                            <div class="mt-3 pt-2 border-t border-white/10 font-cubic text-[10px] text-white thin-border text-right select-none pointer-events-none">🕒 ${item.date}</div>
-                        `;
-                        container.appendChild(card);
-                    });
-                } else {
-                    container.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-full text-white/60">
-                            <span class="text-5xl mb-4">📭</span>
-                            <p class="font-cubic">目前沒有任何購物紀錄</p>
-                        </div>`;
-                }
-            } catch (error) {
-                console.error('Fetch Error:', error);
-                container.innerHTML = `
-                    <div class="text-center text-red-100 p-4">
-                        <p class="font-bold">連線失敗 🛰️</p>
-                        <p class="text-xs opacity-70">請確認 GAS 是否已正確部署並開放權限</p>
-                    </div>`;
-            }
-        }
+        async function fetchHistory(username) {const container = document.getElementById('record-container');
+                                               try {const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}`);
+                                                    const data = await response.json();
+                                                    if (data.records && data.records.length > 0) {container.innerHTML = ''; data.records.forEach((item, index) => {
+                                                        const card = document.createElement('div'); card.className = "record-item glass-panel bg-white/10 p-4 border border-white/20 mb-4";
+                                                        card.style.animationDelay = `${index * 0.1}s`;
+                                                        card.innerHTML = `
+                                                        <div class="flex justify-between items-start">
+                                                            <div>
+                                                                <h3 class="font-cubic text-slate-700 text-lg thin-border tracking-wider">${item.itemName}</h3>
+                                                                <p class="font-cubic text-xs text-slate-500 thin-border mt-1">📍 ${item.location}</p>
+                                                            </div>
+                                                            <span class="bg-white/80 text-cyan-600 font-cubic text-sm thin-border px-3 py-1 rounded-xl shadow-sm">x${item.quantity}</span>
+                                                        </div>
+                                                        <div class="mt-3 pt-2 border-t border-white/10 font-cubic text-[10px] text-white thin-border text-right select-none pointer-events-none">🕒 ${item.date}</div>
+                                                    `;container.appendChild(card);});} 
+                                                    else {container.innerHTML = `
+                                                        <div class="flex flex-col items-center justify-center h-full text-white/80 space-y-2">
+                                                            <span class="text-3xl pointer-events-none select-none">📭</span>
+                                                            <p class="font-cubic tracking-widest thin-border text-sm pointer-events-none select-none">沒有購物紀錄</p>
+                                                        </div>`;}} 
+                                               catch (error) {console.error('Fetch Error:', error); container.innerHTML = `
+                                                        <div class="flex flex-col items-center justify-center h-full text-white/80 space-y-2">
+                                                            <span class="text-3xl pointer-events-none select-none">⚠️</span>
+                                                            <p class="font-cubic tracking-widest thin-border text-sm pointer-events-none select-none">連線失敗</p>
+                                                        </div>`;}}
     </script>
 </body>
 </html>
