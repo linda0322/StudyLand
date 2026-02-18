@@ -139,7 +139,7 @@
             </div>
             <div class="border-t border-white/50 pt-3">
                 <div class="flex justify-between font-cubic text-slate-600 mb-3 text-sm">
-                    <span>總計</span>
+                    <span class="thin-border tracking-wider">總計</span>
                     <span id="cart-total-display" class="flex gap-2">0</span>
                 </div>
                 <button onclick="checkout()" id="checkout-btn" class="w-full bg-[#1dc5fd] text-white font-cubic py-2 rounded-xl text-[15px] tracking-wider active:scale-95 disabled:opacity-50 disabled:grayscale" disabled>確認下單</button>
@@ -225,8 +225,8 @@
                                                  </div>
                                              </div>`;}).join('');
                                      totalDisplay.innerHTML = `
-                                     ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-[#fbbf24] tracking-wider"><img src="${COIN_ICON}" class="w-3 h-3">${totalCoin}</span>` : ''}
-                                     ${totalGem > 0 ? `<span class="flex items-center gap-1 text-[06b6d4] tracking-wider"><img src="${GEM_ICON}" class="w-3 h-3">${totalGem}</span>` : ''}`;}} 
+                                     ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${COIN_ICON}" class="w-3 h-3">${totalCoin}</span>` : ''}
+                                     ${totalGem > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${GEM_ICON}" class="w-3 h-3">${totalGem}</span>` : ''}`;}} 
         // 💳 結帳 CHECKOUT
         async function checkout() {if (!confirm(`確定下單這 ${cart.length} 項商品嗎？`)) return; toggleLoading(true, "打包中"); 
                                    try {const payload = {username: USERNAME, cart: cart.map(i => ({ assetType: i.assetType, quantity: i.quantity }))};
