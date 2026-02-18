@@ -115,9 +115,11 @@
             </div>               
         </nav>
 
-    <main id="main-content" class="flex flex-col items-center mx-auto pt-24 pb-8">
-        <div class="category-tabs" id="category-tabs"><div class="tab active" onclick="filterCategory('全部')">全部</div></div>
-        <div class="container w-full max-w-[1200px] px-8"> <div class="shop-grid" id="shop-grid"></div></div>
+    <main id="main-content" class="flex flex-col items-center mx-auto pt-24 pb-20">
+        <div class="sticky top-0 w-full bg-[#1dc5fd] z-[500] flex justify-center">
+            <div class="category-tabs" id="category-tabs"><div class="tab active" onclick="filterCategory('全部')">全部</div></div>
+        </div>
+        <div class="container w-full max-w-[1200px] px-8 mt-4"><div class="shop-grid" id="shop-grid"></div></div>
     </main>
         
 <script>
