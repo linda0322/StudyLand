@@ -41,6 +41,8 @@
                 .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
             
             /* ⚒️ 操作 OPERATION */
+                /* 🙈 隱藏圖層 HIDDEN LAYER */
+                .hidden {display: none !important;}
                 /* 🚘 加載遮罩（飛行中）LOADING OVERLAY */
                 #loading-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
                 #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
@@ -267,26 +269,30 @@
 
     window.onload = init;
 
+    // ✅ 確認彈窗 CONFIRM MODAL
+    const confirmModal = document.getElementById('confirm-modal');
     let confirmResolver;
-    function showConfirm(text) {document.getElementById('confirm-title').innerText = text; document.getElementById('confirm-modal').classList.remove('hidden');
+    function showConfirm(text) {document.getElementById('confirm-title').innerText = text; confirmModal.classList.remove('hidden');
                                 return new Promise((resolve) => {confirmResolver = resolve;});}
-    function resolveConfirm(result) {document.getElementById('confirm-modal').classList.add('hidden'); if (confirmResolver) confirmResolver(result);}
+    function resolveConfirm(result) {confirmModal.classList.add('hidden'); if (confirmResolver) confirmResolver(result);}
 
     // ❌ 錯誤彈窗 ERROR MODAL
+    const errorOverlay = document.getElementById('error-overlay');
     function showAlert(msg, emoji = "🙏🏻") {
-        const overlay = document.getElementById('error-overlay');
         const msgEl = document.getElementById('error-message');
         const emojiEl = document.getElementById('error-emoji');
         msgEl.innerText = msg;
         emojiEl.innerText = emoji;
-        overlay.classList.remove('hidden');
+        errorOverlay.classList.remove('hidden');
     }
-    function closeAlert() {document.getElementById('error-overlay').classList.add('hidden');}
+    function closeAlert() {errorOverlay.classList.add('hidden');}
+    errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
+    confirmModal.addEventListener('click', (e) => {if (e.target === confirmModal) {confirmModal.classList.add('hidden');}});
 
     // 🫵🏻 手勢禁止 DISABLE GESTURE
         // 捲動控制
         const navbar = document.querySelector('nav'); const topBg = document.querySelector('.fixed.z-\\[400\\]');
-        [navbar, topBg].forEach(el => {if (el) {el.addEventListener('touchmove', (e) => {if (e.cancelable) e.preventDefault();}, { passive: false });}});
+        [navbar, topBg].forEach(el => {if (el) {el.addEventListener('touchmove', (e) => {if (e.cancelable) e.preventDefault();}, {passive: false});}});
         const content = document.getElementById('main-content');
         let startY = 0; content.addEventListener('touchstart', (e) => {startY = e.touches[0].pageY;}, { passive: true });
         content.addEventListener('touchmove', (e) => {const moveY = e.touches[0].pageY; const isAtTop = content.scrollTop <= 0; const isPullingDown = moveY > startY;
