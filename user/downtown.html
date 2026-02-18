@@ -85,7 +85,7 @@
         </div>
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以繼續購物</h2>
     </div>
-    <!-- 🔝 頂欄 TOP --><div id="top-bar" lass="fixed z-[400] w-full h-16 top-0 left-0 bg-[#1dc5fd]"></div>
+    <!-- 🔝 頂欄 TOP --><div id="top-bar" lass="fixed z-[400] w-full h-[120px] top-0 left-0 bg-[#1dc5fd]"></div>
         <nav class="fixed z-[500] top-4 left-1/2 -translate-x-1/2 w-full max-w-[550px] flex justify-between px-6">    
             <!-- ⬅️ 左邊群組 TOP LEFT-->
             <div class="flex items-center gap-2">
@@ -103,13 +103,11 @@
                 </a>
             </div>               
         </nav>
+        <div id="category-tabs" class="category-tabs"><div class="tab active" onclick="filterCategory('全部')">全部</div></div>
 
     <main id="main-content" class="container flex flex-col items-center mx-auto px-8 pt-24 pb-8">
         
     <div class="container">
-        <div class="category-tabs" id="category-tabs">
-            <div class="tab active" onclick="filterCategory('全部')">全部</div>
-        </div>
     
         <div class="shop-grid" id="shop-grid">
             </div>
