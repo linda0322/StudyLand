@@ -66,10 +66,10 @@
                 .container {padding: 20px; max-width: 550px; margin: 0 auto;}
                 .shop-grid {display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 20px;}
                 .product-card {background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: 0.3s; position: relative; display: flex; flex-direction: column;}
-                .product-card:hover {transform: translateY(-5px);}
-                .img-container {width: 100%; aspect-ratio: 1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
-                .product-img {max-width: 100%; max-height: 100%; object-fit: contain; }
-                .info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
+                .product-card:hover {transform: opacity(0.95);}
+                .img-container {width: 100%; aspect-ratio: 1; background: rgba(248, 250, 252, 1); display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
+                .product-img {max-width: 100%; max-height: 100%; object-fit: contain;}
+                .info {padding: 12px; flex-grow: 1; display: flex; flex-direction: column;}
         
         .price-btn { width: 100%; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 5px; transition: 0.2s; }
         .price-btn.coin { background: #f1c40f22; color: #d35400; border: 1px solid #f1c40f; }
@@ -184,8 +184,8 @@
                                                                return ` <div class="product-card">
                                                                            <div class="img-container"><img src="${p.ImgURL}" class="product-img" title="${p.AssetType}"></div>
                                                                            <div class="info">
-                                                                               <div class="font-cubic text-slate-600 thin-border text-[15px] tracking-wider mb-[5px]">${p.AssetType}</div>
-                                                                               <div class="font-cubic text-slate-400 text-[12px] mb-[10px] flex grow-1">${p.Description || ''}</div>
+                                                                               <div class="font-cubic text-slate-600 thin-border text-[15px] tracking-wider text-center mb-[5px]">${p.AssetType}</div>
+                                                                               <div class="font-cubic text-slate-400 text-[12px] mb-[10px] text-center flex grow-1">${p.Description || ''}</div>
                                                                            <button class="price-btn ${isGem ? 'gem' : 'coin'}" onclick="buy('${p.AssetType}')">${unit} ${price.toLocaleString()} 購買</button>
                                                                            </div>
                                                                        </div>`;}).join('');
