@@ -43,11 +43,11 @@
             /* ⚒️ 操作 OPERATION */
 
             /* 🛍️ 主要內容 MAIN CONTENT */
-            #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 70px; padding-bottom: 100px;}
+            #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 0; padding-bottom: 120px;}
                 /* 🗂️ 分類 CATEGORY TABS */
-                .category-tabs {position: sticky; top: 0; z-index: 500; display: flex; justify-content: flex-start; flex-wrap: nowrap;
-                                gap: 8px; margin: 0 auto; padding: 15px 15px 15px 15px; width: 100%; 
-                                max-width: 550px; background-color: #1dc5fd; 
+                .sticky-header-container {position: sticky; top: 0; background-color: #1dc5fd; z-index: 500; width: 100%; padding-top: 64px; display: flex; justify-content: center;}
+                .category-tabs {display: flex; justify-content: flex-start; flex-wrap: nowrap;
+                                gap: 8px; padding: 10px 15px 20px 15px; width: 100%; max-width: 550px;  
                                 overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none;}
                 /**.category-tabs {z-index: 500; display: flex; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; margin: 0 auto 20px auto; padding: 0 15px 10px 15px;
                                 width: 100%; max-width: 550px;
@@ -115,11 +115,11 @@
             </div>               
         </nav>
 
-    <main id="main-content" class="flex flex-col items-center mx-auto pt-24 pb-20">
-        <div class="sticky top-0 w-full bg-[#1dc5fd] z-[500] flex justify-center">
+    <main id="main-content" class="flex flex-col items-center mx-auto">
+        <div class="sticky-header-container">
             <div class="category-tabs" id="category-tabs"><div class="tab active" onclick="filterCategory('全部')">全部</div></div>
         </div>
-        <div class="container w-full max-w-[1200px] px-8 mt-4"><div class="shop-grid" id="shop-grid"></div></div>
+        <div class="container w-full max-w-[1200px] px-8"> <div class="shop-grid" id="shop-grid"></div></div>
     </main>
         
 <script>
