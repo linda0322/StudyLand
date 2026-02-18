@@ -43,11 +43,15 @@
             /* ⚒️ 操作 OPERATION */
 
             /* 🛍️ 主要內容 MAIN CONTENT */
-            #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 70px;} 
+            #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 70px; padding-bottom: 100px;}
                 /* 🗂️ 分類 CATEGORY TABS */
-                .category-tabs {z-index: 500; display: flex; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; margin: 0 auto 20px auto; padding: 0 15px 10px 15px;
-                                width: 100%; max-width: 550px;
+                .category-tabs {position: sticky; top: 0; z-index: 500; display: flex; justify-content: flex-start; flex-wrap: nowrap;
+                                gap: 8px; margin: 0 auto; padding: 15px 15px 15px 15px; width: 100%; 
+                                max-width: 550px; background-color: #1dc5fd; 
                                 overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none;}
+                /**.category-tabs {z-index: 500; display: flex; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; margin: 0 auto 20px auto; padding: 0 15px 10px 15px;
+                                width: 100%; max-width: 550px;
+                                overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none;}**/
                 .category-tabs::-webkit-scrollbar {display: none;}
                 .tab {padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 0.7em; flex-shrink: 0;}
                 .tab.active {background: white; color: #1dc5fd;}
