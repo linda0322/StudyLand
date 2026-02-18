@@ -76,13 +76,13 @@
         .price-btn:disabled { background: #eee; color: #aaa; border-color: #ddd; cursor: not-allowed; }
 
         /* ⚙️ 內部結構 INTERNAL */
-            /* ☁️ 加載遮罩（飛行中）LOADING OVERLAY */
+            /* 🚘 加載遮罩（飛行中）LOADING OVERLAY */
             #loading-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
             #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
     </style>
 </head>
 <body>
-    <!-- ☁️ 加載遮罩（飛行中）LOADING OVERLAY -->
+    <!-- 🚘 加載遮罩（飛行中）LOADING OVERLAY -->
     <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">🚘</div><div id="loading-text" class="font-cubic text-xl text-white thick-border tracking-widest">移動中</div></div>
     <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
     <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
@@ -237,11 +237,11 @@
     toggleLoading(false);
 }
 
+    // 🚘 加載遮罩 LOADING OVERLAY
     function toggleLoading(show, text) {const overlay = document.getElementById('loading-overlay'); const textEl = document.getElementById('loading-text');
                                         if (!overlay) return;
                                         if (show) {overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); if (textEl) textEl.innerText = text || "移動中...";} 
                                         else {overlay.style.display = 'none'; overlay.classList.add('fade-out'); setTimeout(() => {overlay.style.display = 'none';}, 500);}}
-
     window.onload = init;
 
 
