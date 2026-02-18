@@ -251,7 +251,7 @@
                                      ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${COIN_ICON}" class="h-3 w-auto" draggable="false">${totalCoin}</span>` : ''}
                                      ${totalGem > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${GEM_ICON}" class="h-3 w-auto" draggable="false">${totalGem}</span>` : ''}`;}} 
         // 💳 結帳 CHECKOUT
-        async function checkout() {const confirmed = await showConfirm(`確定購買這 ${cart.length} 項商品嗎？`);
+        async function checkout() {const confirmed = await showConfirm(`確定購買商品`);
                                    if (!confirmed) return; toggleLoading(true, "運送中");
                                    try {const payload = {username: USERNAME, cart: cart.map(i => ({ assetType: i.assetType, quantity: i.quantity }))};
                                         const response = await fetch(SCRIPT_URL, {method: "POST", body: JSON.stringify(payload)});
