@@ -41,6 +41,7 @@
                 .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
         
         header {background: #1dc5fd; color: white; padding: 15px; position: sticky; top: 0; z-index: 500; display: flex; justify-content: space-between; align-items: center;}
+        .header-group {display: flex; gap: 15px; font-size: 1.1em;}
         
         .container {padding: 20px; max-width: 1200px; margin: auto; }
         .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
@@ -85,7 +86,9 @@
 
     <main id="main-content" class="container flex flex-col items-center mx-auto px-8 pt-24 pb-8">
         <header>
+        <div class="header-group">
         <!-- 🔝 頂欄 TOP --><nav class="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-[550px] flex justify-between px-6">
+            
             <!-- ⬅️ 左邊群組 TOP LEFT-->
             <div class="flex items-center gap-2">
                 <!-- 💰 餘額 BALANCE -->
@@ -102,6 +105,7 @@
                 </a>
             </div>               
         </nav>
+        </div>
         </header>
 
         
