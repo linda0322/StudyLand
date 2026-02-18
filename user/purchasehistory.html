@@ -37,7 +37,6 @@
             overflow: hidden; 
             overscroll-behavior: none;
             font-family: 'Noto Sans TC', sans-serif;
-            /* 移除原本的背景色，讓 bg-layer 顯示 */
         }
 
         /* 🌼 樣式 STYLE */
@@ -78,9 +77,6 @@
         
         <div class="p-6 pb-2">
             <h1 class="text-3xl font-cubic text-white thick-border mb-1">📜 購物清單</h1>
-            <p class="text-white/90 text-sm">
-                歡迎回來，<span id="user-display-name" class="font-bold text-yellow-300">---</span>
-            </p>
         </div>
 
         <div id="record-container" class="flex-1 overflow-y-auto p-6 pt-2 custom-scrollbar space-y-4">
@@ -108,7 +104,7 @@
                 return;
             }
 
-            document.getElementById('user-display-name').textContent = savedName;
+            // 僅執行抓取，不再顯示用戶名
             fetchHistory(savedName);
         });
 
