@@ -182,13 +182,13 @@
                                                                <div class="product-card">
                                                                    <div class="img-container"><img src="${p.ImgURL}" class="product-img pointer-events-none" draggable="false"></div>
                                                                    <div class="info p-3">
-                                                                       <div class="font-cubic text-slate-600 thin-border text-sm mb-1 truncate tracking-wider">${p.AssetType}</div>
-                                                                       <div class="font-cubic text-slate-400 text-[13px] mb-[10px] tracking-wider text-center">${p.Description || ''}</div>
-                                                                       <div class="font-cubic text-slate-400 text-[10px] thin-border mb-2">剩餘: ${p.MaxQuantity}</div>
+                                                                       <div class="font-cubic text-slate-600 thin-border text-[18px] mb-1 truncate">${p.AssetType}</div>
+                                                                       <div class="font-cubic text-slate-400 text-[13px] mb-[10px]">${p.Description || ''}</div>
+                                                                       <div class="font-cubic text-slate-500 text-[10px] mb-2">剩餘 ${p.MaxQuantity}</div>
                                                                        <button class="price-btn ${isGem ? 'gem' : 'coin'}" 
                                                                            onclick="addToCart('${p.AssetType}')" 
                                                                            ${isOutOfStock ? 'disabled' : ''}>
-                                                                           ${isOutOfStock ? '缺貨' : `<img src="${iconUrl}" class="w-3 h-3"> ${price.toLocaleString()}`}
+                                                                           ${isOutOfStock ? '缺貨' : `<img src="${iconUrl}" class="h-[15px] w-auto"> ${price.toLocaleString()}`}
                                                                        </button>
                                                                    </div>
                                                                </div>`;}).join('');}
