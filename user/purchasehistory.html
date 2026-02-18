@@ -10,24 +10,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* 🏙️ 背景層 BACKGROUND LAYER */
-        .bg-layer {
-            position: fixed; 
-            inset: 0; 
-            z-index: -1;
-            background-size: contain; 
-            background-position: center center; 
-            background-repeat: no-repeat;
-            background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');
-        }
-
+        .bg-layer {position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center center; background-repeat: no-repeat; background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}
+        /* 📱 平板背景 IPAD BACKGROUND LAYER */
+        @media screen and (max-width: 800px) {.bg-layer {position: fixed; inset: 0; z-index: -1; background-size: contain; background-position: center center; background-repeat: no-repeat; background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}}
         /* 📱 手機背景 PHONE BACKGROUND LAYER */
-        @media screen and (max-width: 600px) {
-            .bg-layer {
-                background-size: 100% auto; 
-                background-position: center top; 
-                background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');
-            }
-        }
+        @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center top; background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');}}
        
         /* 🏞️ 整體版面 OVERALL */
         body {height: 100vh; width: 100vw; margin: 0; overflow: hidden; overscroll-behavior: none; font-family: 'Noto Sans TC', sans-serif; background-color: #1dc5fd;
