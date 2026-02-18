@@ -39,6 +39,13 @@
                 .font-cubic {font-family: 'Cubic11', sans-serif;}
                 .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
                 .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+            
+            /* ⚒️ 操作 OPERATION */
+                /* 🫵🏻 手勢禁止 DISABLE GESTURE */
+                .no-touch {touch-action: none;
+                           -webkit-touch-callout: none; /* Safari 選單 */
+                           -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; /* 選取 */
+                           -webkit-user-drag: none; /* 拖動 */}
 
             /* 🛍️ 主要內容 MAIN CONTENT */
             #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 80px;} 
@@ -85,8 +92,8 @@
         </div>
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以繼續購物</h2>
     </div>
-    <!-- 🔝 頂欄 TOP --><div id="top-bar" lass="fixed z-[400] w-full h-[120px] top-0 left-0 bg-[#1dc5fd]"></div>
-        <nav class="fixed z-[500] top-4 left-1/2 -translate-x-1/2 w-full max-w-[550px] flex justify-between px-6">    
+    <!-- 🔝 頂欄 TOP --><div class="no-touch fixed z-[400] w-full h-16 top-0 left-0 bg-[#1dc5fd]"></div>
+        <nav class="no-touch fixed z-[500] top-4 left-1/2 -translate-x-1/2 w-full max-w-[550px] flex justify-between px-6">    
             <!-- ⬅️ 左邊群組 TOP LEFT-->
             <div class="flex items-center gap-2">
                 <!-- 💰 餘額 BALANCE -->
@@ -103,11 +110,13 @@
                 </a>
             </div>               
         </nav>
-        <div id="category-tabs" class="category-tabs"><div class="tab active" onclick="filterCategory('全部')">全部</div></div>
 
     <main id="main-content" class="container flex flex-col items-center mx-auto px-8 pt-24 pb-8">
         
     <div class="container">
+        <div class="category-tabs" id="category-tabs">
+            <div class="tab active" onclick="filterCategory('全部')">全部</div>
+        </div>
     
         <div class="shop-grid" id="shop-grid">
             </div>
@@ -165,7 +174,7 @@
 
 
     function setupCategories() {const categories = ["全部", ...new Set(allProducts.map(p => p.Category))]; const tabContainer = document.getElementById('category-tabs');
-        tabContainer.innerHTML = categories.map(cat => `<div class="bg-[#1dc5fd]/80 font-cubic text-white text-[20px] tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
+        tabContainer.innerHTML = categories.map(cat => `<div class="font-cubic text-white bg-[#1dc5fd]/80 tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
 
     function filterCategory(cat) {currentCategory = cat; setupCategories(); renderShop();}
 
@@ -237,12 +246,13 @@
 
 
     // 🫵🏻 手勢禁止 DISABLE GESTURE
-    let touchStartY = 0;
-    const preventPullToRefresh = (e) => {const moveY = e.touches[0].pageY; const target = e.currentTarget; const isAtTop = target.scrollTop <= 0; const isPullingDown = moveY > touchStartY;
-                                         if (isAtTop && isPullingDown) {if (e.cancelable) e.preventDefault();}};
-    const scrollElements = [document.getElementById('main-content'), document.body];
-    scrollElements.forEach(el => {if (!el) return; el.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].pageY; }, {passive: true}); 
-                                  el.addEventListener('touchmove', preventPullToRefresh, {passive: false});});
+        // 捲動控制
+        const navbar = document.querySelector('nav'); const topBg = document.querySelector('.fixed.z-\\[400\\]');
+        [navbar, topBg].forEach(el => {if (el) {el.addEventListener('touchmove', (e) => {if (e.cancelable) e.preventDefault();}, { passive: false });}});
+        const content = document.getElementById('main-content');
+        let startY = 0; content.addEventListener('touchstart', (e) => {startY = e.touches[0].pageY;}, { passive: true });
+        content.addEventListener('touchmove', (e) => {const moveY = e.touches[0].pageY; const isAtTop = content.scrollTop <= 0; const isPullingDown = moveY > startY;
+                                                      if (isAtTop && isPullingDown) {if (e.cancelable) e.preventDefault();}}, { passive: false }); 
         
     // 📱 手機旋轉提示 ORIENTATION NOTI
     function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
