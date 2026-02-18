@@ -97,6 +97,17 @@
         </div>
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以繼續購物</h2>
     </div>
+
+    <!-- ❌ 錯誤彈窗 ERROR MODAL -->
+    <div id="error-overlay" class="hidden fixed inset-0 z-[10000] bg-black/20 backdrop-blur-sm flex flex-col justify-center items-center p-6">
+    <div class="max-w-xs bg-white/80 backdrop-blur-md rounded-[30px] shadow-xl flex flex-col text-center items-center p-8 relative border border-white/50">
+        <button onclick="closeAlert()" class="w-12 h-12 absolute top-2 right-2 text-slate-400 flex items-center justify-center hover:text-slate-600 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+        <h1 id="error-emoji" class="text-4xl mb-4">💡</h1>
+        <h2 id="error-message" class="font-cubic text-slate-700 text-lg thick-border tracking-wider leading-relaxed">...</h2>
+    </div>
+    </div>
     
     <!-- 🔝 頂欄 TOP --><div class="fixed z-[400] w-full h-16 top-0 left-0 bg-[#1dc5fd]"></div>
         <nav class="fixed z-[800] top-4 left-1/2 -translate-x-1/2 w-full max-w-[550px] flex justify-between px-6">    
@@ -168,7 +179,7 @@
                                                    document.getElementById('gem-val').innerText = data.userBalance.gem.toLocaleString();
                                                    allProducts = data.productList;
                                                    setupCategories(); renderShop();} 
-                                else {alert("商店休息中: " + data.message);}} catch (e) {alert("連線失敗");} toggleLoading(false);}
+                                else {showAlert("商店休息中: " + data.message, "🙏🏻");}} catch (e) {showAlert("連線失敗", "🙏🏻");} toggleLoading(false);}
 
     // 🗂️ 分類 CATEGORY TABS
     function setupCategories() {const categories = ["全部", ...new Set(allProducts.map(p => p.Category))]; const tabContainer = document.getElementById('category-tabs');
@@ -198,12 +209,12 @@
     function toggleCart() {const panel = document.getElementById('cart-panel'); panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';}
         // ➕ 加入 ADD TO CART
         function addToCart(assetType) {const product = allProducts.find(p => p.AssetType === assetType); const existing = cart.find(item => item.assetType === assetType); const maxQty = parseInt(product.MaxQuantity) || 0;
-                                       if (existing) {if (existing.quantity < maxQty) existing.quantity++; else alert("庫存不足！");} 
+                                       if (existing) {if (existing.quantity < maxQty) existing.quantity++; else showAlert("庫存不足", "🙏🏻");} 
                                        else {cart.push({assetType: product.AssetType, quantity: 1, price: product.PriceGem > 0 ? product.PriceGem : product.PriceCoin, isGem: product.PriceGem > 0, max: maxQty});}
                                        renderCart(); const badge = document.getElementById('cart-count'); badge.classList.remove('animate-bounce'); void badge.offsetWidth; badge.classList.add('animate-bounce');}
         // ➖ 移除或調整 REMOVE OR EDIT
         function updateCartQty(index, delta) {cart[index].quantity += delta; if (cart[index].quantity <= 0) cart.splice(index, 1); 
-            else if (cart[index].quantity > cart[index].max) {cart[index].quantity = cart[index].max; alert("已達最大購買量");} renderCart();}
+            else if (cart[index].quantity > cart[index].max) {cart[index].quantity = cart[index].max; showAlert("已超過限額", "⚠️");} renderCart();}
         // 🛒 介面 INTERFACE
         function renderCart() {const list = document.getElementById('cart-items-list'); const countBadge = document.getElementById('cart-count'); 
                                const checkoutBtn = document.getElementById('checkout-btn'); const totalDisplay = document.getElementById('cart-total-display');
@@ -231,9 +242,9 @@
                                    try {const payload = {username: USERNAME, cart: cart.map(i => ({ assetType: i.assetType, quantity: i.quantity }))};
                                         const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
                                         const result = await response.json();
-                                        if (result.success) {alert("交易成功！快去查看行李吧～"); cart = []; renderCart(); toggleCart(); await init();} 
-                                        else { alert("下單失敗: " + result.message); }} 
-                                   catch (e) { alert("連線錯誤"); } toggleLoading(false);}
+                                        if (result.success) {showAlert("交易成功", "💸"); cart = []; renderCart(); toggleCart(); await init();} 
+                                        else {showAlert("下單失敗: " + result.message, "🫡"); }} 
+                                   catch (e) {showAlert("連線失敗", "🙏🏻"); } toggleLoading(false);}
 
     // 🚘 加載遮罩 LOADING OVERLAY
     function toggleLoading(show, text) {const overlay = document.getElementById('loading-overlay'); const textEl = document.getElementById('loading-text');
@@ -243,6 +254,16 @@
 
     window.onload = init;
 
+    // 📢 顯示自定義彈窗
+    function showAlert(msg, emoji = "🙏🏻") {
+        const overlay = document.getElementById('error-overlay');
+        const msgEl = document.getElementById('error-message');
+        const emojiEl = document.getElementById('error-emoji');
+        msgEl.innerText = msg;
+        emojiEl.innerText = emoji;
+        overlay.classList.remove('hidden');
+    }
+    function closeAlert() {document.getElementById('error-overlay').classList.add('hidden');}
 
     // 🫵🏻 手勢禁止 DISABLE GESTURE
         // 捲動控制
