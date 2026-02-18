@@ -182,8 +182,9 @@
                                                                <div class="product-card">
                                                                    <div class="img-container"><img src="${p.ImgURL}" class="product-img pointer-events-none" draggable="false"></div>
                                                                    <div class="info p-3">
-                                                                       <div class="font-cubic text-slate-600 thin-border text-sm mb-1 truncate">${p.AssetType}</div>
-                                                                       <div class="font-cubic text-slate-400 text-[10px] mb-2">剩餘: ${p.MaxQuantity}</div>
+                                                                       <div class="font-cubic text-slate-600 thin-border text-sm mb-1 truncate tracking-wider">${p.AssetType}</div>
+                                                                       <div class="font-cubic text-slate-400 text-[13px] mb-[10px] tracking-wider text-center">${p.Description || ''}</div>
+                                                                       <div class="font-cubic text-slate-400 text-[10px] thin-border mb-2">剩餘: ${p.MaxQuantity}</div>
                                                                        <button class="price-btn ${isGem ? 'gem' : 'coin'}" 
                                                                            onclick="addToCart('${p.AssetType}')" 
                                                                            ${isOutOfStock ? 'disabled' : ''}>
