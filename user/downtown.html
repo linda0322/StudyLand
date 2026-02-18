@@ -69,16 +69,17 @@
                 .img-container {width: 100%; aspect-ratio: 1; background: rgba(248, 250, 252, 1); display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
                 .product-img {max-width: 100%; max-height: 100%; object-fit: contain;}
                 .info {padding: 12px; flex-grow: 1; display: flex; flex-direction: column;}
-        
-        .price-btn {width: 100%; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 5px; transition: 0.2s;}
-        .price-btn.coin {font-family: 'Cubic11'; background: #fef3c7; color: #fbbf24; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; letter-spacing: 0.05em; font-size: 14px}
-        .price-btn.gem {font-family: 'Cubic11'; background: #cffafe; color: #06b6d4; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; letter-spacing: 0.05em; font-size: 14px}
-        .price-btn:hover { background: #e67e22; color: white; border-color: #e67e22; }
-        .price-btn:disabled { background: #eee; color: #aaa; border-color: #ddd; cursor: not-allowed; }            
+                .price-btn {width: 100%; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 5px; transition: 0.2s;}
+                .price-btn.coin {font-family: 'Cubic11'; background: #fef3c7; color: #fbbf24; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; letter-spacing: 0.05em; font-size: 14px}
+                .price-btn.gem {font-family: 'Cubic11'; background: #cffafe; color: #06b6d4; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; letter-spacing: 0.05em; font-size: 14px}
+                .price-btn.coin:hover {background: #d97706; color: white}
+                .price-btn.gem:hover {background: #0891b2; color: white}
+                .price-btn:active {transform: scale(0.95);}
+                .price-btn:disabled {background: #e7e5e4; color: #78716c; cursor: not-allowed;}            
 
         /* 🛒 購物車 SHOPPING CART */
         #cart-panel {position: fixed; top: 70px; right: 20px; width: 280px; max-height: 450px; z-index: 1000; display: none; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 15px; border: 2px solid white;}
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .cart-item {display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05);}
         #cart-count {position: absolute; top: -5px; right: -5px; background: #b91c1c; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
                      font-family: 'Cubic11'; font-size: 10px; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
     </style>
