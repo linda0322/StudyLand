@@ -10,98 +10,122 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* 🏞️ 整體版面 OVERALL */
-        body {height: 100vh; width: 100vw; margin: 0; overflow: hidden; overscroll-behavior: none; font-family: 'Noto Sans TC', sans-serif; background-color: #1dc5fd;
-              cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;}
-            /* 🏙️ 背景層 BACKGROUND LAYER */
-            .bg-layer {position: fixed; inset: 0; z-index: -1;
-                       background-size: cover; background-position: center center; background-repeat: no-repeat;
-                       background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}
-            /* 📱 手機背景 PHONE BACKGROUND LAYER */
-            @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center top; background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');}}
-            /* 📱 手機旋轉提示 ORIENTATION NOTI */
-            #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
-                               background-color: #1dc5fd;
-                               flex-direction: column; align-items: center; justify-content: center;}
-            @media screen and (max-width: 1000px) and (orientation: landscape) {#orientation-noti {display: flex !important;} body {overflow: hidden !important;}}
-            @keyframes phone-portrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
-            .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
-        
+        body {
+            height: 100vh; width: 100vw; margin: 0; 
+            overflow: hidden; overscroll-behavior: none;
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #1dc5fd; 
+            background-image: linear-gradient(180deg, #1dc5fd 0%, #69daff 100%);
+        }
+
         /* 🌼 樣式 STYLE */
-            /* 🥽 玻璃框 */
-            .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
-            /* 🔠 字體 FONTS */
-            @font-face {font-family: "Cubic11"; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype'); font-display: swap;}
-            .font-cubic {font-family: 'Cubic11', sans-serif;}
-            .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
-            .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+        }
 
-        /* 🐕 動畫 ANIMATION */
-        @keyframes fadeInUp {from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);}}
-        .record-item {animation: fadeInUp 0.5s ease forwards; opacity: 0;}
+        @font-face {
+            font-family: "Cubic11";
+            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
+        }
 
-        /* 🎚️ 捲軸 SCROLLER */
-        .custom-scrollbar::-webkit-scrollbar {width: 4px;}
-        .custom-scrollbar::-webkit-scrollbar-track {background: transparent;}
-        .custom-scrollbar::-webkit-scrollbar-thumb {background: rgba(255,255,255,0.4); border-radius: 10px;}
+        .font-cubic { font-family: 'Cubic11', sans-serif; }
+        .thick-border { -webkit-text-stroke: 1px #4a5568; paint-order: stroke fill; }
+
+        /* 動畫 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .record-item { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+
+        /* 客製化捲軸 */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); border-radius: 10px; }
     </style>
 </head>
-<body>
-    <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
-    
-    <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
-    <div id="orientation-noti">
-        <div class="animate-phone-portrait w-20 h-20 flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-        </div>
-        <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以繼續遊戲</h2>
-    </div>
+<body class="flex items-center justify-center p-4">
 
-    <main class="flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-md h-[80vh] flex flex-col shadow-2xl overflow-hidden border border-white/40">
+    <div class="fixed inset-0 z-[-1] opacity-50 bg-cover bg-center" style="background-image: url('https://www.transparenttextures.com/patterns/cloudy-day.png');"></div>
+
+    <div class="glass-panel w-full max-w-md h-[80vh] flex flex-col shadow-2xl overflow-hidden border border-white/40">
+        
         <div class="p-6 pb-2">
-            <h1 class="font-cubic text-3xl text-white thick-border mb-1">購物清單</h1>
+            <h1 class="text-3xl font-cubic text-white thick-border mb-1">📜 購物清單</h1>
+            <p class="text-white/90 text-sm">
+                歡迎回來，<span id="user-display-name" class="font-bold text-yellow-300">---</span>
+            </p>
         </div>
 
         <div id="record-container" class="flex-1 overflow-y-auto p-6 pt-2 custom-scrollbar space-y-4">
-            <div class="flex flex-col items-center justify-center h-full text-white space-y-2">
-                <div class="animate-bounce text-5xl">💸</div>
-                <p class="w-full col-span-full font-cubic text-slate-400 thin-border tracking-wider flex justify-center text-center items-center">正在翻閱帳本</p>
+            <div class="flex flex-col items-center justify-center h-full text-white/80 space-y-2">
+                <div class="animate-spin text-3xl">🌀</div>
+                <p class="font-cubic">正在翻閱帳本...</p>
             </div>
         </div>
 
         <div class="p-4 bg-white/10 text-center">
-            <button onclick="window.location.href='downtown.html'" class="font-cubic text-white bg-white/20 hover:bg-white/30 px-6 py-2 rounded-full transition-all text-sm border border-white/20">返回市中心</button>
+            <button onclick="window.location.href='index.html'" class="font-cubic text-white bg-white/20 hover:bg-white/30 px-6 py-2 rounded-full transition-all text-sm border border-white/20">
+                返回地圖
+            </button>
         </div>
     </div>
-    </main>
 
     <script>
-        // 🌎 GAS
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyk_UVjukSLRWYv22LwSegOm0_Q1ICMoHdtn9qA-T6jXmJ1UI_MKNWHk9EWBz2j9kz/exec";
+        // 1. 設定你的 GAS 部署網址 (部署後請替換這裡)
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwyk_UVjukSLRWYv22LwSegOm0_Q1ICMoHdtn9qA-T6jXmJ1UI_MKNWHk9EWBz2j9kz/exec";
 
-        window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser');
-                                                           if (!savedName) {window.location.href = 'index.html'; return;}
-                                                           document.getElementById('user-display-name').textContent = savedName;
-                                                           fetchHistory(savedName);});
+        window.addEventListener('DOMContentLoaded', () => {
+            // 2. 從 localStorage 讀取用戶名
+            const savedName = localStorage.getItem('studyLandUser');
+            
+            if (!savedName) {
+                // 如果沒有登入紀錄，跳回首頁
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 顯示用戶名
+            document.getElementById('user-display-name').textContent = savedName;
+
+            // 3. 執行抓取資料
+            fetchHistory(savedName);
+        });
 
         async function fetchHistory(username) {
             const container = document.getElementById('record-container');
-            try {const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}`);
-                 const data = await response.json();
-                 if (data.records && data.records.length > 0) {container.innerHTML = ''; data.records.forEach((item, index) => {
+            
+            try {
+                // 向 GAS 發送 GET 請求
+                const response = await fetch(`${GAS_WEB_APP_URL}?user=${encodeURIComponent(username)}`);
+                const data = await response.json();
+
+                if (data.records && data.records.length > 0) {
+                    container.innerHTML = ''; // 清空載入中狀態
+
+                    data.records.forEach((item, index) => {
                         const card = document.createElement('div');
                         card.className = "record-item glass-panel bg-white/10 p-4 border border-white/20";
                         card.style.animationDelay = `${index * 0.1}s`;
+
                         card.innerHTML = `
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h3 class="font-cubic text-slate-500 text-lg">${item.itemName}</h3>
-                                    <p class="font-cubic text-slate-300 text-xs mt-1">📍 ${item.location}</p>
+                                    <h3 class="font-cubic text-white text-lg">${item.itemName}</h3>
+                                    <p class="text-xs text-white/60 mt-1">📍 送至：${item.location}</p>
                                 </div>
-                                <span class="bg-white text-slate-300 font-cubic text-sm rounded-lg shadow-sm px-3 py-1">x${item.quantity}</span>
+                                <span class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 rounded-lg text-sm shadow-sm">
+                                    x${item.quantity}
+                                </span>
                             </div>
-                            <div class="mt-3 pt-2 border-t border-white/10 text-[10px] text-white text-right">${item.date}</div>
-                            `;
+                            <div class="mt-3 pt-2 border-t border-white/10 text-[10px] text-white/50 text-right">
+                                🕒 ${item.date}
+                            </div>
+                        `;
                         container.appendChild(card);
                     });
                 } else {
@@ -120,14 +144,6 @@
                     </div>`;
             }
         }
-
-        // 📱 手機旋轉提示 ORIENTATION NOTI
-        function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
-                                            const isPortrait = window.innerHeight > window.innerWidth; const isMobileOrTablet = window.innerWidth < 700;
-                                            if (isPortrait && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
-        window.addEventListener('resize', handleOrientationChange);
-        window.addEventListener('orientationchange', handleOrientationChange);
-        handleOrientationChange();
     </script>
 </body>
 </html>
