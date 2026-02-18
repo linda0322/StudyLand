@@ -10,8 +10,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* 🏞️ 整體版面 OVERALL */
-        body {min-height: 100vh; width: 100vw; margin: 0; 
-              overflow-x: hidden; overflow-y: auto; overscroll-behavior: none;
+        body {min-height: 100vh; width: 100vw; position: fixed; margin: 0; 
+              overflow: hidden; overscroll-behavior: none;
               -webkit-user-select: none;
               font-family: 'Noto Sans TC', sans-serif;
               background-color: #1dc5fd;            
@@ -39,6 +39,9 @@
                 .font-cubic {font-family: 'Cubic11', sans-serif;}
                 .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
                 .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+
+            /* 🛍️ 主要內容 MAIN CONTENT */
+            #main-content {height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 80px;}
         
         .container {padding: 20px; max-width: 1200px; margin: auto; }
         .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
@@ -80,9 +83,7 @@
         </div>
         <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以繼續購物</h2>
     </div>
-
-    <main id="main-content" class="container flex flex-col items-center mx-auto px-8 pt-24 pb-8">
-        <!-- 🔝 頂欄 TOP --><div class="fixed z-[400] w-full h-16 top-0 left-0 bg-[#1dc5fd]"></div>
+    <!-- 🔝 頂欄 TOP --><div class="fixed z-[400] w-full h-16 top-0 left-0 bg-[#1dc5fd]"></div>
         <nav class="fixed z-[500] top-4 left-1/2 -translate-x-1/2 w-full max-w-[550px] flex justify-between px-6">    
             <!-- ⬅️ 左邊群組 TOP LEFT-->
             <div class="flex items-center gap-2">
@@ -99,7 +100,9 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </a>
             </div>               
-        </nav>
+    </nav>
+
+    <main id="main-content" class="container flex flex-col items-center mx-auto px-8 pt-24 pb-8">
         
     <div class="container">
         <div class="category-tabs" id="category-tabs">
