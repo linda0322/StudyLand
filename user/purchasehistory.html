@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>購物紀錄</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap">
+    <link rel="icon" type="image/webp" href="https://lh3.googleusercontent.com/d/1dEOyNT7D5TQfiV0i2BbfLR6nQIcEylP1">
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1cVkUL5LapuLvtBYyw_CHgejOCflFRYyB">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 🏞️ 整體版面 OVERALL */
+        body {
+            height: 100vh; width: 100vw; margin: 0; 
+            overflow: hidden; overscroll-behavior: none;
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #1dc5fd; 
+            background-image: linear-gradient(180deg, #1dc5fd 0%, #69daff 100%);
+        }
+
+        /* 🌼 樣式 STYLE */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+        }
+
+        @font-face {
+            font-family: "Cubic11";
+            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
+        }
+
+        .font-cubic { font-family: 'Cubic11', sans-serif; }
+        .thick-border { -webkit-text-stroke: 1px #4a5568; paint-order: stroke fill; }
+
+        /* 動畫 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .record-item { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+
+        /* 客製化捲軸 */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); border-radius: 10px; }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <div class="fixed inset-0 z-[-1] opacity-50 bg-cover bg-center" style="background-image: url('https://www.transparenttextures.com/patterns/cloudy-day.png');"></div>
+
+    <div class="glass-panel w-full max-w-md h-[80vh] flex flex-col shadow-2xl overflow-hidden border border-white/40">
+        
+        <div class="p-6 pb-2">
+            <h1 class="text-3xl font-cubic text-white thick-border mb-1">📜 購物清單</h1>
+            <p class="text-white/90 text-sm">
+                歡迎回來，<span id="user-display-name" class="font-bold text-yellow-300">---</span>
+            </p>
+        </div>
+
+        <div id="record-container" class="flex-1 overflow-y-auto p-6 pt-2 custom-scrollbar space-y-4">
+            <div class="flex flex-col items-center justify-center h-full text-white/80 space-y-2">
+                <div class="animate-spin text-3xl">🌀</div>
+                <p class="font-cubic">正在翻閱帳本...</p>
+            </div>
+        </div>
+
+        <div class="p-4 bg-white/10 text-center">
+            <button onclick="window.location.href='index.html'" class="font-cubic text-white bg-white/20 hover:bg-white/30 px-6 py-2 rounded-full transition-all text-sm border border-white/20">
+                返回地圖
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 1. 設定你的 GAS 部署網址 (部署後請替換這裡)
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwyk_UVjukSLRWYv22LwSegOm0_Q1ICMoHdtn9qA-T6jXmJ1UI_MKNWHk9EWBz2j9kz/exec";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // 2. 從 localStorage 讀取用戶名
+            const savedName = localStorage.getItem('studyLandUser');
+            
+            if (!savedName) {
+                // 如果沒有登入紀錄，跳回首頁
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 顯示用戶名
+            document.getElementById('user-display-name').textContent = savedName;
+
+            // 3. 執行抓取資料
+            fetchHistory(savedName);
+        });
+
+        async function fetchHistory(username) {
+            const container = document.getElementById('record-container');
+            
+            try {
+                // 向 GAS 發送 GET 請求
+                const response = await fetch(`${GAS_WEB_APP_URL}?user=${encodeURIComponent(username)}`);
+                const data = await response.json();
+
+                if (data.records && data.records.length > 0) {
+                    container.innerHTML = ''; // 清空載入中狀態
+
+                    data.records.forEach((item, index) => {
+                        const card = document.createElement('div');
+                        card.className = "record-item glass-panel bg-white/10 p-4 border border-white/20";
+                        card.style.animationDelay = `${index * 0.1}s`;
+
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-cubic text-white text-lg">${item.itemName}</h3>
+                                    <p class="text-xs text-white/60 mt-1">📍 送至：${item.location}</p>
+                                </div>
+                                <span class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 rounded-lg text-sm shadow-sm">
+                                    x${item.quantity}
+                                </span>
+                            </div>
+                            <div class="mt-3 pt-2 border-t border-white/10 text-[10px] text-white/50 text-right">
+                                🕒 ${item.date}
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-white/60">
+                            <span class="text-5xl mb-4">📭</span>
+                            <p class="font-cubic">目前沒有任何購物紀錄</p>
+                        </div>`;
+                }
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                container.innerHTML = `
+                    <div class="text-center text-red-100 p-4">
+                        <p class="font-bold">連線失敗 🛰️</p>
+                        <p class="text-xs opacity-70">請確認 GAS 是否已正確部署並開放權限</p>
+                    </div>`;
+            }
+        }
+    </script>
+</body>
+</html>
