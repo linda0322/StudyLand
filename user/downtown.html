@@ -45,7 +45,8 @@
             /* 🛍️ 主要內容 MAIN CONTENT */
             #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 70px;} 
                 /* 🗂️ 分類 CATEGORY TABS */
-                .category-tabs {z-index: 500; display: flex; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; margin-bottom: 20px; padding: 0 15px 10px 15px; width: 100%;
+                .category-tabs {z-index: 500; display: flex; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; margin: 0 auto 20px auto; padding: 0 15px 10px 15px;
+                                width: 100%; max-width: 550px;
                                 overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none;}
                 .category-tabs::-webkit-scrollbar {display: none;}
                 .tab {padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 0.7em; flex-shrink: 0;}
@@ -110,11 +111,9 @@
             </div>               
         </nav>
 
-    <main id="main-content" class="container flex flex-col items-center mx-auto px-8 pt-24 pb-8">
-        <div class="container w-full">
-            <div class="category-tabs" id="category-tabs"><div class="tab active" onclick="filterCategory('全部')">全部</div></div>
-            <div class="shop-grid" id="shop-grid"></div>
-        </div>
+    <main id="main-content" class="flex flex-col items-center mx-auto pt-24 pb-8">
+        <div class="category-tabs" id="category-tabs"><div class="tab active" onclick="filterCategory('全部')">全部</div></div>
+        <div class="container w-full max-w-[1200px] px-8"> <div class="shop-grid" id="shop-grid"></div></div>
     </main>
         
 <script>
