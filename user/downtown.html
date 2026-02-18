@@ -181,7 +181,7 @@
                            grid.innerHTML = filtered.map(p => {const isGem = p.PriceGem > 0; const price = isGem ? p.PriceGem : p.PriceCoin; const iconUrl = isGem ? GEM_ICON : COIN_ICON; const isOutOfStock = p.MaxQuantity <= 0;
                                                                return `
                                                                <div class="product-card">
-                                                                   <div class="img-container"><img src="${p.ImgURL}" class="product-img user-select-none" draggable="false"></div>
+                                                                   <div class="img-container"><img src="${p.ImgURL}" class="product-img pointer-events-none" draggable="false"></div>
                                                                    <div class="info p-3">
                                                                        <div class="font-cubic text-slate-600 thin-border text-sm mb-1 truncate">${p.AssetType}</div>
                                                                        <div class="font-cubic text-slate-400 text-[10px] mb-2">剩餘: ${p.MaxQuantity}</div>
