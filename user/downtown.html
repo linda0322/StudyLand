@@ -225,8 +225,8 @@
                                                  </div>
                                              </div>`;}).join('');
                                      totalDisplay.innerHTML = `
-                                     ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-orange-600"><img src="${COIN_ICON}" class="w-3 h-3">${totalCoin}</span>` : ''}
-                                     ${totalGem > 0 ? `<span class="flex items-center gap-1 text-blue-600"><img src="${GEM_ICON}" class="w-3 h-3">${totalGem}</span>` : ''}`;}} 
+                                     ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-[#fbbf24] tracking-wider"><img src="${COIN_ICON}" class="w-3 h-3">${totalCoin}</span>` : ''}
+                                     ${totalGem > 0 ? `<span class="flex items-center gap-1 text-[06b6d4] tracking-wider"><img src="${GEM_ICON}" class="w-3 h-3">${totalGem}</span>` : ''}`;}} 
         // 💳 結帳 CHECKOUT
         async function checkout() {if (!confirm(`確定下單這 ${cart.length} 項商品嗎？`)) return; toggleLoading(true, "打包中"); 
                                    try {const payload = {username: USERNAME, cart: cart.map(i => ({ assetType: i.assetType, quantity: i.quantity }))};
