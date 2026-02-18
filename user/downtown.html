@@ -76,6 +76,11 @@
         .price-btn.gem { background: #3498db22; color: #2980b9; border: 1px solid #3498db; }
         .price-btn:hover { background: #e67e22; color: white; border-color: #e67e22; }
         .price-btn:disabled { background: #eee; color: #aaa; border-color: #ddd; cursor: not-allowed; }            
+
+        /* 🛒 購物車 SHOPPING CART */
+        #cart-panel {position: fixed; top: 70px; right: 20px; width: 280px; max-height: 450px; z-index: 1000; display: none; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 15px; border: 2px solid white;}
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        #cart-count { position: absolute; top: -5px; right: -5px; background: #ff4757; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid white; }
     </style>
 </head>
 <body>
@@ -108,6 +113,10 @@
                 <a href="../index.html" class="glass-panel rounded-full shadow-md text-slate-500 p-2 hover:bg-white/20 hover:text-white active:scale-95 active:bg-white/30 active:text-white" title="回到主頁" draggable="false">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </a>
+                <button onclick="toggleCart()" class="relative glass-panel rounded-full shadow-md text-slate-500 p-2 hover:bg-white active:scale-90">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <span id="cart-count" style="display: none;">0</span>
+                </button>
             </div>               
         </nav>
 
@@ -119,69 +128,119 @@
         </div>
         <!-- 🧸 商品 PRODUCTS -->
         <div class="container w-full max-w-[550px] px-8"> <div class="shop-grid" id="shop-grid"></div></div>
+        <!-- 🛒 購物車 SHOPPING CART -->
+        <div id="cart-panel" class="glass-panel p-4">
+            <h3 class="font-cubic text-slate-600 mb-2 border-b border-white/50 pb-2 flex justify-between">
+                <span>我的購物籃</span>
+                <button onclick="toggleCart()" class="text-xs text-slate-400">關閉</button>
+            </h3>
+            <div id="cart-items-list" class="flex-grow overflow-y-auto mb-4 text-sm font-cubic text-slate-500 min-h-[100px]">
+                <div class="text-center py-8">空空如也... 🍱</div>
+            </div>
+            <div class="border-t border-white/50 pt-3">
+                <div class="flex justify-between font-cubic text-slate-600 mb-3 text-sm">
+                    <span>應付總計：</span>
+                    <span id="cart-total-display" class="flex gap-2">0</span>
+                </div>
+                <button onclick="checkout()" id="checkout-btn" class="w-full bg-[#1dc5fd] text-white font-cubic py-2 rounded-xl shadow-lg active:scale-95 disabled:opacity-50 disabled:grayscale" disabled>確認下單</button>
+            </div>
+        </div>
     </main>
         
 <script>
 
-    //🌎 GAS
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLWFynQpY-RYrUR3Amk_18Iaj8H6RdzuSSpa3DaYQHYxOI0ufk73KuOtcN7Cwm37W6/exec";
+    // 🌎 GAS
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGnhK-09XYSG6CqIfvSMwDNhFP7XuaPJzUMNEvWQsOA8aTxmGxzagg-F8SHjRpUDuB/exec";
+    const COIN_ICON = 'https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5';
+    const GEM_ICON = 'https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l';
     let USERNAME = "";
-    
     let allProducts = [];
+    let cart = [];
     let currentCategory = "全部";
 
-    
-    //🔄 載入網頁 LOADING PAGE
-    async function init() {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) {window.location.href = 'index.html'; return;}
+    // 🔄 載入網頁 LOADING PAGE
+    async function init() {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) { window.location.href = 'index.html'; return;}
                            USERNAME = savedName;
-                           toggleLoading(true, "移動中");
+                           toggleLoading(true, "連線中");
                            try {const res = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(USERNAME)}`);
                                 const data = await res.json();
                                 if (data.success) {document.getElementById('coin-val').innerText = data.userBalance.coin.toLocaleString();
                                                    document.getElementById('gem-val').innerText = data.userBalance.gem.toLocaleString();
                                                    allProducts = data.productList;
                                                    setupCategories(); renderShop();} 
-                                else {alert("獲取商店資料失敗: " + data.message);}} 
-                           catch (e) {console.error(e); alert("伺服器連線失敗，請稍後再試。");}
-                           toggleLoading(false);}
+                                else {alert("商店休息中: " + data.message);}} catch (e) {alert("連線失敗");} toggleLoading(false);}
 
-
+    // 🗂️ 分類 CATEGORY TABS
     function setupCategories() {const categories = ["全部", ...new Set(allProducts.map(p => p.Category))]; const tabContainer = document.getElementById('category-tabs');
-        tabContainer.innerHTML = categories.map(cat => `<div class="font-cubic text-white thin-border bg-white/20 tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
-
+                                tabContainer.innerHTML = categories.map(cat => 
+                                    `<div class="font-cubic text-white thin-border bg-white/20 tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
     function filterCategory(cat) {currentCategory = cat; setupCategories(); renderShop();}
 
     // 🧸 商品 PRODUCTS
-    const COIN_ICON = 'https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5'; 
-    const GEM_ICON = 'https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l';
-    function renderShop() {const grid = document.getElementById('shop-grid');
-                           const filtered = currentCategory === "全部" ? allProducts : allProducts.filter(p => p.Category === currentCategory);
-                           grid.innerHTML = filtered.map(p => {const isGem = p.PriceGem > 0; const price = isGem ? p.PriceGem : p.PriceCoin;
-                                                               const iconUrl = isGem ? GEM_ICON : COIN_ICON;
-                                                               const unitHtml = `<img src="${iconUrl}" class="inline-block w-4 h-4 mr-1 mb-1" alt="icon">`; return `
-                           <div class="product-card">
-                               <div class="img-container"><img src="${p.ImgURL}" class="product-img" title="${p.AssetType}"></div>
-                               <div class="info">
-                                    <div class="font-cubic text-slate-600 thin-border text-[15px] tracking-wider text-center mb-[5px]">${p.AssetType}</div>
-                                    <div class="font-cubic text-slate-400 text-[13px] mb-[10px] tracking-wider text-center">${p.Description || ''}</div>
-                                    <button class="price-btn ${isGem ? 'gem' : 'coin'}" onclick="buy('${p.AssetType}')">${unitHtml}${price.toLocaleString()}</button>
-                               </div>
-                           </div>`;}).join('');}
+    function renderShop() {const grid = document.getElementById('shop-grid'); const filtered = currentCategory === "全部" ? allProducts : allProducts.filter(p => p.Category === currentCategory);
+                           grid.innerHTML = filtered.map(p => {const isGem = p.PriceGem > 0; const price = isGem ? p.PriceGem : p.PriceCoin; const iconUrl = isGem ? GEM_ICON : COIN_ICON; const isOutOfStock = p.MaxQuantity <= 0;
+                                                               return `
+                                                               <div class="product-card">
+                                                                   <div class="img-container"><img src="${p.ImgURL}" class="product-img"></div>
+                                                                   <div class="info p-3">
+                                                                       <div class="font-cubic text-slate-600 thin-border text-sm mb-1 truncate">${p.AssetType}</div>
+                                                                       <div class="font-cubic text-slate-400 text-[10px] mb-2">剩餘: ${p.MaxQuantity}</div>
+                                                                       <button class="price-btn ${isGem ? 'gem' : 'coin'}" 
+                                                                           onclick="addToCart('${p.AssetType}')" 
+                                                                           ${isOutOfStock ? 'disabled' : ''}>
+                                                                           ${isOutOfStock ? '缺貨' : `<img src="${iconUrl}" class="w-3 h-3"> ${price.toLocaleString()}`}
+                                                                       </button>
+                                                                   </div>
+                                                               </div>`;}).join('');}
 
-    // 🛍️ 購買 SHOPPING
-    async function buy(assetType) {if (!confirm(`確定要購買 ${assetType} 嗎？`)) return;
-    toggleLoading(true, "交易處理中");
-    try {const response = await fetch(SCRIPT_URL, {method: "POST", body: JSON.stringify({username: USERNAME, assetType: assetType, quantity: 1})});
-         const result = await response.json();
-         if (result.success) {alert("購買成功！"); await init();} else {alert("失敗: " + result.message);}
-    } catch (e) {console.error(e); alert("通訊失敗，請檢查 GAS 部署設定是否為「任何人」。");}
-    toggleLoading(false);}
+    // 🛒 購物車 SHOPPING CART
+    function toggleCart() {const panel = document.getElementById('cart-panel'); panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';}
+        // ➕ 加入 ADD TO CART
+        function addToCart(assetType) {const product = allProducts.find(p => p.AssetType === assetType); const existing = cart.find(item => item.assetType === assetType); const maxQty = parseInt(product.MaxQuantity) || 0;
+                                       if (existing) {if (existing.quantity < maxQty) existing.quantity++; else alert("庫存不足！");} 
+                                       else {cart.push({assetType: product.AssetType, quantity: 1, price: product.PriceGem > 0 ? product.PriceGem : product.PriceCoin, isGem: product.PriceGem > 0, max: maxQty});}
+                                       renderCart(); const badge = document.getElementById('cart-count'); badge.classList.remove('animate-bounce'); void badge.offsetWidth; badge.classList.add('animate-bounce');}
+        // ➖ 移除或調整 REMOVE OR EDIT
+        function updateCartQty(index, delta) {cart[index].quantity += delta; if (cart[index].quantity <= 0) cart.splice(index, 1); 
+            else if (cart[index].quantity > cart[index].max) {cart[index].quantity = cart[index].max; alert("已達最大購買量");} renderCart();}
+        // 🛒 介面 INTERFACE
+        function renderCart() {const list = document.getElementById('cart-items-list'); const countBadge = document.getElementById('cart-count'); 
+                               const checkoutBtn = document.getElementById('checkout-btn'); const totalDisplay = document.getElementById('cart-total-display');
+                               if (cart.length === 0) {list.innerHTML = '<div class="text-center py-8">空空如也... 🍱</div>';
+                                                       countBadge.style.display = 'none'; checkoutBtn.disabled = true; totalDisplay.innerText = "0";} 
+                               else {countBadge.innerText = cart.length; countBadge.style.display = 'flex'; checkoutBtn.disabled = false;
+                                     let totalCoin = 0, totalGem = 0; list.innerHTML = cart.map((item, index) => {
+                                         if (item.isGem) totalGem += item.price * item.quantity; 
+                                         else totalCoin += item.price * item.quantity; return 
+                                             `<div class="cart-item">
+                                                 <div class="flex flex-col max-w-[150px]">
+                                                     <span class="truncate">${item.assetType}</span>
+                                                     <span class="text-[9px] text-slate-400">單價: ${item.price}</span>
+                                                 </div>
+                                                 <div class="flex items-center gap-2">
+                                                     <button onclick="updateCartQty(${index}, -1)" class="w-6 h-6 bg-white/50 rounded-full shadow-inner">-</button>
+                                                     <span class="w-4 text-center text-xs">${item.quantity}</span>
+                                                     <button onclick="updateCartQty(${index}, 1)" class="w-6 h-6 bg-white/50 rounded-full shadow-inner">+</button>
+                                                 </div>
+                                             </div>`;}).join('');
+                                     totalDisplay.innerHTML = `
+                                     ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-orange-600"><img src="${COIN_ICON}" class="w-3 h-3">${totalCoin}</span>` : ''}
+                                     ${totalGem > 0 ? `<span class="flex items-center gap-1 text-blue-600"><img src="${GEM_ICON}" class="w-3 h-3">${totalGem}</span>` : ''}`;}} 
+        // 💳 結帳 CHECKOUT
+        async function checkout() {if (!confirm(`確定下單這 ${cart.length} 項商品嗎？`)) return; toggleLoading(true, "打包中"); 
+                                   try {const payload = {username: USERNAME, cart: cart.map(i => ({ assetType: i.assetType, quantity: i.quantity }))};
+                                        const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+                                        const result = await response.json();
+                                        if (result.success) {alert("交易成功！快去查看行李吧～"); cart = []; renderCart(); toggleCart(); await init();} 
+                                        else { alert("下單失敗: " + result.message); }} 
+                                   catch (e) { alert("連線錯誤"); } toggleLoading(false);}
 
     // 🚘 加載遮罩 LOADING OVERLAY
     function toggleLoading(show, text) {const overlay = document.getElementById('loading-overlay'); const textEl = document.getElementById('loading-text');
                                         if (!overlay) return;
                                         if (show) {overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); if (textEl) textEl.innerText = text || "移動中";} 
                                         else {overlay.style.display = 'none'; overlay.classList.add('fade-out'); setTimeout(() => {overlay.style.display = 'none';}, 500);}}
+
     window.onload = init;
 
 
