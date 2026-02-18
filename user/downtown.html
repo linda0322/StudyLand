@@ -50,9 +50,13 @@
             /* 🛍️ 主要內容 MAIN CONTENT */
             #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 80px;} 
                 /* 🗂️ 分類 CATEGORY TABS */
-                .category-tabs {z-index: 500; display: flex;  justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 5px; width: 100%;}
-                .tab {padding: 8px 8px; border-radius: 20px; cursor: pointer; white-space: nowrap;}
+                .category-tabs {z-index: 500; display: flex; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; margin-bottom: 20px; padding: 0 15px 10px 15px; width: 100%;
+                                overflow-x: auto; -webkit-overflow-scrolling: touch;}
+                .category-tabs::-webkit-scrollbar {display: none;}
+                .tab {padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 0.9em; flex-shrink: 0;}
                 .tab.active {background: white; color: #1dc5fd;}
+                @media screen and (min-width: 600px) {.category-tabs {justify-content: center; overflow-x: hidden;}
+                                                      .tab {padding: 8px 16px; font-size: 1em;}}
         
         .container {padding: 20px; max-width: 1200px; margin: auto; }
        
