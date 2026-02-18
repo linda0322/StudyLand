@@ -185,7 +185,7 @@
                                                                            <div class="img-container"><img src="${p.ImgURL}" class="product-img" title="${p.AssetType}"></div>
                                                                            <div class="info">
                                                                                <div class="font-cubic text-slate-600 thin-border text-[15px] tracking-wider text-center mb-[5px]">${p.AssetType}</div>
-                                                                               <div class="font-cubic text-slate-400 text-[12px] mb-[10px] text-center flex grow-1">${p.Description || ''}</div>
+                                                                               <div class="font-cubic text-slate-400 text-[12px] mb-[10px] text-center">${p.Description || ''}</div>
                                                                            <button class="price-btn ${isGem ? 'gem' : 'coin'}" onclick="buy('${p.AssetType}')">${unit} ${price.toLocaleString()} 購買</button>
                                                                            </div>
                                                                        </div>`;}).join('');
