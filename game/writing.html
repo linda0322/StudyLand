@@ -238,7 +238,7 @@
             if (masterLibrary.length === 0) masterLibrary = [{char: "例", strokes: 8}];
             userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));
         } finally {
-            setTimeout(() => {loadingOverlay.classList.remove('show');}, 500);
+            loadingOverlay.classList.remove('show');
             renderGame();
             renderSteps();
         }
@@ -420,7 +420,7 @@
                 })
             });
         } catch (e) { console.error("儲存失敗:", e); }
-        setTimeout(() => {loadingOverlay.classList.remove('show');}, 500);
+        loadingOverlay.classList.remove('show');
     }
 
     function showSuccess() {
