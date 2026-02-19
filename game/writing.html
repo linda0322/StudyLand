@@ -207,327 +207,139 @@
     const progressText = document.getElementById('progress-text');
     const syncStatus = document.getElementById('sync-status');
 
-    async function initApp() {
-        const username = localStorage.getItem('studyLandUser');
-        if (!username) { window.location.href = 'index.html'; return; }
-        document.getElementById('user-display-name').innerText = username;
-
-        setupCanvas();
-        
-        try {syncStatus.classList.add('show');
-            // 字庫
-            const libRes = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchLibrary' }) });
-            masterLibrary = await libRes.json();
-
-            // 進度
-            const progRes = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'load', userId: username }) });
-            const progData = await progRes.text();
-
-            if (progData !== "NoData" && progData.trim() !== "") {
-                const saved = JSON.parse(progData);
-                userCharacters = saved.characters;
-                currentIndex = saved.currentIndex || 0;
-            } else {
-                userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));
-                currentIndex = 0;
-            }
-        } catch (e) {
-            console.error("同步失敗:", e);
-            if (masterLibrary.length === 0) masterLibrary = [{char: "例", strokes: 8}];
-            userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));
-        } finally {
-            syncStatus.classList.remove('show');
-            renderGame();
-            renderSteps();
-        }
-    }
-
-    function setupCanvas() {
-        const container = canvas.parentElement;
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.lineWidth = canvas.width * 0.035;
-        ctx.strokeStyle = '#1e293b';
-    }
-
-    function renderGame() {
-        if (!userCharacters[currentIndex]) return;
-        const current = userCharacters[currentIndex];
-        watermark.innerText = current.char || "";
-        document.getElementById('target-strokes').innerText = "/ " + (current.strokes || 0);
-        updateStrokeCount();
-    }
-
-    function renderSteps() {
-        stepContainer.innerHTML = '';
-        const completedCount = userCharacters.filter(item => item.completed).length;
+    async function initApp() {const username = localStorage.getItem('studyLandUser'); if (!username) {window.location.href = 'index.html'; return;}
+                              document.getElementById('user-display-name').innerText = username;
+                              setupCanvas();
+                              try {syncStatus.classList.add('show');
+                                   const libRes = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: 'fetchLibrary'})}); masterLibrary = await libRes.json();
+                                   const progRes = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: 'load', userId: username})});
+                                   const progData = await progRes.text();
+                                   if (progData !== "NoData" && progData.trim() !== "") {
+                                       const saved = JSON.parse(progData); userCharacters = saved.characters; currentIndex = saved.currentIndex || 0;}
+                                   else {userCharacters = masterLibrary.map(item => ({ ...item, completed: false })); currentIndex = 0;}}
+                              catch (e) {console.error("同步失敗:", e);
+                                         if (masterLibrary.length === 0) masterLibrary = [{char: "無", strokes: 12}];
+                                         userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));}
+                              finally {syncStatus.classList.remove('show'); renderGame(); renderSteps();}}
     
-        userCharacters.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.className = `step-btn relative flex-none w-12 h-12 rounded-xl bg-white font-iansui thin-border text-xl shadow-sm border-2 transition-all flex items-center justify-center cursor-pointer ${
-                index === currentIndex ? 'active border-white' : 'text-slate-400 border-transparent'
-            }`;
-            
-            if (item.completed) div.classList.add('completed');    
-            div.innerText = item.char;
-            div.onclick = () => { 
-                currentIndex = index; 
-                clearCanvas(); 
-                renderGame(); 
-                renderSteps(); 
-                div.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-            };
-            stepContainer.appendChild(div);
-        });
-    
-        const progressPercent = userCharacters.length ? (completedCount / userCharacters.length) * 100 : 0;
-        progressFill.style.width = `${progressPercent}%`;
-        progressChar.style.left = `${progressPercent}%`;
-        progressText.innerText = `學習進度：${completedCount} / ${userCharacters.length}`;
-    }
+    function setupCanvas() {const container = canvas.parentElement;
+                            canvas.width = container.clientWidth; canvas.height = container.clientHeight; 
+                            ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = canvas.width * 0.035; ctx.strokeStyle = '#1e293b';}
 
-    canvas.addEventListener('pointerdown', e => {
-        isDrawing = true;
-        paths.push([]);
-        canvas.setPointerCapture(e.pointerId);
-        draw(e);
-    });
+    function renderGame() {if (!userCharacters[currentIndex]) return;
+                           const current = userCharacters[currentIndex];
+                           watermark.innerText = current.char || "";
+                           document.getElementById('target-strokes').innerText = "/ " + (current.strokes || 0);
+                           updateStrokeCount();}
 
-    canvas.addEventListener('pointermove', e => {
-        if (isDrawing) draw(e);
-    });
+    function renderSteps() {stepContainer.innerHTML = '';
+                            const completedCount = userCharacters.filter(item => item.completed).length;
+                            userCharacters.forEach((item, index) => {const div = document.createElement('div');
+                                                                     div.className = `step-btn relative flex-none w-12 h-12 rounded-xl bg-white font-iansui thin-border text-xl shadow-sm border-2 transition-all flex items-center justify-center cursor-pointer ${
+                                                                         index === currentIndex ? 'active border-white' : 'text-slate-400 border-transparent'}`;
+                                                                     if (item.completed) div.classList.add('completed');
+                                                                     div.innerText = item.char;
+                                                                     div.onclick = () => {currentIndex = index;  clearCanvas(); renderGame(); renderSteps(); 
+                                                                                          div.scrollIntoView({behavior: 'smooth', inline: 'center', block: 'nearest'});};
+                                                                     stepContainer.appendChild(div);});
+                            const progressPercent = userCharacters.length ? (completedCount / userCharacters.length) * 100 : 0;
+                            progressFill.style.width = `${progressPercent}%`; progressChar.style.left = `${progressPercent}%`; progressText.innerText = `學習進度：${completedCount} / ${userCharacters.length}`;}
 
-    window.addEventListener('pointerup', e => { 
-        if(isDrawing) {
-            isDrawing = false;
-            canvas.releasePointerCapture(e.pointerId);
-            updateStrokeCount();
-            checkScore();
-        }
-    });
+    canvas.addEventListener('pointerdown', e => {isDrawing = true; paths.push([]); canvas.setPointerCapture(e.pointerId); draw(e);});
+    canvas.addEventListener('pointermove', e => {if (isDrawing) draw(e);});
+    window.addEventListener('pointerup', e => {if(isDrawing) {isDrawing = false; canvas.releasePointerCapture(e.pointerId); updateStrokeCount(); checkScore();}});
 
-    function draw(e) {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+    function draw(e) {const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; const currentPath = paths[paths.length - 1];
+                      currentPath.push({ x, y }); ctx.beginPath();
+                      if (currentPath.length > 1) {const prev = currentPath[currentPath.length - 2]; ctx.moveTo(prev.x, prev.y);}
+                      else {ctx.moveTo(x, y);}
+                      ctx.lineTo(x, y); ctx.stroke();}
+
+    function updateStrokeCount() {document.getElementById('current-strokes').innerText = paths.length;}
+
+    function checkScore() {const current = userCharacters[currentIndex]; const target = current.strokes;
+                           if (paths.length === target) {if (verifyWriting()) {userCharacters[currentIndex].completed = true; showSuccess(); saveProgress();}
+                           else {showToast("不夠準確");}} else if (paths.length > target) {showToast("筆劃太多"); document.getElementById('current-strokes').classList.add('text-red-500');}
+                           else {document.getElementById('current-strokes').classList.remove('text-red-500');}}
+
+    function verifyWriting() {const w = canvas.width; const h = canvas.height;
+                              // 取得筆跡
+                              const userData = ctx.getImageData(0, 0, w, h).data;
+                              // 建立「正確答案」
+                              const offscreen = document.createElement('canvas'); offscreen.width = w; offscreen.height = h;
+                              const octx = offscreen.getContext('2d');
+                              // 跟隨水印
+                              const fontSize = Math.min(w * 0.8, 240); 
+                              octx.font = `${fontSize}px Iansui`; octx.textAlign = 'center'; octx.textBaseline = 'middle'; octx.strokeStyle = 'black';
+                              octx.lineWidth = canvas.width * 0.08; octx.strokeText(userCharacters[currentIndex].char, w / 2, h / 2); octx.fillStyle = 'black'; octx.fillText(userCharacters[currentIndex].char, w / 2, h / 2);
+                              const standardData = octx.getImageData(0, 0, w, h).data; let hitPixels = 0; let totalStandardPixels = 0; let overflowPixels = 0;
+                              for (let i = 3; i < userData.length; i += 4) {const userAlpha = userData[i]; const stdAlpha = standardData[i];
+                                                                            if (stdAlpha > 30) {totalStandardPixels++; if (userAlpha > 30) hitPixels++;} 
+                                                                            else {if (userAlpha > 30) overflowPixels++;}}
+                              const hitRate = hitPixels / totalStandardPixels; const overflowRate = overflowPixels / (w * h); return hitRate > 0.3 && overflowRate < 0.1;}
+
+    function showToast(message) {const container = document.getElementById('toast-container'); const msgElem = document.getElementById('toast-msg'); const canvasContainer = document.querySelector('.canvas-container');
+                                 msgElem.innerText = message; container.classList.add('show'); canvasContainer.classList.add('shake');
+                                 setTimeout(() => {container.classList.remove('show'); canvasContainer.classList.remove('shake');}, 2000);}
         
-        const currentPath = paths[paths.length - 1];
-        currentPath.push({ x, y });
+    async function saveProgress() {const username = localStorage.getItem('studyLandUser'); syncStatus.classList.add('show');
+                                   try {await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: 'save', userId: username, payload: {characters: userCharacters, currentIndex}})});}
+                                   catch (e) { console.error("儲存失敗:", e); } syncStatus.classList.remove('show');}
 
-        ctx.beginPath();
-        if (currentPath.length > 1) {
-            const prev = currentPath[currentPath.length - 2];
-            ctx.moveTo(prev.x, prev.y);
-        } else {
-            ctx.moveTo(x, y);
-        }
-        ctx.lineTo(x, y);
-        ctx.stroke();
-    }
-
-    function updateStrokeCount() {
-        document.getElementById('current-strokes').innerText = paths.length;
-    }
-
-    function checkScore() {
-        const current = userCharacters[currentIndex];
-        const target = current.strokes;
-        if (paths.length === target) {
-            if (verifyWriting()) { 
-                userCharacters[currentIndex].completed = true;
-                showSuccess();
-                saveProgress();
-            } else {
-                showToast("不夠準確");
-            }
-        } else if (paths.length > target) {
-            showToast("筆劃太多");
-            document.getElementById('current-strokes').classList.add('text-red-500');
-        } else {
-            document.getElementById('current-strokes').classList.remove('text-red-500');
-        }
-    }
-
-    function verifyWriting() {
-        const w = canvas.width;
-        const h = canvas.height;
-        // 取得筆跡
-        const userData = ctx.getImageData(0, 0, w, h).data;
-        // 建立「正確答案」
-        const offscreen = document.createElement('canvas');
-        offscreen.width = w;
-        offscreen.height = h;
-        const octx = offscreen.getContext('2d');
-        // 跟隨水印
-        const fontSize = Math.min(w * 0.8, 240); 
-        octx.font = `${fontSize}px Iansui`;
-        octx.textAlign = 'center';
-        octx.textBaseline = 'middle';
-        octx.strokeStyle = 'black';
-        octx.lineWidth = canvas.width * 0.08; // 增加判定的容錯寬度
-        octx.strokeText(userCharacters[currentIndex].char, w / 2, h / 2);
-        octx.fillStyle = 'black';
-        octx.fillText(userCharacters[currentIndex].char, w / 2, h / 2);
-        const standardData = octx.getImageData(0, 0, w, h).data;
-        let hitPixels = 0;
-        let totalStandardPixels = 0;
-        let overflowPixels = 0;
-        for (let i = 3; i < userData.length; i += 4) {
-            const userAlpha = userData[i];
-            const stdAlpha = standardData[i];
-            if (stdAlpha > 30) {
-                totalStandardPixels++;
-                if (userAlpha > 30) hitPixels++; 
-            } else {
-                if (userAlpha > 30) overflowPixels++;
-            }
-        }
-        const hitRate = hitPixels / totalStandardPixels;
-        const overflowRate = overflowPixels / (w * h);
-        return hitRate > 0.3 && overflowRate < 0.1;
-    }
-
-    function showToast(message) {
-        const container = document.getElementById('toast-container');
-        const msgElem = document.getElementById('toast-msg');
-        const canvasContainer = document.querySelector('.canvas-container');
-    
-        msgElem.innerText = message;
-        container.classList.add('show');
-        
-        canvasContainer.classList.add('shake');
-        
-        setTimeout(() => {
-            container.classList.remove('show');
-            canvasContainer.classList.remove('shake');
-        }, 2000);
-    }
-        
-    async function saveProgress() {
-        const username = localStorage.getItem('studyLandUser');
-        syncStatus.classList.add('show');
-        try {
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'save',
-                    userId: username,
-                    payload: { characters: userCharacters, currentIndex }
-                })
-            });
-        } catch (e) { console.error("儲存失敗:", e); }
-        syncStatus.classList.remove('show');
-    }
-
-    function showSuccess() {
-        const overlay = document.getElementById('success-overlay');
-        overlay.classList.remove('hidden');
-        setTimeout(() => overlay.classList.add('active'), 10); 
-        setTimeout(() => {
-            overlay.classList.remove('active');
-            setTimeout(() => {
-                overlay.classList.add('hidden');
-                if (currentIndex < userCharacters.length - 1) {
-                    currentIndex++;
-                    clearCanvas();
-                    renderGame();
-                    renderSteps();
-                }
-            }, 500);
-        }, 1200);
-    }
+    function showSuccess() {const overlay = document.getElementById('success-overlay'); overlay.classList.remove('hidden'); 
+                            setTimeout(() => overlay.classList.add('active'), 10); 
+                            setTimeout(() => {overlay.classList.remove('active');
+                                              setTimeout(() => {overlay.classList.add('hidden'); 
+                                                                if (currentIndex < userCharacters.length - 1) {currentIndex++; clearCanvas(); renderGame(); renderSteps();}}, 500);}, 1200);}
 
     function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); paths = []; updateStrokeCount(); document.getElementById('current-strokes').classList.remove('text-red-500');}
     document.getElementById('clear-button').onclick = clearCanvas;
-    document.getElementById('undo-button').onclick = () => { 
-        paths.pop(); 
-        redraw(); 
-    };
+    document.getElementById('undo-button').onclick = () => {paths.pop(); redraw(); };
 
-    function redraw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        paths.forEach(path => {
-            ctx.beginPath();
-            path.forEach((pt, i) => {
-                if (i === 0) ctx.moveTo(pt.x, pt.y);
-                else ctx.lineTo(pt.x, pt.y);
-            });
-            ctx.stroke();
-        });
-        updateStrokeCount();
-    }
+    function redraw() {ctx.clearRect(0, 0, canvas.width, canvas.height);
+                       paths.forEach(path => {ctx.beginPath(); path.forEach((pt, i) => {if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);});
+                                              ctx.stroke();});
+                       updateStrokeCount();}
 
     const galleryOverlay = document.getElementById('word-gallery');
     const galleryGrid = document.getElementById('gallery-grid');
     const gallerySearch = document.getElementById('gallery-search');
     const galleryCategoryFilter = document.getElementById('gallery-category-filter');
-    document.getElementById('gallery-trigger-btn').onclick = () => {
-        renderGallery();
-        galleryOverlay.classList.add('active');
-        };
+    document.getElementById('gallery-trigger-btn').onclick = () => {renderGallery(); galleryOverlay.classList.add('active');};
     document.getElementById('close-gallery').onclick = () => galleryOverlay.classList.remove('active');
     gallerySearch.oninput = renderGallery;
     galleryCategoryFilter.onchange = renderGallery;
 
-    function renderGallery() {
-        const searchTerm = gallerySearch.value.toLowerCase();
-        const categoryTerm = galleryCategoryFilter.value;
+    function renderGallery() {const searchTerm = gallerySearch.value.toLowerCase(); const categoryTerm = galleryCategoryFilter.value;
+                              if (galleryCategoryFilter.options.length === 1 && masterLibrary.length > 0) {
+                                  const allCats = []; masterLibrary.forEach(item => {if (item.categories) allCats.push(...item.categories);});
+                                  const uniqueCategories = [...new Set(allCats)]; uniqueCategories.forEach(cat => {const opt = document.createElement('option');
+                                                                                                                   opt.value = opt.innerText = cat;
+                                                                                                                   galleryCategoryFilter.appendChild(opt);});}
+                              galleryGrid.innerHTML = '';
+                              masterLibrary.forEach((item, index) => {const itemCategories = item.categories || ["未分類"];
+                                                                      const matchesChar = item.char.includes(searchTerm);
+                                                                      const matchesEnglish = item.en ? String(item.en).toLowerCase().includes(searchTerm) : false;
+                                                                      const matchesSearch = matchesChar || matchesEnglish;
+                                                                      const matchesCategory = categoryTerm === 'all' || itemCategories.includes(categoryTerm);
+                                                                      if (matchesSearch && matchesCategory) {const isCompleted = userCharacters[index]?.completed; 
+                                                                                                             const card = document.createElement('div');
+                                                                                                             card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
+                                                                                                                 index === currentIndex ? 'border-amber-400 bg-amber-50' : 'border-slate-100 bg-slate-50 hover:bg-white'}`;
+                                                                                                             card.innerHTML = `
+                                                                                                             <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
+                                                                                                             <span class="text-[8px] font-cubic text-slate-500 mt-1">${item.strokes} 劃</span>
+                                                                                                             `;
+                                                                                                             card.onclick = () => {currentIndex = index; clearCanvas(); renderGame(); renderSteps();
+                                                                                                                                   galleryOverlay.classList.remove('active');
+                                                                                                                                   const targetStep = stepContainer.children[index];
+                                                                                                                                   if (targetStep) targetStep.scrollIntoView({behavior: 'smooth', inline: 'center'});};
+                                                                                                             galleryGrid.appendChild(card);}});
+                             }
     
-        if (galleryCategoryFilter.options.length === 1 && masterLibrary.length > 0) {
-            const allCats = [];
-            masterLibrary.forEach(item => {
-                if (item.categories) allCats.push(...item.categories);
-            });
-            const uniqueCategories = [...new Set(allCats)];
-            uniqueCategories.forEach(cat => {
-                const opt = document.createElement('option');
-                opt.value = opt.innerText = cat;
-                galleryCategoryFilter.appendChild(opt);
-            });
-        }
-    
-        galleryGrid.innerHTML = '';
-    
-        masterLibrary.forEach((item, index) => {
-            const itemCategories = item.categories || ["未分類"];
-            
-            const matchesChar = item.char.includes(searchTerm);
-            const matchesEnglish = item.en ? String(item.en).toLowerCase().includes(searchTerm) : false;
-            const matchesSearch = matchesChar || matchesEnglish;
-    
-            const matchesCategory = categoryTerm === 'all' || itemCategories.includes(categoryTerm);
-    
-            if (matchesSearch && matchesCategory) {
-                const isCompleted = userCharacters[index]?.completed;
-                const card = document.createElement('div');
-                card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
-                    index === currentIndex ? 'border-amber-400 bg-amber-50' : 'border-slate-100 bg-slate-50 hover:bg-white'
-                }`;
-                
-                card.innerHTML = `
-                    <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
-                    <span class="text-[8px] font-cubic text-slate-500 mt-1">${item.strokes} 劃</span>
-                `;
-                
-                card.onclick = () => {
-                    currentIndex = index;
-                    clearCanvas();
-                    renderGame();
-                    renderSteps();
-                    galleryOverlay.classList.remove('active');
-                    const targetStep = stepContainer.children[index];
-                    if (targetStep) targetStep.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-                };
-                galleryGrid.appendChild(card);
-            }
-        });
-    }
-    
-    function preventDefaults(e) { if (e.target === canvas) e.preventDefault(); }
-    document.addEventListener('touchmove', preventDefaults, { passive: false });
-    document.addEventListener('touchstart', preventDefaults, { passive: false });
+    function preventDefaults(e) {if (e.target === canvas) e.preventDefault();}
+    document.addEventListener('touchmove', preventDefaults, {passive: false});
+    document.addEventListener('touchstart', preventDefaults, {passive: false});
     canvas.addEventListener('contextmenu', e => e.preventDefault());
 
     window.onload = initApp;
