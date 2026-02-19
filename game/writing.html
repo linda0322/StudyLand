@@ -36,15 +36,17 @@
             .font-iansui { font-family: 'Iansui', serif; }
             .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
             .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
-            
-        /* 🔘 按鈕 BUTTON */
-        a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
-        button {transition: transform 0.1s ease;} 
-        @media (hover: hover) {a:hover, button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
-        a:active, button:active, [role="button"]:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
 
-        /* 🫵🏻 手勢禁止 NO GESTURE */
-        .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
+        /* ⚒️ 操作 OPERATION */
+            /* 🫵🏻 手勢禁止 NO GESTURE */
+            .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
+            /* 🔘 按鈕 BUTTON */
+            a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+            button {transition: transform 0.1s ease;} 
+            @media (hover: hover) {a:hover, button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
+            a:active, button:active, [role="button"]:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
+
+       
         
         .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
         #watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(0, 0, 0, 0.05); z-index: 1; pointer-events: none;}
@@ -67,8 +69,12 @@
         .step-btn.active { background-color: #38C0FF; color: white; border-color: white; }
         .step-btn.completed::after {content: '✓'; position: absolute; top: -2px; right: -2px; background: #10B981; color: white; width: 14px; height: 14px; border-radius: 50%; font-size: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid white;}
 
-        #gallery-overlay {position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem;}
-        #gallery-overlay.active {display: flex;}
+        /* 📖 字庫 WORD GALLERY */
+        #word-gallery {z-index: 200; position: fixed; inset: 0;
+                       background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);
+                       display: none; align-items: center; justify-content: center; padding: 16px;}
+        #word-gallery.active {display: flex;}
+        
         .scrollbar-hide::-webkit-scrollbar {display: none;}
         .scrollbar-hide {-ms-overflow-style: none; scrollbar-width: none;}
         
@@ -113,20 +119,18 @@
         </div>
     </nav>
 
-    <div id="gallery-overlay">
-        <div class="bg-white p-6 rounded-[40px] shadow-2xl w-full max-w-md h-[85vh] flex flex-col">
+    <!-- 📖 字庫 WORD GALLERY -->
+    <div id="word-gallery">
+        <div class="w-full max-w-md h-[85vh] bg-white rounded-[40px] shadow-2xl flex flex-col p-6">
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg>
-                    </div>
-                    <h3 class="font-cubic thin-border text-slate-700 text-xl">字庫</h3>
+                    <div class="w-10 h-10 bg-sky-400 rounded-2xl text-white flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-marked-icon lucide-book-marked"><path d="M10 2v8l3-3 3 3V2"/><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/></svg></div>
+                    <h3 class="font-cubic text-slate-700 text-xl thin-border tracking-wider">字庫</h3>
                 </div>
-                <button id="close-gallery" class="p-2 text-white bg-slate-500 hover:bg-slate-500/80 transition-colors active:scale-95 transition-all rounded-full">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <button id="close-gallery" class="text-slate-400 text-2xl hover:text-slate-600 p-2 hover:scale-110 active:scale-95 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>
             </div>
-
             <div class="flex flex-col gap-2 mb-6">
                 <div class="relative w-full">
                     <input type="text" id="gallery-search" placeholder="搜尋" class="w-full bg-slate-100 border-none rounded-2xl px-4 py-3 pl-10 text-sm font-cubic outline-none focus:ring-2 focus:ring-amber-200">
@@ -458,7 +462,7 @@
         updateStrokeCount();
     }
 
-    const galleryOverlay = document.getElementById('gallery-overlay');
+    const galleryOverlay = document.getElementById('word-gallery');
     const galleryGrid = document.getElementById('gallery-grid');
     const gallerySearch = document.getElementById('gallery-search');
     const galleryCategoryFilter = document.getElementById('gallery-category-filter');
