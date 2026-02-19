@@ -9,29 +9,19 @@
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1cVkUL5LapuLvtBYyw_CHgejOCflFRYyB">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 🏞️ 整體版面 OVERALL */
-        body {min-height: 100vh; width: 100vw; position: fixed; margin: 0; 
-              overflow: hidden; overscroll-behavior: none; overscroll-behavior-y: none;
-              -webkit-user-select: none; -webkit-touch-callout: none;
-              font-family: 'Noto Sans TC', sans-serif;
-              background-color: #1dc5fd;            
+        /* 🏞️ 整體 OVERALL */
+        body {min-height: 100vh; width: 100vw; position: fixed; overflow: hidden; margin: 0; 
+              overscroll-behavior: none; overscroll-behavior-y: none; -webkit-user-select: none; -webkit-touch-callout: none;
+              font-family: 'Noto Sans TC', sans-serif; background-color: #1dc5fd;            
               cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
-            /* 🏙️ 背景層 BACKGROUND LAYER */
-            .bg-layer {position: fixed; inset: 0; z-index: -1;
-                       background-size: cover; background-position: center center; background-repeat: no-repeat;
+            /* 🏙️ 背景 BACKGROUND */
+            .bg-layer {position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center center; background-repeat: no-repeat;
                        background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}
-                /* 📱 平板背景 IPAD BACKGROUND LAYER */
+                /* 📱 平板背景 IPAD BACKGROUND */
                 @media screen and (max-width: 800px) {.bg-layer {position: fixed; inset: 0; z-index: -1; background-size: contain; background-position: center center; background-repeat: no-repeat; background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}}
-                /* 📱 手機背景 PHONE BACKGROUND LAYER */
+                /* 📱 手機背景 PHONE BACKGROUND */
                 @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center top; background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');}}
-                /* 📱 手機旋轉提示 ORIENTATION NOTI */
-                #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
-                                   background-color: #1dc5fd;
-                                   flex-direction: column; align-items: center; justify-content: center;}
-                @media screen and (max-width: 1000px) and (orientation: landscape) {#orientation-noti {display: flex !important;} body {overflow: hidden !important;}}
-                @keyframes phone-portrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
-                .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
 
             /* 🌼 樣式 STYLE */
                 /* 🥽 玻璃框 */
@@ -94,14 +84,6 @@
     
     <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
     
-    <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
-    <div id="orientation-noti">
-        <div class="animate-phone-portrait w-20 h-20 flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-        </div>
-        <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以繼續購物</h2>
-    </div>
-
     <!-- ❌ 錯誤彈窗 ERROR MODAL -->
     <div id="error-overlay" class="hidden fixed inset-0 z-[10000] bg-black/20 backdrop-blur-sm flex flex-col justify-center items-center p-6">
         <div class="max-w-xs bg-white/80 backdrop-blur-md rounded-[30px] shadow-xl flex flex-col text-center items-center p-8 relative border border-white/50">
@@ -308,15 +290,6 @@
                                                      }, { passive: false });
         // 雙擊縮放
         let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
-                                                    
-        
-    // 📱 手機旋轉提示 ORIENTATION NOTI
-    function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
-                                        const isLandscape = window.innerWidth > window.innerHeight; const isMobileOrTablet = window.innerWidth < 1024;
-                                        if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
-    window.addEventListener('resize', handleOrientationChange);
-    window.addEventListener('orientationchange', handleOrientationChange);
-    handleOrientationChange();
     
 </script>
 
