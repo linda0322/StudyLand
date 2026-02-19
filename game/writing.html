@@ -38,6 +38,8 @@
             .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
 
         /* ⚒️ 操作 OPERATION */
+            /* 🙈 隱藏圖層 HIDDEN */
+            .hidden {display: none !important;}
             /* 🫵🏻 手勢禁止 NO GESTURE */
             .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
             /* 🔘 按鈕 BUTTON */
@@ -161,7 +163,7 @@
             <!-- ⬅️ 左邊 LEFT--><div class="flex items-center gap-2">
                 <div class="glass-panel rounded-full shadow-lg flex items-center gap-3 px-4 py-2">
                     <span class="font-cubic text-slate-500 text-[10px] thin-border uppercase tracking-wider">筆劃</span>
-                    <span id="current-strokes" class="font-cubic text-slate-700 text-2xl thin-border">0</span>
+                    <span id="current-strokes" class="font-cubic text-slate-700 text-xl thin-border">0</span>
                     <span id="target-strokes" class="bg-slate-100 rounded-full font-cubic text-slate-400 text-xs thin-border px-2 py-0.5">/ 0</span>
                 </div>
             </div>   
@@ -171,16 +173,16 @@
             </div>
         </div>
 
-        <!-- 畫布 -->
-        <div class="canvas-container w-full aspect-square mb-8">
-            <div id="watermark" class="absolute inset-0 flex items-center justify-center text-[min(55vw,240px)] text-slate-100 font-iansui pointer-events-none select-none"></div>
+        <!-- 📝 畫布 CANVAS -->
+        <div class="canvas-container w-full max-w-[450px] aspect-square mb-8">
+            <div id="watermark" class="pointer-events-none select-none absolute inset-0 font-iansui text-slate-100 text-[min(55vw,240px)] flex items-center justify-center"></div>
             <canvas id="main-canvas"></canvas>
-            <div id="success-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden z-[50]">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#10B981"/><path d="M8 12L11 15L16 9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div id="success-overlay" class="hidden pointer-events-none z-[50] absolute inset-0 flex items-center justify-center">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#10B981"/><path d="M8 12L11 15L16 9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
         </div>
 
-        <!-- 底部 Scroller -->
+        <!-- 🔠 底部 SCROLLBAR -->
         <div class="glass-panel p-4 rounded-3xl shadow-xl w-full max-w-md">
             <div id="progress-text" class="text-[10px] text-slate-500 font-cubic thin-border mb-1 text-center">學習進度：0 / 0</div>
             <div class="progress-bar-container !mb-6 !mt-3 !h-[6px]">
