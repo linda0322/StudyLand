@@ -74,9 +74,9 @@
                        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);
                        display: none; align-items: center; justify-content: center; padding: 16px;}
         #word-gallery.active {display: flex;}
-        
-        .scrollbar-hide::-webkit-scrollbar {display: none;}
-        .scrollbar-hide {-ms-overflow-style: none; scrollbar-width: none;}
+            /* 🎚️ 捲軸 SCROLLBAR */
+            .scrollbar-hide::-webkit-scrollbar {display: none;}
+            .scrollbar-hide {-ms-overflow-style: none; scrollbar-width: none;}
         
         #sync-status {transition: opacity 0.3s; opacity: 0;}
         #sync-status.show {opacity: 1;}
@@ -133,16 +133,15 @@
             </div>
             <div class="flex flex-col gap-2 mb-6">
                 <div class="relative w-full">
-                    <input type="text" id="gallery-search" placeholder="搜尋" class="w-full bg-slate-100 border-none rounded-2xl px-4 py-3 pl-10 text-sm font-cubic outline-none focus:ring-2 focus:ring-amber-200">
+                    <input type="text" id="gallery-search" placeholder="搜尋" class="w-full border-none bg-slate-100 rounded-2xl font-cubic text-sm px-4 py-3 pl-10 outline-none focus:ring-2 focus:ring-sky-200">
                     <svg class="absolute left-3 top-3.5 text-slate-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
                 </div>
-                <select id="gallery-category-filter" class="w-full h-12 bg-slate-100 border-none rounded-2xl px-4 py-3 text-sm font-cubic text-slate-500 outline-none">
+                <select id="gallery-category-filter" class="w-full h-12 bg-slate-100 border-none rounded-2xl font-cubic text-slate-500 text-sm px-4 py-3 outline-none">
                     <option value="all">所有主題</option>
                 </select>
             </div>
-
-            <div id="gallery-grid" class="grid grid-cols-4 gap-3 overflow-y-auto pr-1 scrollbar-hide"></div>
-            <div class="mt-6 text-center text-[10px] text-slate-400 font-cubic thin-border uppercase tracking-widest">點擊字卡切換練習</div>
+            <div id="gallery-grid" class="scrollbar-hide overflow-y-auto grid grid-cols-4 gap-3 pr-1"></div>
+            <div class="font-cubic text-slate-400 text-[10px] thin-border uppercase tracking-widest text-center mt-6">點擊字卡切換練習</div>
         </div>
     </div>
     
