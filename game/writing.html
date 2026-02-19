@@ -36,9 +36,6 @@
             .font-iansui { font-family: 'Iansui', serif; }
             .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
             .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
-            /* 🕹️ 加載遮罩 LOADING OVERLAY */
-            #loading-overlay {z-index: 6000; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
-            #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
 
         /* ⚒️ 操作 OPERATION */
             /* 🙈 隱藏圖層 HIDDEN */
@@ -53,7 +50,8 @@
             /* 🍞 通知 TOAST */
             #toast-container.show {opacity: 1; transform: translate(-50%, 0);}
 
-       
+        #sync-status {transition: opacity 0.3s; opacity: 0;}
+        #sync-status.show {opacity: 1;}
         
         .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
         #watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(0, 0, 0, 0.05); z-index: 1; pointer-events: none;}
@@ -101,9 +99,6 @@
         <h2 class="font-cubic text-white text-xl thick-border tracking-wider">旋轉螢幕以繼續遊戲</h2>
     </div>  
 
-    <!-- 🕹️ 加載遮罩 LOADING OVERLAY -->
-    <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">🕹️</div><div id="loading-text" class="font-cubic text-white text-xl thick-border tracking-widest">加載中</div></div>
-
     <!-- 🔝 頂欄 TOP --><nav class="w-full max-w-[550px] flex justify-between py-8">
         <!-- ⬅️ 左邊 LEFT--><div class="flex items-center gap-2">
             <!-- 📛 用户名稱 USERNAME -->
@@ -119,6 +114,10 @@
             <button id="gallery-trigger-btn" class="no-touch bg-[#1dc5fd]/50 rounded-full shadow-md text-white p-2" title="字庫">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
             </button>
+        </div>
+        <!-- 🔄 同步狀態 SYNC NOTI -->  
+        <div id="sync-status" class="pointer-events-none fixed top-4 right-6 z-[100] bg-black/50 rounded-full shadow-lg flex items-center gap-2 px-4 py-2">
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div><span id="sync-text" class="font-cubic text-xs thin-border text-white">同步中</span>
         </div>
     </nav>
 
@@ -192,8 +191,6 @@
 
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxO9H_GCvLXrm7eIf2vdUz1I8mwYc9jHoFgzvYJd8fA64dQzlYN3f4VKBTm-nBIXCi/exec';
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const loadingText = document.getElementById('loading-text');
     
     let masterLibrary = [];
     let userCharacters = [];
@@ -208,6 +205,7 @@
     const progressFill = document.getElementById('progress-fill');
     const progressChar = document.getElementById('progress-character');
     const progressText = document.getElementById('progress-text');
+    const syncStatus = document.getElementById('sync-status');
 
     async function initApp() {
         const username = localStorage.getItem('studyLandUser');
@@ -216,7 +214,7 @@
 
         setupCanvas();
         
-        try {loadingOverlay.classList.add('show'); loadingText.innerText = "加載中";
+        try {syncStatus.classList.add('show');
             // 字庫
             const libRes = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchLibrary' }) });
             masterLibrary = await libRes.json();
@@ -238,7 +236,7 @@
             if (masterLibrary.length === 0) masterLibrary = [{char: "例", strokes: 8}];
             userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));
         } finally {
-            loadingOverlay.classList.remove('show');
+            syncStatus.classList.remove('show');
             renderGame();
             renderSteps();
         }
@@ -409,7 +407,7 @@
         
     async function saveProgress() {
         const username = localStorage.getItem('studyLandUser');
-        loadingOverlay.classList.add('show'); loadingText.innerText = "加載中";
+        syncStatus.classList.add('show');
         try {
             await fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -420,7 +418,7 @@
                 })
             });
         } catch (e) { console.error("儲存失敗:", e); }
-        loadingOverlay.classList.remove('show');
+        syncStatus.classList.remove('show');
     }
 
     function showSuccess() {
