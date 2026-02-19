@@ -4,60 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>單字練習</title>
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1dJz8_GceDg8TAGf3ngz85sHSBlLTbQe5">
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1ETlFc9Yn4fh5_hSKseAa5tfTXzpE4Dr4">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/man_icon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        @font-face {
-            font-family: 'Cubic11';
-            src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');
-        }
-        @font-face {
-            font-family: 'Iansui';
-            src: url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@9d9a8e68bf1e138dd91e562eeff28d95bca33196/fonts/ttf/Iansui-Regular.ttf') format('truetype');
-        }
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background: #1dc5fd url('https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/Sky.png') no-repeat center / cover;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23BAE6FF'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, auto;
-            overflow-x: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-            overscroll-behavior: none;
-            touch-action: none;
-        }
-        a, button, [role="button"] {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;
-        }
-        
-        /* 手機旋轉提示 */
-        #orientation-warning {
-            display: none; position: fixed; inset: 0;
-            background: #1dc5fd; z-index: 9999;
-            flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center;
-        }
-        @media screen and (orientation: landscape) and (max-width: 932px) {
-            #orientation-warning { display: flex; }
-            #game-stage { display: none; }
-        }
-        @keyframes wobble {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            75% { transform: rotate(-15deg); }
-            100% { transform: rotate(0deg); }
-        }
-        .wobble-img {animation: wobble 1s ease-in-out infinite;}
-        
-        .font-cubic { font-family: 'Cubic11', sans-serif; }
-        .font-iansui { font-family: 'Iansui', serif; }
-        
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
-        .thin-border { -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; }
-        .thick-border { -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; }
-        
+        /* 🌼 樣式 STYLE */
+            /* 🥽 玻璃框 GLASS PANEL */
+            .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
+            /* 🔠 字體 FONTS */
+            @font-face {font-family: 'Cubic11'; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');}
+            @font-face {font-family: 'Iansui'; src: url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@9d9a8e68bf1e138dd91e562eeff28d95bca33196/fonts/ttf/Iansui-Regular.ttf') format('truetype');}
+            .font-cubic {font-family: 'Cubic11', sans-serif;}
+            .font-iansui { font-family: 'Iansui', serif; }
+            .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+            .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+        /* 🏞️ 整體 OVERALL */
+        body {min-height: 100vh; min-height: -webkit-fill-available; overflow-x: hidden;
+              user-select: none; -webkit-user-select: none; overscroll-behavior: none; touch-action: none;
+              font-family: 'Noto Sans TC', sans-serif;
+              background: #1dc5fd url('https://lh3.googleusercontent.com/d/1WZPUn9UYK1xsLwXmo4QfSr1LG2-poCxc') no-repeat center / cover;
+              cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
+             }
+        a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+
+        /* 📲 手機旋轉提示 ORIENTATION NOTI */
+        #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999; background-color: #1dc5fd; flex-direction: column; align-items: center; justify-content: center;}
+        @media screen and (max-width: 1000px) and (orientation: landscape) {#orientation-noti {display: flex !important;} body {overflow: hidden !important;}}
+        @keyframes phone-portrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
+        .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
+       
         .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
         #watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(0, 0, 0, 0.05); z-index: 1; pointer-events: none;}
         canvas { touch-action: none; border-radius: 2.5rem; background: transparent; position: relative; z-index: 2; -webkit-touch-callout: none;}
@@ -73,46 +49,35 @@
         #step-container {display: flex; gap: 0.75rem; overflow-x: auto; overflow-y: hidden; white-space: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 8px; width: 100%;}
         #step-container::-webkit-scrollbar {height: 6px; display: block;}
         #step-container::-webkit-scrollbar-thumb {background: rgba(56, 192, 255, 0.5); border-radius: 10px;}
-        .step-container {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='white'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer;}
-        .step-container:hover {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='%23BAE6FF'><path d='M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.3-1.7-4.1-3.9-4.4-.5-3.4-3.4-6.1-7-6.1-3.1 0-5.7 2-6.7 4.8C2.1 9.4 0 11.4 0 14c0 3 2.5 5.5 5.5 5.5h12z'/></svg>") 16 16, pointer !important;}
+        .step-container {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;}
+        .step-container:hover {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
        
         .step-btn.active { background-color: #38C0FF; color: white; border-color: white; }
-        .step-btn.completed::after { content: '✓'; position: absolute; top: -2px; right: -2px; background: #10B981; color: white; width: 14px; height: 14px; border-radius: 50%; font-size: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid white; }
+        .step-btn.completed::after {content: '✓'; position: absolute; top: -2px; right: -2px; background: #10B981; color: white; width: 14px; height: 14px; border-radius: 50%; font-size: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid white;}
 
         #gallery-overlay {position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 1rem;}
-        #gallery-overlay.active { display: flex; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        #gallery-overlay.active {display: flex;}
+        .scrollbar-hide::-webkit-scrollbar {display: none;}
+        .scrollbar-hide {-ms-overflow-style: none; scrollbar-width: none;}
         
-        #sync-status { transition: opacity 0.3s; opacity: 0; }
-        #sync-status.show { opacity: 1; }
-
-        #toast-container.show {
-        opacity: 1;
-        transform: translate(-50%, 0);
-        }
-        .shake {
-            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-        }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
+        #sync-status {transition: opacity 0.3s; opacity: 0;}
+        #sync-status.show {opacity: 1;}
+        #toast-container.show {opacity: 1; transform: translate(-50%, 0);}
+        .shake {animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;}
+        @keyframes shake {10%, 90% {transform: translate3d(-1px, 0, 0);} 20%, 80% {transform: translate3d(2px, 0, 0);} 30%, 50%, 70% {transform: translate3d(-4px, 0, 0);} 40%, 60% {transform: translate3d(4px, 0, 0);}}
         
     </style>
 </head>
 
 <body class="flex flex-col items-center px-4 pt-4 pb-8">
-    
-    <!-- 手機旋轉提示 -->
-    <div id="orientation-warning" class="font-cubic">
-        <img src="https://raw.githubusercontent.com/linda0322/StudyLand/refs/heads/main/image/NPC.gif" class="w-24 mb-4 wobble-img">
-        <h2 class="text-xl thick-border">旋轉畫面以繼續練習</h2>
+
+<!-- 📲 手機旋轉提示 ORIENTATION NOTI -->
+<div id="orientation-noti">
+    <div class="animate-phone-portrait w-20 h-20 flex items-center justify-center mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
     </div>
+    <h2 class="font-cubic text-white text-xl thick-border tracking-wider">旋轉螢幕以繼續遊戲</h2>
+</div>    
 
     <nav class="w-full max-w-md flex justify-between items-end mb-6 mt-2 px-2">
         <div class="flex items-center gap-2">
@@ -551,8 +516,14 @@
     canvas.addEventListener('contextmenu', e => e.preventDefault());
 
     window.onload = initApp;
-</script>
-
     
+    // 📲 手機旋轉提示 ORIENTATION NOTI
+    function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
+                                        const isLandscape = window.innerWidth > window.innerHeight; const isMobileOrTablet = window.innerWidth < 1024;
+                                        if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    handleOrientationChange();
+</script>
 </body>
 </html>
