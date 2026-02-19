@@ -188,7 +188,7 @@
 </div>
 
 <script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyxO9H_GCvLXrm7eIf2vdUz1I8mwYc9jHoFgzvYJd8fA64dQzlYN3f4VKBTm-nBIXCi/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxO9H_GCvLXrm7eIf2vdUz1I8mwYc9jHoFgzvYJd8fA64dQzlYN3f4VKBTm-nBIXCi/exec';
     
     let masterLibrary = [];
     let userCharacters = [];
@@ -215,11 +215,11 @@
         try {
             syncStatus.classList.add('show');
             // 字庫
-            const libRes = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchLibrary' }) });
+            const libRes = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'fetchLibrary' }) });
             masterLibrary = await libRes.json();
 
             // 進度
-            const progRes = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'load', userId: username }) });
+            const progRes = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'load', userId: username }) });
             const progData = await progRes.text();
 
             if (progData !== "NoData" && progData.trim() !== "") {
@@ -408,7 +408,7 @@
         const username = localStorage.getItem('studyLandUser');
         syncStatus.classList.add('show');
         try {
-            await fetch(GAS_URL, {
+            await fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify({
                     action: 'save',
