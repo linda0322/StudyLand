@@ -224,7 +224,7 @@
     
     function setupCanvas() {const container = canvas.parentElement;
                             canvas.width = container.clientWidth; canvas.height = container.clientHeight; 
-                            ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = canvas.width * 0.035; ctx.strokeStyle = '#1e293b';}
+                            ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = canvas.width * 0.025; ctx.strokeStyle = '#1e293b';}
 
     function renderGame() {if (!userCharacters[currentIndex]) return;
                            const current = userCharacters[currentIndex];
@@ -276,7 +276,7 @@
                               for (let i = 3; i < userData.length; i += 4) {const userAlpha = userData[i]; const stdAlpha = standardData[i];
                                                                             if (stdAlpha > 30) {totalStandardPixels++; if (userAlpha > 30) hitPixels++;} 
                                                                             else {if (userAlpha > 30) overflowPixels++;}}
-                              const hitRate = hitPixels / totalStandardPixels; const overflowRate = overflowPixels / (w * h); return hitRate > 0.3 && overflowRate < 0.1;}
+                              const hitRate = hitPixels / totalStandardPixels; const overflowRate = overflowPixels / (w * h); return hitRate > 0.3 && overflowRate < 0.08;}
 
     function showToast(message) {const container = document.getElementById('toast-container'); const msgElem = document.getElementById('toast-msg'); const canvasContainer = document.querySelector('.canvas-container');
                                  msgElem.innerText = message; container.classList.add('show'); canvasContainer.classList.add('shake');
