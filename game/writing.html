@@ -278,9 +278,6 @@
                              }
                                                                                                              
                                                                                                             
-    document.getElementById('gallery-button').onclick = () => {renderGallery(); galleryOverlay.classList.add('active');};
-    document.getElementById('close-gallery').onclick = () => galleryOverlay.classList.remove('active');
-    document.getElementById('gallery-search').oninput = renderGallery;
     document.getElementById('clear-button').onclick = () => { renderGame(); };
     document.getElementById('hint-button').onclick = () => { if(writer) writer.animateCharacter(); };
 
