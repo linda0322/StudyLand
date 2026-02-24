@@ -60,7 +60,7 @@
         .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
         #hanzi-target { width: 100%; height: 100%; }
         #hanzi-target svg path[bundleid] {stroke-width: 80px !important;}
-        #hanzi-target svg path {stroke-width: 30px !important; stroke-linecap: round !important; stroke-linejoin: round !important;}
+        #hanzi-target svg path {stroke-width: 80px !important; stroke-linecap: round !important; stroke-linejoin: round !important;}
         #hanzi-target svg .hanzi-writer-stroke-outline {stroke-width: 80px !important;}
         
         #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -225,7 +225,7 @@
                                                                                       padding: 25,
                                                                                       showOutline: true,
                                                                                       strokeAnimationSpeed: 1, delayBetweenStrokes: 200,
-                                                                                      strokeColor: '#1e293b', outlineColor: '#f1f5f9', drawingColor: '#38C0FF', strokeWidth: 3, drawingThickness: 30, strokeCap: 'round'});
+                                                                                      strokeColor: '#1e293b', outlineColor: '#f1f5f9', drawingColor: '#38C0FF', strokeWidth: 20, drawingThickness: 50, strokeCap: 'round'});
 
                            writer.quiz({onComplete: function(summary) {userCharacters[currentIndex].completed = true; showSuccess(); saveProgress();},
                                         onMistake: function(strokeData) {showToast("筆劃錯誤");}});}
