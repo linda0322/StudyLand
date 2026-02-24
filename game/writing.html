@@ -270,7 +270,7 @@
                                                                                                              card.innerHTML = `
                                                                                                              <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
                                                                                                              `;
-                                                                                                             card.onclick = () => {currentIndex = index; clearCanvas(); renderGame(); renderSteps();
+                                                                                                             card.onclick = () => {currentIndex = index; renderGame(); renderSteps();
                                                                                                                                    galleryOverlay.classList.remove('active');
                                                                                                                                    const targetStep = stepContainer.children[index];
                                                                                                                                    if (targetStep) targetStep.scrollIntoView({behavior: 'smooth', inline: 'center'});};
