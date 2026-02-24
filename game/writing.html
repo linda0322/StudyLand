@@ -222,7 +222,7 @@
                                                                                       padding: 25,
                                                                                       showOutline: true,
                                                                                       strokeAnimationSpeed: 1, delayBetweenStrokes: 200,
-                                                                                      strokeColor: '#1e293b', outlineColor: '#f1f5f9', drawingColor: '#38C0FF', drawingThickness: 35});
+                                                                                      strokeColor: '#1e293b', outlineColor: '#f1f5f9', drawingColor: '#38C0FF', drawingThickness: 50});
 
                            writer.quiz({onComplete: function(summary) {userCharacters[currentIndex].completed = true; showSuccess(); saveProgress();},
                                         onMistake: function(strokeData) {showToast("筆劃錯誤");}});}
@@ -281,10 +281,27 @@
     document.getElementById('clear-button').onclick = () => { renderGame(); };
     document.getElementById('hint-button').onclick = () => { if(writer) writer.animateCharacter(); };
 
-    document.getElementById('gallery-button').addEventListener('click', () => {renderGallery(); galleryOverlay.classList.add('active');});
-    document.getElementById('close-gallery').addEventListener('click', () => {galleryOverlay.classList.remove('active');});
-    gallerySearch.addEventListener('input', renderGallery); 
-    galleryCategoryFilter.addEventListener('change', renderGallery);
+    // 在腳本最後方統一處理事件
+document.addEventListener('DOMContentLoaded', () => {
+    const gBtn = document.getElementById('gallery-button');
+    const cBtn = document.getElementById('close-gallery');
+    const gSearch = document.getElementById('gallery-search');
+    const gFilter = document.getElementById('gallery-category-filter');
+    const gOverlay = document.getElementById('word-gallery');
+
+    gBtn.onclick = () => {
+        renderGallery(); 
+        gOverlay.classList.add('active');
+    };
+
+    cBtn.onclick = () => {
+        gOverlay.classList.remove('active');
+    };
+
+    // 這裡確保輸入或切換選單時，畫面會立刻重繪
+    gSearch.oninput = renderGallery;
+    gFilter.onchange = renderGallery;
+});
 
     function showToast(message) {
         const container = document.getElementById('toast-container');
