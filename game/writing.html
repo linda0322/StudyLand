@@ -27,18 +27,29 @@
             @keyframes phone-portrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
             .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
         
-        .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
-        @font-face {font-family: 'Cubic11'; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');}
-        @font-face {font-family: 'Iansui'; src: url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@9d9a8e68bf1e138dd91e562eeff28d95bca33196/fonts/ttf/Iansui-Regular.ttf') format('truetype');}
-        .font-cubic {font-family: 'Cubic11', sans-serif;}
-        .font-iansui { font-family: 'Iansui', serif; }
-        .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
-        .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+        /* 🌼 樣式 STYLE */
+            /* 🥽 玻璃框 GLASS PANEL */
+            .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
+            /* 🔠 字體 FONTS */
+            @font-face {font-family: 'Cubic11'; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype');}
+            @font-face {font-family: 'Iansui'; src: url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@9d9a8e68bf1e138dd91e562eeff28d95bca33196/fonts/ttf/Iansui-Regular.ttf') format('truetype');}
+            .font-cubic {font-family: 'Cubic11', sans-serif;}
+            .font-iansui { font-family: 'Iansui', serif; }
+            .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+            .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
 
-        .hidden {display: none !important;}
-        .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
-        button {transition: transform 0.1s ease;} 
-        #toast-container.show {opacity: 1; transform: translate(-50%, 0);}
+        /* ⚒️ 操作 OPERATION */
+            /* 🙈 隱藏圖層 HIDDEN */
+            .hidden {display: none !important;}
+            /* 🫵🏻 手勢禁止 NO GESTURE */
+            .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
+            /* 🔘 按鈕 BUTTON */
+            a, button, [role="button"] {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+            button {transition: transform 0.1s ease;} 
+            @media (hover: hover) {a:hover, button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
+            a:active, button:active, [role="button"]:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
+            /* 🍞 通知 TOAST */
+            #toast-container.show {opacity: 1; transform: translate(-50%, 0);}
 
         #sync-status {transition: opacity 0.3s; opacity: 0;}
         #sync-status.show {opacity: 1;}
