@@ -50,6 +50,9 @@
             a:active, button:active, [role="button"]:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
             /* 🍞 通知 TOAST */
             #toast-container.show {opacity: 1; transform: translate(-50%, 0);}
+            /* 🎚️ 捲軸 SCROLLBAR */
+            .scrollbar-hide::-webkit-scrollbar {display: none;}
+            .scrollbar-hide {-ms-overflow-style: none; scrollbar-width: none;}
 
         #sync-status {transition: opacity 0.3s; opacity: 0;}
         #sync-status.show {opacity: 1;}
