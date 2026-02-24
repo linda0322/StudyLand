@@ -10,7 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
     <style>
-        /* 🏞️ 保留原有樣式 */
         body {min-height: 100vh; min-height: -webkit-fill-available; overflow-x: hidden;
               overscroll-behavior: none; -webkit-user-select: none; touch-action: none;
               font-family: 'Noto Sans TC', sans-serif; background-color: #1dc5fd;            
@@ -41,9 +40,7 @@
         #sync-status {transition: opacity 0.3s; opacity: 0;}
         #sync-status.show {opacity: 1;}
         
-        /* 🖌️ 新的 Canvas 容器樣式 */
         .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
-        /* Hanzi Writer 會填滿這個 div */
         #hanzi-target { width: 100%; height: 100%; }
 
         #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -118,14 +115,7 @@
     </div>
 
     <main class="w-full max-w-[550px] flex flex-col items-center">
-        <div class="w-full max-w-[550px] flex justify-between mb-4">
-            <div class="flex items-center gap-2">
-                <div class="glass-panel rounded-full shadow-lg flex items-center gap-3 px-4 py-2">
-                    <span class="font-cubic text-slate-500 text-[10px] thin-border uppercase tracking-wider">進度</span>
-                    <span id="current-strokes" class="font-cubic text-slate-700 text-xl thin-border">0</span>
-                    <span id="target-strokes" class="bg-slate-100 rounded-full font-cubic text-slate-400 text-xs thin-border px-2 py-0.5">/ 0</span>
-                </div>
-            </div>   
+        <div class="w-full max-w-[550px] flex justify-end mb-4">
             <div class="flex items-center gap-2">
                 <button id="hint-button" class="px-4 py-2 glass-panel rounded-full shadow-md font-cubic text-sky-500 text-xs thin-border">提示</button>
                 <button id="clear-button" class="px-4 py-2 glass-panel rounded-full shadow-md font-cubic text-slate-500 text-xs thin-border">重寫</button>
@@ -197,8 +187,6 @@
     function renderGame() {
         if (!userCharacters[currentIndex]) return;
         const current = userCharacters[currentIndex];
-        document.getElementById('target-strokes').innerText = "/ " + (current.strokes || "?");
-        document.getElementById('current-strokes').innerText = "0";
         document.getElementById('hanzi-target').innerHTML = '';
         
         writer = HanziWriter.create('hanzi-target', current.char, {
@@ -214,9 +202,6 @@
         });
 
         writer.quiz({
-            onCorrectStroke: function(strokeData) {
-                document.getElementById('current-strokes').innerText = strokeData.strokeNum + 1;
-            },
             onComplete: function(summary) {
                 userCharacters[currentIndex].completed = true;
                 showSuccess();
@@ -245,11 +230,9 @@
         progressText.innerText = `學習進度：${completedCount} / ${userCharacters.length}`;
     }
 
-    // --- 📔 字庫邏輯補回 ---
     function renderGallery() {
         galleryGrid.innerHTML = '';
         const searchTerm = document.getElementById('gallery-search').value.toLowerCase();
-        
         masterLibrary.forEach((item, index) => {
             if (item.char.includes(searchTerm)) {
                 const card = document.createElement('div');
@@ -266,15 +249,12 @@
         });
     }
 
-    // 綁定字庫按鈕
     document.getElementById('gallery-trigger-btn').onclick = () => {
         renderGallery();
         galleryOverlay.classList.add('active');
     };
     document.getElementById('close-gallery').onclick = () => galleryOverlay.classList.remove('active');
     document.getElementById('gallery-search').oninput = renderGallery;
-
-    // --- 其他功能 ---
     document.getElementById('clear-button').onclick = () => { renderGame(); };
     document.getElementById('hint-button').onclick = () => { if(writer) writer.animateCharacter(); };
 
