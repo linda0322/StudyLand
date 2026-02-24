@@ -53,9 +53,9 @@
             /* 🎚️ 捲軸 SCROLLBAR */
             .scrollbar-hide::-webkit-scrollbar {display: none;}
             .scrollbar-hide {-ms-overflow-style: none; scrollbar-width: none;}
-
-        #sync-status {transition: opacity 0.3s; opacity: 0;}
-        #sync-status.show {opacity: 1;}
+            /* 🔄 同步 SYNC */
+            #sync-status {transition: opacity 0.3s; opacity: 0;}
+            #sync-status.show {opacity: 1;}
         
         .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
         #hanzi-target { width: 100%; height: 100%; }
@@ -74,8 +74,6 @@
 
         #word-gallery {z-index: 200; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 16px;}
         #word-gallery.active {display: flex;}
-        .shake {animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;}
-        @keyframes shake {10%, 90% {transform: translate3d(-1px, 0, 0);} 20%, 80% {transform: translate3d(2px, 0, 0);} 30%, 50%, 70% {transform: translate3d(-4px, 0, 0);} 40%, 60% {transform: translate3d(4px, 0, 0);}}        
     </style>
 </head>
 <body>
@@ -100,7 +98,7 @@
             <a href="../index.html" class="no-touch glass-panel rounded-full shadow-md text-slate-600 p-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></a>
         </div>
         <!-- ➡️ 右邊 RIGHT --><div class="flex items-center gap-2">
-            <button id="gallery-trigger-btn" class="no-touch bg-[#1dc5fd]/50 rounded-full shadow-md text-white p-2">
+            <button id="gallery-button" class="no-touch bg-[#1dc5fd]/50 rounded-full shadow-md text-white p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
             </button>
         </div>
@@ -244,29 +242,30 @@
         progressText.innerText = `學習進度：${completedCount} / ${userCharacters.length}`;
     }
 
-    function renderGallery() {
-        galleryGrid.innerHTML = '';
-        const searchTerm = document.getElementById('gallery-search').value.toLowerCase();
-        masterLibrary.forEach((item, index) => {
-            if (item.char.includes(searchTerm)) {
-                const card = document.createElement('div');
-                card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer border-2 ${index === currentIndex ? 'border-sky-400 bg-sky-50' : 'border-slate-100 bg-slate-50'}`;
-                card.innerHTML = `<span class="text-2xl font-iansui text-slate-700">${item.char}</span>`;
-                card.onclick = () => {
-                    currentIndex = index;
-                    renderGame();
-                    renderSteps();
-                    galleryOverlay.classList.remove('active');
-                };
-                galleryGrid.appendChild(card);
-            }
-        });
-    }
-
-    document.getElementById('gallery-trigger-btn').onclick = () => {
-        renderGallery();
-        galleryOverlay.classList.add('active');
-    };
+    function renderGallery() {const searchTerm = document.getElementById('gallery-search').value.toLowerCase(); const categoryTerm = document.getElementById('gallery-category-filter').value; 
+                              if (galleryCategoryFilter.options.length === 1 && masterLibrary.length > 0) {const allCats = []; masterLibrary.forEach(item => {if (item.categories) allCats.push(...item.categories);});
+                                                                                                           const uniqueCategories = [...new Set(allCats)]; uniqueCategories.forEach(cat => {const opt = document.createElement('option');
+                                                                                                                                                                                            opt.value = opt.innerText = cat; 
+                                                                                                                                                                                            galleryCategoryFilter.appendChild(opt);});}
+                              galleryGrid.innerHTML = '';
+                              masterLibrary.forEach((item, index) => {const itemCategories = item.categories || ["未分類"];
+                                                                      const matchesChar = item.char.includes(searchTerm);
+                                                                      const matchesEnglish = item.en ? String(item.en).toLowerCase().includes(searchTerm) : false;
+                                                                      const matchesSearch = matchesChar || matchesEnglish;
+                                                                      const matchesCategory = categoryTerm === 'all' || itemCategories.includes(categoryTerm);
+                                                                      if (matchesSearch && matchesCategory) {const isCompleted = userCharacters[index]?.completed; 
+                                                                                                             const card = document.createElement('div');
+                                                                                                             card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
+                                                                                                             index === currentIndex ? 'border-amber-400 bg-amber-50' : 'border-slate-100 bg-slate-50 hover:bg-white'}`;
+                                                                                                             card.innerHTML = `
+                                                                                                             <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
+                                                                                                             `;
+                                                                                                             card.onclick = () => {currentIndex = index; renderGame(); renderSteps(); galleryOverlay.classList.remove('active');};
+                                                                                                             galleryGrid.appendChild(card);}});
+                              }
+                                                                                                             
+                                                                                                            
+    document.getElementById('gallery-button').onclick = () => {renderGallery(); galleryOverlay.classList.add('active');};
     document.getElementById('close-gallery').onclick = () => galleryOverlay.classList.remove('active');
     document.getElementById('gallery-search').oninput = renderGallery;
     document.getElementById('clear-button').onclick = () => { renderGame(); };
