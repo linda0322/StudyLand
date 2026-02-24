@@ -242,7 +242,8 @@
         progressText.innerText = `學習進度：${completedCount} / ${userCharacters.length}`;
     }
 
-    function renderGallery() {const searchTerm = document.getElementById('gallery-search').value.toLowerCase(); const categoryTerm = document.getElementById('gallery-category-filter').value; 
+    const galleryCategoryFilter = document.getElementById('gallery-category-filter');
+    function renderGallery() {const searchTerm = document.getElementById('gallery-search').value.toLowerCase(); const categoryTerm = galleryCategoryFilter.value;
                               if (galleryCategoryFilter.options.length === 1 && masterLibrary.length > 0) {const allCats = []; masterLibrary.forEach(item => {if (item.categories) allCats.push(...item.categories);});
                                                                                                            const uniqueCategories = [...new Set(allCats)]; uniqueCategories.forEach(cat => {const opt = document.createElement('option');
                                                                                                                                                                                             opt.value = opt.innerText = cat; 
