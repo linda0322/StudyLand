@@ -72,7 +72,7 @@
         <h2 class="font-cubic text-white text-xl thick-border tracking-wider">旋轉螢幕以繼續遊戲</h2>
     </div>  
 
-    <nav class="w-full max-w-[550px] flex justify-between mt-4 mb-4">
+    <nav class="w-full max-w-[450px] flex justify-between mt-4 mb-4">
         <div class="flex items-center gap-2">
             <div class="glass-panel rounded-full shadow-md flex items-center px-4 py-1.5 gap-2">
                 <span class="font-cubic text-slate-500 text-[10px] thin-border tracking-wider">玩家</span><span id="user-display-name" class="font-cubic text-slate-700 text-sm thin-border">載入中...</span>
@@ -117,8 +117,8 @@
     <main class="w-full max-w-[450px] flex flex-col items-center">
         <div class="w-full max-w-[550px] flex justify-end mb-4">
             <div class="flex items-center gap-2">
-                <button id="hint-button" class="px-4 py-2 glass-panel rounded-full shadow-md font-cubic text-sky-500 text-xs thin-border">提示</button>
-                <button id="clear-button" class="px-4 py-2 glass-panel rounded-full shadow-md font-cubic text-slate-500 text-xs thin-border">重寫</button>
+                <button id="hint-button" class="px-4 py-2 glass-panel rounded-full shadow-md font-cubic text-sky-500 text-xs thin-border">示範</button>
+                <button id="clear-button" class="px-4 py-2 glass-panel rounded-full shadow-md font-cubic text-sky-500 text-xs thin-border">重寫</button>
             </div>
         </div>
 
@@ -184,34 +184,16 @@
         }
     }
 
-    function renderGame() {
-        if (!userCharacters[currentIndex]) return;
-        const current = userCharacters[currentIndex];
-        document.getElementById('hanzi-target').innerHTML = '';
-        
-        writer = HanziWriter.create('hanzi-target', current.char, {
-            width: document.getElementById('hanzi-target').clientWidth,
-            height: document.getElementById('hanzi-target').clientHeight,
-            padding: 25,
-            showOutline: true,
-            strokeAnimationSpeed: 1,
-            delayBetweenStrokes: 200,
-            strokeColor: '#1e293b',
-            outlineColor: '#f1f5f9',
-            drawingColor: '#38C0FF'
-        });
+    function renderGame() {if (!userCharacters[currentIndex]) return; const current = userCharacters[currentIndex]; document.getElementById('hanzi-target').innerHTML = '';
+                           writer = HanziWriter.create('hanzi-target', current.char, {width: document.getElementById('hanzi-target').clientWidth,
+                                                                                      height: document.getElementById('hanzi-target').clientHeight,
+                                                                                      padding: 25,
+                                                                                      showOutline: true,
+                                                                                      strokeAnimationSpeed: 1, delayBetweenStrokes: 200,
+                                                                                      strokeColor: '#1e293b', outlineColor: '#f1f5f9', drawingColor: '#38C0FF'});
 
-        writer.quiz({
-            onComplete: function(summary) {
-                userCharacters[currentIndex].completed = true;
-                showSuccess();
-                saveProgress();
-            },
-            onMistake: function(strokeData) {
-                showToast("筆劃錯誤，再試一次");
-            }
-        });
-    }
+                           writer.quiz({onComplete: function(summary) {userCharacters[currentIndex].completed = true; showSuccess(); saveProgress();},
+                                        onMistake: function(strokeData) {showToast("筆劃錯誤");}});}
 
     function renderSteps() {
         stepContainer.innerHTML = '';
