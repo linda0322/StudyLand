@@ -242,12 +242,21 @@
         progressText.innerText = `學習進度：${completedCount} / ${userCharacters.length}`;
     }
 
+    const galleryOverlay = document.getElementById('word-gallery');
+    const galleryGrid = document.getElementById('gallery-grid');
+    const gallerySearch = document.getElementById('gallery-search');
     const galleryCategoryFilter = document.getElementById('gallery-category-filter');
-    function renderGallery() {const searchTerm = document.getElementById('gallery-search').value.toLowerCase(); const categoryTerm = galleryCategoryFilter.value;
-                              if (galleryCategoryFilter.options.length === 1 && masterLibrary.length > 0) {const allCats = []; masterLibrary.forEach(item => {if (item.categories) allCats.push(...item.categories);});
-                                                                                                           const uniqueCategories = [...new Set(allCats)]; uniqueCategories.forEach(cat => {const opt = document.createElement('option');
-                                                                                                                                                                                            opt.value = opt.innerText = cat; 
-                                                                                                                                                                                            galleryCategoryFilter.appendChild(opt);});}
+    document.getElementById('gallery-button').onclick = () => {renderGallery(); galleryOverlay.classList.add('active');};
+    document.getElementById('close-gallery').onclick = () => galleryOverlay.classList.remove('active');
+    gallerySearch.oninput = renderGallery;
+    galleryCategoryFilter.onchange = renderGallery;
+
+    function renderGallery() {const searchTerm = gallerySearch.value.toLowerCase(); const categoryTerm = galleryCategoryFilter.value;
+                              if (galleryCategoryFilter.options.length === 1 && masterLibrary.length > 0) {
+                                  const allCats = []; masterLibrary.forEach(item => {if (item.categories) allCats.push(...item.categories);});
+                                  const uniqueCategories = [...new Set(allCats)]; uniqueCategories.forEach(cat => {const opt = document.createElement('option');
+                                                                                                                   opt.value = opt.innerText = cat;
+                                                                                                                   galleryCategoryFilter.appendChild(opt);});}
                               galleryGrid.innerHTML = '';
                               masterLibrary.forEach((item, index) => {const itemCategories = item.categories || ["未分類"];
                                                                       const matchesChar = item.char.includes(searchTerm);
@@ -257,13 +266,16 @@
                                                                       if (matchesSearch && matchesCategory) {const isCompleted = userCharacters[index]?.completed; 
                                                                                                              const card = document.createElement('div');
                                                                                                              card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
-                                                                                                             index === currentIndex ? 'border-amber-400 bg-amber-50' : 'border-slate-100 bg-slate-50 hover:bg-white'}`;
+                                                                                                                 index === currentIndex ? 'border-amber-400 bg-amber-50' : 'border-slate-100 bg-slate-50 hover:bg-white'}`;
                                                                                                              card.innerHTML = `
                                                                                                              <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
                                                                                                              `;
-                                                                                                             card.onclick = () => {currentIndex = index; renderGame(); renderSteps(); galleryOverlay.classList.remove('active');};
+                                                                                                             card.onclick = () => {currentIndex = index; clearCanvas(); renderGame(); renderSteps();
+                                                                                                                                   galleryOverlay.classList.remove('active');
+                                                                                                                                   const targetStep = stepContainer.children[index];
+                                                                                                                                   if (targetStep) targetStep.scrollIntoView({behavior: 'smooth', inline: 'center'});};
                                                                                                              galleryGrid.appendChild(card);}});
-                              }
+                             }
                                                                                                              
                                                                                                             
     document.getElementById('gallery-button').onclick = () => {renderGallery(); galleryOverlay.classList.add('active');};
