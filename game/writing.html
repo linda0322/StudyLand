@@ -256,11 +256,13 @@
 
     window.onload = initApp;
 
-    function setupCategoryFilter() {
-    const filter = document.getElementById('gallery-category-filter'); filter.innerHTML = '<option value="all">所有主題</option>'; 
-    const allCats = []; masterLibrary.forEach(item => {if (item.categories && Array.isArray(item.categories)) {allCats.push(...item.categories);}});
-    const uniqueCategories = [...new Set(allCats)]; uniqueCategories.forEach(cat => {const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; 
-                                                                                     filter.appendChild(opt);});}
+    function setupCategoryFilter() {const filter = document.getElementById('gallery-category-filter'); filter.innerHTML = '<option value="all">所有主題</option>';
+                                    const customOrder = ["未分類", "三疊字", "日常動作", "語氣及聲音", "身體相關", "情感相關", "飲食", "氣候及時間", "動物相關", "植物相關", "顏色", "狀態",];
+                                    const allCatsInData = []; masterLibrary.forEach(item => {if (item.categories && Array.isArray(item.categories)) {allCatsInData.push(...item.categories);}});
+                                    const uniqueCategories = [...new Set(allCatsInData)]; uniqueCategories.sort((a, b) => {let indexA = customOrder.indexOf(a); let indexB = customOrder.indexOf(b);
+                                                                                                                           if (indexA === -1) indexA = 999; if (indexB === -1) indexB = 999;
+                                                                                                                           return indexA - indexB;});
+                                    uniqueCategories.forEach(cat => {const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; filter.appendChild(opt);});}
     
     // 📲 手機旋轉提示 ORIENTATION NOTI
     function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
