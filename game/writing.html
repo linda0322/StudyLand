@@ -57,20 +57,27 @@
             #sync-status {transition: opacity 0.3s; opacity: 0;}
             #sync-status.show {opacity: 1;}
         
-        .canvas-container {position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
-/* 🌚 底層灰字與動畫：交給 JS 控制，這裡保持乾淨 */
-#hanzi-target svg {
+.canvas-container {
+    position: relative; 
+    background: white; 
+    border-radius: 2.5rem; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+    overflow: hidden;
+}
+
+#hanzi-target {
     width: 100%;
     height: 100%;
 }
 
-/* ✍️ 玩家寫字時的藍色線條：強制設定寬度與圓潤度 */
-#hanzi-target svg path:not([bundleid]) {
-    stroke-width: 25px !important; /* 藍色線條的視覺寬度 */
+/* ✍️ 僅針對玩家寫出的「藍色筆跡」強制加粗與圓潤 */
+/* 這樣可以確保底層灰字是正常的，而你寫出來的線是漂亮的 25px */
+#hanzi-target svg path:not([bundleid]):not(.hanzi-writer-stroke-outline):not(.hanzi-writer-stroke-highlight) {
+    stroke-width: 25px !important;
     stroke: #38C0FF !important;
     stroke-linecap: round !important;
     stroke-linejoin: round !important;
-}
+}: round !important;
 
         
         #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -243,14 +250,14 @@ function renderGame() {
         strokeAnimationSpeed: 1,
         delayBetweenStrokes: 200,
         
-        // 🎨 顏色與外觀
-        strokeColor: '#1e293b',    // 動畫播放時的顏色
-        outlineColor: '#f1f5f9',   // 預設底層灰字的顏色
-        drawingColor: '#38C0FF',   // 寫字顏色
+        // 🎨 顏色設定
+        strokeColor: '#1e293b',    // 播放示範動畫時的顏色
+        outlineColor: '#f1f5f9',   // 底層灰字的顏色
+        drawingColor: '#38C0FF',   // 寫字時的顏色
         
-        // 📏 厚度設定 (這是解決問題的核心)
-        strokeWidth: 20,           // 👈 調大這個數值，底層灰字就會變厚！(建議 15-25)
-        drawingThickness: 25,      // 👈 玩家寫字時的判定寬度
+        // 📏 厚度設定 (解決太幼/空白的關鍵)
+        strokeWidth: 20,           // 👈 這個數值決定灰字的厚度，建議設定在 20-25 之間
+        drawingThickness: 25,      // 👈 玩家寫字時的感應寬度
         
         showHintAfterMisses: 1
     });
