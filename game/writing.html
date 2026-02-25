@@ -44,7 +44,7 @@
             /* 🫵🏻 手勢禁止 NO GESTURE */
             .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
             /* 🔘 按鈕 BUTTON */
-            a, button, [role="button"], .step-button, .gallery-category-filter, .gallery-card {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+            a, button, [role="button"], .step-button, .gallery-card {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;} 
             @media (hover: hover) {a:hover, button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
             a:active, button:active, [role="button"]:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
@@ -56,24 +56,24 @@
             /* 🔄 同步 SYNC */
             #sync-status {transition: opacity 0.3s; opacity: 0;}
             #sync-status.show {opacity: 1;}
-        
-        .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
-        #hanzi-target { width: 100%; height: 100%; }
 
-        #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                          display: flex; pointer-events: none;}
-        #success-overlay.active {transform: translate(-50%, -50%) scale(1.5);}
-
-        .progress-bar-container {position: relative; width: 100%; height: 10px; background-color: rgba(255, 255, 255, 0.5); border-radius: 5px; margin-bottom: 25px; margin-top: 15px;}
-        #progress-fill {height: 100%; background-color: #10B981; width: 0%; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); border-radius: 5px;}
-        #progress-character {position: absolute; bottom: 8px; left: 0%; width: 40px; height: 40px; transform: translateX(-50%); transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); pointer-events: none; z-index: 20;}
-
-        #step-container {display: flex; gap: 0.75rem; overflow-x: auto; white-space: nowrap; padding-bottom: 8px; width: 100%;}
-        .step-button.active { background-color: #38C0FF; color: white; border-color: white; }
-        .step-button.completed::after {content: '✓'; position: absolute; top: -2px; right: -2px; background: #10B981; color: white; width: 14px; height: 14px; border-radius: 50%; font-size: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid white;}
-
-        #word-gallery {z-index: 200; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 16px;}
-        #word-gallery.active {display: flex;}
+        /* ⚙️ 內部結構 INTERNAL */
+            /* 📝 寫字區 CANVAS */
+            .canvas-container {position: relative; overflow: hidden; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1);}
+            #hanzi-target {width: 100%; height: 100%;}
+            #success-overlay {position: fixed; top: 50%; left: 50%; z-index: 50; display: flex; pointer-events: none;
+                              transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translate(-50%, -50%) scale(0); }
+            #success-overlay.active {transform: translate(-50%, -50%) scale(1.5);}
+            /* 👆🏻 選字區 BAR */
+            .progress-bar-container {position: relative; width: 100%; height: 10px; background-color: rgba(255, 255, 255, 0.5); border-radius: 5px; margin-bottom: 25px; margin-top: 15px;}
+            #progress-fill {height: 100%; background-color: #10B981; width: 0%; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); border-radius: 5px;}
+            #progress-character {position: absolute; z-index: 20; bottom: 8px; left: 0%; width: 40px; height: 40px; pointer-events: none; transform: translateX(-50%); transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);}
+            #step-container {width: 100%; overflow-x: auto; white-space: nowrap; display: flex; gap: 0.75rem; padding-bottom: 8px;}
+            .step-button.active { background-color: #38C0FF; color: white; border-color: white; }
+            .step-button.completed::after {content: '✓'; position: absolute; top: -2px; right: -2px; background: #10B981; color: white; width: 14px; height: 14px; font-size: 8px; border-radius: 50%; border: 1px solid white; display: flex; justify-content: center; align-items: center;}
+            /* 📖 字庫 WORD GALLERY */
+            #word-gallery {z-index: 200; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 16px;}
+            #word-gallery.active {display: flex;}
     </style>
 </head>
 <body>
@@ -102,7 +102,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
             </button>
         </div>
-        <!-- 🔄 同步狀態 SYNC NOTI -->
+        <!-- 🔄 同步 SYNC -->
         <div id="sync-status" class="pointer-events-none fixed top-4 right-6 z-[100] bg-black/50 rounded-full shadow-lg flex items-center gap-2 px-4 py-2">
             <div class="w-2 h-2 bg-sky-200 rounded-full animate-pulse"></div><span id="sync-text" class="font-cubic text-xs thin-border text-white">同步中</span>
         </div>
@@ -141,7 +141,7 @@
         </div>
     </div>
 
-    <!-- 👩🏻‍💻 主要 MAIN -->    <main class="w-full max-w-[450px] flex flex-col items-center">
+    <!-- 👩🏻‍💻 主要 MAIN --><main class="w-full max-w-[450px] flex flex-col items-center">
         <!-- ✏️ 操作欄 OPERATION -->
         <div class="w-full max-w-[450px] flex justify-end mb-4">
             <!-- ⬅️ 左邊 LEFT--><div class="flex items-center gap-2">
@@ -183,38 +183,18 @@
     const galleryOverlay = document.getElementById('word-gallery');
     const galleryGrid = document.getElementById('gallery-grid');
 
-    async function initApp() {
-        const username = localStorage.getItem('studyLandUser') || "訪客";
-        document.getElementById('user-display-name').innerText = username;
+    async function initApp() {const username = localStorage.getItem('studyLandUser') || "訪客";
+                              document.getElementById('user-display-name').innerText = username;
         
-        try {
-            syncStatus.classList.add('show');
+        try {syncStatus.classList.add('show');
             const libRes = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: 'fetchLibrary'})}); 
             masterLibrary = await libRes.json();
-            
-            const progRes = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: 'load', userId: username})});
-            const progData = await progRes.text();
-            
-            if (progData !== "NoData" && progData.trim() !== "") {
-                const saved = JSON.parse(progData); 
-                userCharacters = saved.characters; 
-                currentIndex = saved.currentIndex || 0;
-            } else {
-                userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));
-                currentIndex = 0;
-            }
-        } catch (e) {
-            console.error("同步失敗:", e);
-            if (masterLibrary.length === 0) masterLibrary = [{char: "一", strokes: 1}];
-            userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));
-        } finally {
-        syncStatus.classList.remove('show');
-        setupCategoryFilter(); // <--- 1. 先建立選單選項
-        renderGame(); 
-        renderSteps();
-        renderGallery();      // <--- 2. 預渲染一次字庫
-    }
-}
+            const progRes = await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: 'load', userId: username})}); const progData = await progRes.text();  
+            if (progData !== "NoData" && progData.trim() !== "") {const saved = JSON.parse(progData); userCharacters = saved.characters; currentIndex = saved.currentIndex || 0;}
+            else {userCharacters = masterLibrary.map(item => ({ ...item, completed: false })); currentIndex = 0;}} 
+        catch (e) {console.error("同步失敗:", e); if (masterLibrary.length === 0) masterLibrary = [{char: "一", strokes: 1}]; 
+                   userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));} 
+        finally {syncStatus.classList.remove('show'); setupCategoryFilter(); renderGame(); renderSteps(); renderGallery();}}
 
     function renderGame() {if (!userCharacters[currentIndex]) return; const current = userCharacters[currentIndex]; document.getElementById('hanzi-target').innerHTML = '';
                            writer = HanziWriter.create('hanzi-target', current.char, {width: document.getElementById('hanzi-target').clientWidth,
@@ -223,141 +203,64 @@
                                                                                       showOutline: true,
                                                                                       strokeAnimationSpeed: 1, delayBetweenStrokes: 200,
                                                                                       strokeColor: '#1e293b', outlineColor: '#f1f5f9', highlightColor: '#9BDFFF',drawingColor: '#38C0FF', drawingWidth: 35});
-
                            writer.quiz({onComplete: function(summary) {userCharacters[currentIndex].completed = true; showSuccess(); saveProgress();},
                                         onMistake: function(strokeData) {showToast("筆劃錯誤");}});}
 
-    function renderSteps() {
-        stepContainer.innerHTML = '';
-        const completedCount = userCharacters.filter(item => item.completed).length;
-        userCharacters.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.className = `step-button relative flex-none w-12 h-12 rounded-xl bg-white font-iansui text-xl shadow-sm border-2 transition-all flex items-center justify-center cursor-pointer ${index === currentIndex ? 'active border-white' : 'text-slate-400 border-transparent'}`;
-            if (item.completed) div.classList.add('completed');
-            div.innerText = item.char;
-            div.onclick = () => { currentIndex = index; renderGame(); renderSteps(); };
-            stepContainer.appendChild(div);
-        });
-        const progressPercent = userCharacters.length ? (completedCount / userCharacters.length) * 100 : 0;
-        progressFill.style.width = `${progressPercent}%`; 
-        progressChar.style.left = `${progressPercent}%`; 
-        progressText.innerText = `學習進度：${completedCount} / ${userCharacters.length}`;
-    }
+    function renderSteps() {stepContainer.innerHTML = ''; 
+                            const completedCount = userCharacters.filter(item => item.completed).length; userCharacters.forEach((item, index) => {const div = document.createElement('div');
+                                                                                                                                                  div.className = `step-button w-12 h-12 rounded-xl bg-white font-iansui text-xl shadow-sm border-2 relative flex-none flex items-center justify-center transition-all cursor-pointer ${index === currentIndex ? 'active border-white' : 'text-slate-400 border-transparent'}`;
+                                                                                                                                                  if (item.completed) div.classList.add('completed');div.innerText = item.char;
+                                                                                                                                                  div.onclick = () => {currentIndex = index; renderGame(); renderSteps(); }; stepContainer.appendChild(div);});
+                            const progressPercent = userCharacters.length ? (completedCount / userCharacters.length) * 100 : 0; 
+                            progressFill.style.width = `${progressPercent}%`; progressChar.style.left = `${progressPercent}%`; progressText.innerText = `學習進度：${completedCount} / ${userCharacters.length}`;}
 
-    const galleryCategoryFilter = document.getElementById('gallery-category-filter');
-    const gallerySearch = document.getElementById('gallery-search');
-    function renderGallery() {
-    const searchTerm = gallerySearch.value.toLowerCase();
-    const categoryTerm = galleryCategoryFilter.value;
-
-    galleryGrid.innerHTML = ''; // 每次執行先清空
-
-    masterLibrary.forEach((item, index) => {
-        const itemCategories = item.categories || ["未分類"];
-        const matchesSearch = item.char.includes(searchTerm) || 
-                             (item.en && String(item.en).toLowerCase().includes(searchTerm));
-        const matchesCategory = (categoryTerm === 'all') || itemCategories.includes(categoryTerm);
-
-        if (matchesSearch && matchesCategory) {
-            const isCompleted = userCharacters[index]?.completed;
-            const card = document.createElement('div');
-            card.className = `gallery-card aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
-                index === currentIndex ? 'border-sky-500 bg-sky-50' : 'border-slate-100 bg-slate-50 hover:bg-white'
-            }`;
-            card.innerHTML = `<span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>`;
-            
-            card.onclick = () => {
-                currentIndex = index;
-                renderGame();
-                renderSteps();
-                galleryOverlay.classList.remove('active');
-            };
-            galleryGrid.appendChild(card);
-        }
-    });
-}
+    const galleryCategoryFilter = document.getElementById('gallery-category-filter'); const gallerySearch = document.getElementById('gallery-search');
+    function renderGallery() {const searchTerm = gallerySearch.value.toLowerCase(); const categoryTerm = galleryCategoryFilter.value;
+                              galleryGrid.innerHTML = ''; 
+                              masterLibrary.forEach((item, index) => {const itemCategories = item.categories || ["未分類"]; 
+                                                                      const matchesSearch = item.char.includes(searchTerm) || (item.en && String(item.en).toLowerCase().includes(searchTerm));
+                                                                      const matchesCategory = (categoryTerm === 'all') || itemCategories.includes(categoryTerm);
+                                                                      if (matchesSearch && matchesCategory) {const isCompleted = userCharacters[index]?.completed; const card = document.createElement('div');
+                                                                                                             card.className = `gallery-card aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
+                                                                                                                 index === currentIndex ? 'border-sky-500 bg-sky-50' : 'border-slate-100 bg-slate-50 hover:bg-white'}`;
+                                                                                                             card.innerHTML = `<span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>`;
+                                                                                                             card.onclick = () => {currentIndex = index; renderGame(); renderSteps(); galleryOverlay.classList.remove('active');};
+                                                                                                             galleryGrid.appendChild(card);}});
+                             }
                                                                                                              
                                                                                                             
     document.getElementById('clear-button').onclick = () => { renderGame(); };
     document.getElementById('hint-button').onclick = () => { if(writer) writer.animateCharacter(); };
 
-    // 在腳本最後方統一處理事件
-document.addEventListener('DOMContentLoaded', () => {
-    const gBtn = document.getElementById('gallery-button');
-    const cBtn = document.getElementById('close-gallery');
-    const gSearch = document.getElementById('gallery-search');
-    const gFilter = document.getElementById('gallery-category-filter');
-    const gOverlay = document.getElementById('word-gallery');
+    document.addEventListener('DOMContentLoaded', () => {const gBtn = document.getElementById('gallery-button'); const cBtn = document.getElementById('close-gallery');
+                                                         const gSearch = document.getElementById('gallery-search'); const gFilter = document.getElementById('gallery-category-filter');
+                                                         const gOverlay = document.getElementById('word-gallery');
+                                                         gBtn.onclick = () => {renderGallery(); gOverlay.classList.add('active');};
+                                                         cBtn.onclick = () => {gOverlay.classList.remove('active');};
+                                                         gSearch.oninput = renderGallery; gFilter.onchange = renderGallery;});
 
-    gBtn.onclick = () => {
-        renderGallery(); 
-        gOverlay.classList.add('active');
-    };
+    function showToast(message) {const container = document.getElementById('toast-container');
+                                 document.getElementById('toast-msg').innerText = message; container.classList.add('show');
+                                 setTimeout(() => container.classList.remove('show'), 2000);}
 
-    cBtn.onclick = () => {
-        gOverlay.classList.remove('active');
-    };
+    async function saveProgress() {const username = localStorage.getItem('studyLandUser') || "訪客";
+                                   syncStatus.classList.add('show');
+                                   try {await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: 'save', userId: username, payload: {characters: userCharacters, currentIndex}})});} 
+                                   catch (e) { console.error("儲存失敗:", e); } syncStatus.classList.remove('show');}
 
-    // 這裡確保輸入或切換選單時，畫面會立刻重繪
-    gSearch.oninput = renderGallery;
-    gFilter.onchange = renderGallery;
-});
-
-    function showToast(message) {
-        const container = document.getElementById('toast-container');
-        document.getElementById('toast-msg').innerText = message;
-        container.classList.add('show');
-        setTimeout(() => container.classList.remove('show'), 2000);
-    }
-
-    async function saveProgress() {
-        const username = localStorage.getItem('studyLandUser') || "訪客";
-        syncStatus.classList.add('show');
-        try {
-            await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: 'save', userId: username, payload: {characters: userCharacters, currentIndex}})});
-        } catch (e) { console.error("儲存失敗:", e); } 
-        syncStatus.classList.remove('show');
-    }
-
-    function showSuccess() {
-        const overlay = document.getElementById('success-overlay');
-        overlay.classList.remove('hidden'); 
-        setTimeout(() => overlay.classList.add('active'), 10); 
-        setTimeout(() => {
-            overlay.classList.remove('active');
-            setTimeout(() => {
-                overlay.classList.add('hidden'); 
-                if (currentIndex < userCharacters.length - 1) {
-                    currentIndex++; 
-                    renderGame(); 
-                    renderSteps();
-                }
-            }, 500);
-        }, 1200);
-    }
+    function showSuccess() {const overlay = document.getElementById('success-overlay'); overlay.classList.remove('hidden'); 
+                            setTimeout(() => overlay.classList.add('active'), 10); 
+                            setTimeout(() => {overlay.classList.remove('active');
+                                              setTimeout(() => {overlay.classList.add('hidden'); 
+                                                                if (currentIndex < userCharacters.length - 1) {currentIndex++; renderGame(); renderSteps();}}, 500);}, 1200);}
 
     window.onload = initApp;
 
     function setupCategoryFilter() {
-    const filter = document.getElementById('gallery-category-filter');
-    // 保留 "所有主題"，清除其他舊選項
-    filter.innerHTML = '<option value="all">所有主題</option>';
-    
-    const allCats = [];
-    masterLibrary.forEach(item => {
-        if (item.categories && Array.isArray(item.categories)) {
-            allCats.push(...item.categories);
-        }
-    });
-    
-    const uniqueCategories = [...new Set(allCats)];
-    uniqueCategories.forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.innerText = cat;
-        filter.appendChild(opt);
-    });
-}
+    const filter = document.getElementById('gallery-category-filter'); filter.innerHTML = '<option value="all">所有主題</option>'; 
+    const allCats = []; masterLibrary.forEach(item => {if (item.categories && Array.isArray(item.categories)) {allCats.push(...item.categories);}});
+    const uniqueCategories = [...new Set(allCats)]; uniqueCategories.forEach(cat => {const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; 
+                                                                                     filter.appendChild(opt);});}
     
     // 📲 手機旋轉提示 ORIENTATION NOTI
     function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
