@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1cVkUL5LapuLvtBYyw_CHgejOCflFRYyB">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 🏞️ 整體 OVERALL */
+        /* 🏞️ 整體版面 OVERALL */
         body {min-height: 100vh; width: 100vw; position: fixed; overflow: hidden; margin: 0; 
               overscroll-behavior: none; overscroll-behavior-y: none; -webkit-user-select: none; -webkit-touch-callout: none;
               font-family: 'Noto Sans TC', sans-serif; background-color: #1dc5fd;            
@@ -22,71 +22,95 @@
                 @media screen and (max-width: 800px) {.bg-layer {position: fixed; inset: 0; z-index: -1; background-size: contain; background-position: center center; background-repeat: no-repeat; background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}}
                 /* 📱 手機背景 PHONE BACKGROUND */
                 @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center top; background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');}}
+                /* 📲 手機旋轉提示 ORIENTATION NOTI */
+                #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999; background-color: #1dc5fd; flex-direction: column; align-items: center; justify-content: center;}
+                @media screen and (max-width: 1000px) and (orientation: landscape) {#orientation-noti {display: flex !important;} body {overflow: hidden !important;}}
+                @keyframes phone-portrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
+                .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
 
             /* 🌼 樣式 STYLE */
-                /* 🥽 玻璃框 */
+                /* 🥽 玻璃框 GLASS PANEL */
                 .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
                 /* 🔠 字體 FONTS */
                 @font-face {font-family: "Cubic11"; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype'); font-display: swap;}
                 .font-cubic {font-family: 'Cubic11', sans-serif;}
                 .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
                 .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+                /* 🚘 加載遮罩 LOADING OVERLAY */
+                #loading-overlay {z-index: 6000; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
+                #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
             
             /* ⚒️ 操作 OPERATION */
                 /* 🙈 隱藏圖層 HIDDEN LAYER */
                 .hidden {display: none !important;}
-                /* 🚘 加載遮罩（飛行中）LOADING OVERLAY */
-                #loading-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
-                #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
-                /* 🔘 按鈕效果 BUTTON EFFECT */
+                /* 🔘 按鈕 BUTTON */
                 a, button, [role="button"], .tab {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;
                                                   transition: transform 0.1s ease;}
 
-            /* ⚙️ 主要內容 MAIN CONTENT */
-            #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 0; padding-bottom: 120px;
-                           display: flex; flex-direction: column; align-items: center; justify-content: flex-start;}
-                /* 🗂️ 分類 CATEGORY TABS */
-                .sticky-header-container {position: sticky; top: 0; background-color: rgba(29, 197, 253, 1); z-index: 500; width: 100%; padding-top: 64px; display: flex; justify-content: center;}
-                .category-tabs {display: flex; justify-content: center; flex-wrap: nowrap;
-                                gap: 8px; padding: 10px 15px 20px 15px; width: 100%; max-width: 550px;  
-                                overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none;}
-                .category-tabs::-webkit-scrollbar {display: none;}
-                .tab {padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 0.7em; flex-shrink: 0;}
-                .tab.active {background: white; color: #1dc5fd;}
-                @media screen and (min-width: 600px) {.category-tabs {justify-content: center; overflow-x: hidden;}
-                                                      .tab {padding: 8px 16px; font-size: 0.85em;}}
-                /* 🧸 商品 PRODUCTS */
-                .container {padding: 20px; max-width: 550px; margin: 0 auto;}
-                .shop-grid {display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 20px;}
-                .product-card {background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: 0.3s; position: relative; display: flex; flex-direction: column;}
-                .product-card:hover {transform: opacity(0.95);}
-                .img-container {width: 100%; aspect-ratio: 1; background: rgba(248, 250, 252, 1); display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
-                .product-img {max-width: 100%; max-height: 100%; object-fit: contain;}
-                .info {padding: 12px; flex-grow: 1; display: flex; flex-direction: column;}
-                .price-btn {width: 100%; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 5px; transition: 0.2s;}
-                .price-btn.coin {font-family: 'Cubic11'; background: #fef3c7; color: #fbbf24; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; letter-spacing: 0.05em; font-size: 14px}
-                .price-btn.gem {font-family: 'Cubic11'; background: #cffafe; color: #06b6d4; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; letter-spacing: 0.05em; font-size: 14px}
-                .price-btn.coin:hover {background: #d97706; color: white}
-                .price-btn.gem:hover {background: #0891b2; color: white}
-                .price-btn:active {transform: scale(0.95);}
-                .price-btn:disabled {background: #e7e5e4; color: #78716c; cursor: not-allowed;}            
-
-        /* 🛒 購物車 SHOPPING CART */
-        #cart-panel {position: fixed; top: 70px; right: 20px; width: 280px; max-height: 450px; z-index: 1000; display: none; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 15px; border: 2px solid white;}
-        .cart-item {display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05);}
-        #cart-count {position: absolute; top: -5px; right: -5px; background: #b91c1c; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
-                     font-family: 'Cubic11'; font-size: 10px; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+            /* ⚙️ 內部結構 INTERNAL */
+            #main-content {position: absolute; inset: 0; overflow-y: auto;
+                           -webkit-overflow-scrolling: touch;
+                           display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 0; padding-bottom: 120px;}
+              /* 🗂️ 分類 CATEGORY */
+              .sticky-header-container {position: sticky; top: 0; z-index: 500; width: 100%; 
+                                        background-color: rgba(29, 197, 253, 1);
+                                        padding-top: 64px; display: flex; justify-content: center;}
+              .category-tabs {width: 100%; max-width: 550px; overflow-x: auto; 
+                              -webkit-overflow-scrolling: touch; touch-action: pan-x; 
+                              scrollbar-width: none;
+                              display: flex; justify-content: center; flex-wrap: nowrap; gap: 8px; padding: 10px 15px 20px 15px;}
+              .category-tabs::-webkit-scrollbar {display: none;}
+              .tab {cursor: pointer; border-radius: 20px; font-size: 0.7em; white-space: nowrap; padding: 6px 12px; flex-shrink: 0;}
+              .tab.active {background: white; color: #1dc5fd;}
+                /* 📱 手機／iPad版 SIZE */
+                @media screen and (min-width: 600px) {.category-tabs {overflow-x: hidden; justify-content: center;}
+                                                      .tab {font-size: 0.85em; padding: 8px 16px;}}
+              /* 🧸 商品 PRODUCTS */
+              .container {max-width: 550px; margin: 0 auto; padding: 20px;}
+              .shop-grid {display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 20px;}
+              .product-card {background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                             position: relative; display: flex; flex-direction: column;
+                             transition: 0.3s;}
+              .product-card:hover {transform: opacity(0.95);}
+              .img-container {width: 100%; aspect-ratio: 1; box-sizing: border-box; background: rgba(248, 250, 252, 1);
+                              display: flex; align-items: center; justify-content: center; padding: 10px;}
+              .product-img {max-width: 100%; max-height: 100%; object-fit: contain;}
+              .info {flex-grow: 1; display: flex; flex-direction: column; padding: 12px;}
+              .price-btn {width: 100%; border: none; border-radius: 8px; font-weight: bold; 
+                          cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; padding: 10px; 
+                          transition: 0.2s;}
+              .price-btn.coin {font-family: 'Cubic11'; background: #fef3c7; color: #fbbf24; font-size: 14px; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; letter-spacing: 0.05em;}
+              .price-btn.gem {font-family: 'Cubic11'; background: #cffafe; color: #06b6d4; font-size: 14px; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill; letter-spacing: 0.05em;}
+              .price-btn.coin:hover {background: #d97706; color: white}
+              .price-btn.gem:hover {background: #0891b2; color: white}
+              .price-btn:active {transform: scale(0.95);}
+              .price-btn:disabled {background: #e7e5e4; color: #78716c; cursor: not-allowed;}            
+              /* 🛒 購物車 SHOPPING CART */
+              #cart-panel {position: fixed; z-index: 1000; top: 70px; right: 20px; width: 280px; max-height: 450px;
+                           box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 15px; border: 2px solid white;
+                           display: none; flex-direction: column;}
+              .cart-item {border-bottom: 1px solid rgba(0,0,0,0.05);
+                          display: flex; justify-content: space-between; align-items: center; padding: 10px 0;}
+              #cart-count {position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; 
+                           background: #b91c1c; border-radius: 50%; font-family: 'Cubic11'; color: white; font-size: 10px; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;
+                           display: flex; align-items: center; justify-content: center;}
     </style>
 </head>
 <body>
-    <!-- 🚘 加載遮罩（飛行中）LOADING OVERLAY -->
-    <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">🚘</div><div id="loading-text" class="font-cubic text-xl text-white thick-border tracking-widest">移動中</div></div>
-    
+    <!-- 🚘 加載遮罩 LOADING OVERLAY -->
+    <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">🚘</div><div id="loading-text" class="font-cubic text-white text-xl thick-border tracking-widest">移動中</div></div>
     <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
-    
-    <!-- ❌ 錯誤彈窗 ERROR MODAL -->
+    <!-- 📲 手機旋轉提示 ORIENTATION NOTI -->
+    <div id="orientation-noti">
+        <div class="animate-phone-portrait w-20 h-20 flex items-center justify-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        </div>
+        <h2 class="font-cubic text-white text-xl thick-border tracking-wider">旋轉螢幕以繼續購物</h2>
+    </div>
+
+    <!-- ⚠️ 錯誤警告 ALERT -->
     <div id="error-overlay" class="hidden fixed inset-0 z-[10000] bg-black/20 backdrop-blur-sm flex flex-col justify-center items-center p-6">
-        <div class="max-w-xs bg-white/80 backdrop-blur-md rounded-[30px] shadow-xl flex flex-col text-center items-center p-8 relative border border-white/50">
+        <div class="max-w-xs bg-white/80 backdrop-blur-md rounded-[30px] shadow-xl border border-white/50 relative flex flex-col text-center items-center p-8">
             <button onclick="closeAlert()" class="w-12 h-12 absolute top-2 right-2 text-slate-400 flex items-center justify-center hover:text-slate-600 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
@@ -95,65 +119,60 @@
         </div>
     </div>
 
+  <!-- 💬✅ 確認視窗 CONFIRM MODAL -->
     <div id="confirm-modal" class="hidden fixed inset-0 z-[10000] bg-black/20 backdrop-blur-sm flex justify-center items-center p-6">
         <div class="w-full max-w-xs glass-panel rounded-[40px] shadow-2xl flex flex-col text-center items-center p-8">
             <h2 id="confirm-title" class="font-cubic text-slate-700 text-xl thick-border tracking-wider mb-6 leading-relaxed">確認付款</h2>
-            <div class="flex gap-4 w-full">
-                <button onclick="resolveConfirm(false)" class="flex-1 py-3 bg-slate-50 rounded-2xl font-cubic text-slate-400 thin-border hover:bg-slate-100 active:scale-95 transition-all">取消</button>
-                <button id="confirm-confirm-btn" onclick="resolveConfirm(true)" class="flex-1 py-3 bg-[#1dc5fd] rounded-2xl font-cubic text-white thick-border hover:bg-[#19b2e6] active:scale-95 transition-all">確定</button>
+            <div class="w-full flex gap-4">
+                <button onclick="resolveConfirm(false)" class="flex-1 bg-slate-50 rounded-2xl font-cubic text-slate-400 thin-border py-3 hover:bg-slate-100 active:scale-95 transition-all">取消</button>
+                <button id="confirm-confirm-btn" onclick="resolveConfirm(true)" class="flex-1 bg-[#1dc5fd] rounded-2xl font-cubic text-white thick-border py-3 hover:bg-[#19b2e6] active:scale-95 transition-all">確定</button>
             </div>
         </div>
     </div>
     
     <!-- 🔝 頂欄 TOP --><div class="fixed z-[400] w-full h-16 top-0 left-0 bg-[#1dc5fd]"></div>
-        <nav class="fixed z-[800] top-4 left-1/2 -translate-x-1/2 w-full max-w-[550px] flex justify-between px-6">    
-            <!-- ⬅️ 左邊群組 TOP LEFT-->
+        <nav class="fixed z-[800] w-full max-w-[550px] top-4 left-1/2 -translate-x-1/2 flex justify-between px-6">    
+            <!-- ⬅️ 左邊 LEFT-->
             <div class="flex items-center gap-2">
                 <!-- 💰 餘額 BALANCE -->
                 <div class="group glass-panel shadow-md rounded-full flex items-center px-3 py-1.5 gap-1">
-                    <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5" alt="金幣" class="pointer-events-none h-[15px] w-auto px-1"><span id="coin-val" class="font-cubic text-sm text-slate-500 thin-border tracking-wider">0</span></span>
-                    <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l" alt="寶石" class="pointer-events-none h-[15px] w-auto px-1"><span id="gem-val" class="font-cubic text-sm text-slate-500 thin-border tracking-wider">0</span></span>
+                    <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5" alt="金幣" class="pointer-events-none h-[15px] w-auto px-1"><span id="coin-val" class="font-cubic text-slate-500 text-sm thin-border tracking-wider">0</span></span>
+                    <span class="flex items-center whitespace-nowrap"><img src="https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l" alt="寶石" class="pointer-events-none h-[15px] w-auto px-1"><span id="gem-val" class="font-cubic text-slate-500 text-sm thin-border tracking-wider">0</span></span>
                 </div>
                 <!-- 🔘🧾 紀錄 PURCHASE HISTORY -->
                 <a id="purchase-history" href="#" class="glass-panel rounded-full shadow-md text-slate-500 p-2 hover:bg-white/20 hover:text-white active:scale-95 active:bg-white/30 active:text-white" title="購物紀錄" draggable="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-receipt-icon lucide-receipt"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>
                 </a>
             </div>
-            <!-- ➡️ 右邊群組 TOP RIGHT -->
+            <!-- ➡️ 右邊 RIGHT -->
             <div class="flex items-center gap-2">
                 <!-- 🔘🏠 回到主頁 HOME BUTTON -->
                 <a href="../index.html" class="glass-panel rounded-full shadow-md text-slate-500 p-2 hover:bg-white/20 hover:text-white active:scale-95 active:bg-white/30 active:text-white" title="回到主頁" draggable="false">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </a>
                 <!-- 🔘🛒 購物車 SHOPPING CART BUTTON -->
-                <button onclick="toggleCart()" class="relative glass-panel rounded-full shadow-md text-slate-500 p-2 hover:bg-white/20 hover:text-white active:scale-95 active:bg-white/30 active:text-white" title="購物車" draggable="false">
+                <button onclick="toggleCart()" class="glass-panel rounded-full shadow-md text-slate-500 relative p-2 hover:bg-white/20 hover:text-white active:scale-95 active:bg-white/30 active:text-white" title="購物車" draggable="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-basket-icon lucide-shopping-basket"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></svg>
                     <span id="cart-count" style="display: none;">0</span>
                 </button>
             </div>               
         </nav>
 
-    <!-- ⚙️ 主要內容 MAIN CONTENT -->
+    <!-- 👩🏻‍💻 主要 MAIN -->
     <main id="main-content" class="flex flex-col items-center justify-start mx-auto">
-        <!-- 🗂️ 分類 CATEGORY TABS -->
+        <!-- 🗂️ 分類 CATEGORY -->
         <div class="sticky-header-container"><div class="category-tabs" id="category-tabs"></div></div>
         <!-- 🧸 商品 PRODUCTS -->
         <div class="container w-full max-w-[550px] px-8"> <div class="shop-grid" id="shop-grid"></div></div>
         <!-- 🛒 購物車 SHOPPING CART -->
         <div id="cart-panel" class="glass-panel p-4">
-            <h3 class="font-cubic text-slate-600 mb-2 border-b border-white/50 pb-2 flex justify-between">
-                <span class="thin-border tracking-wider">購物車</span>
+            <h3 class="font-cubic text-slate-600 border-b border-white/50 flex justify-between pb-2 mb-2"><span class="thin-border tracking-wider">購物車</span>
                 <button onclick="toggleCart()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
             </h3>
-            <div id="cart-items-list" class="flex-grow overflow-y-auto mb-4 text-sm font-cubic text-slate-500 min-h-[100px]">
-                <div class="text-center py-8 tracking-wider">空空如也</div>
-            </div>
+            <div id="cart-items-list" class="min-h-[100px] overflow-y-auto font-cubic text-slate-500 text-sm flex-grow mb-4"><div class="tracking-wider text-center py-8">空空如也</div></div>
             <div class="border-t border-white/50 pt-3">
-                <div class="flex justify-between font-cubic text-slate-600 mb-3 text-sm">
-                    <span class="thin-border tracking-wider">總計</span>
-                    <span id="cart-total-display" class="flex gap-2">0</span>
-                </div>
-                <button onclick="checkout()" id="checkout-btn" class="w-full bg-[#1dc5fd] text-white thin-border font-cubic py-2 rounded-xl text-[15px] tracking-wider active:scale-95 disabled:opacity-50 disabled:grayscale" disabled>確認付款</button>
+              <div class="font-cubic text-slate-600 text-sm flex justify-between mb-3"><span class="thin-border tracking-wider">總計</span><span id="cart-total-display" class="flex gap-2">0</span></div>
+              <button onclick="checkout()" id="checkout-btn" class="w-full bg-[#1dc5fd] rounded-xl font-cubic text-white text-[15px] thin-border tracking-wider py-2 active:scale-95 disabled:opacity-50 disabled:grayscale" disabled>確認付款</button>
             </div>
         </div>
     </main>
@@ -161,7 +180,7 @@
 <script>
 
     // 🌎 GAS
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwq3fx8sVXmR87K8c6TuWXeBMcJ5ZnlU3o0PYfoYcaljDud8q3xtkpLFmz13NXGTtwe/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhH0seNfmMVCtI6NrgN9oNIo91SZ0awUolGfxzcIuSgAyp_NKA_Y-CxsrKYgO1f0Ff/exec";
     const COIN_ICON = 'https://lh3.googleusercontent.com/d/1EHtoHei3srPmofN0n-MiSanqCBnYrvI5';
     const GEM_ICON = 'https://lh3.googleusercontent.com/d/1yVPE3oEu1or9nOT1zI_dp-CjuguCAO2l';
     let USERNAME = "";
@@ -169,36 +188,46 @@
     let cart = [];
     let currentCategory = "全部";
 
-    // 🔄 載入網頁 LOADING PAGE
-    async function init() {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) { window.location.href = 'index.html'; return;}
-                           USERNAME = savedName;
-                           toggleLoading(true, "移動中");
-                           try {const res = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(USERNAME)}`);
-                                const data = await res.json();
-                                const history = document.getElementById('purchase-history');
-                                history.href = `purchasehistory.html?user=${encodeURIComponent(savedName)}`;
-                                if (data.success) {document.getElementById('coin-val').innerText = data.userBalance.coin.toLocaleString();
-                                                   document.getElementById('gem-val').innerText = data.userBalance.gem.toLocaleString();
-                                                   allProducts = data.productList;
-                                                   setupCategories(); renderShop();} 
-                                else {showAlert("商店休息中: " + data.message, "🙏🏻");}} catch (e) {showAlert("連線失敗", "🙏🏻");} toggleLoading(false);}
+    // ⚠️ 錯誤警告 ALERT
+    const errorOverlay = document.getElementById('error-overlay');
+    function showAlert(msg, emoji = "🙏🏻") {const msgEl = document.getElementById('error-message'); const emojiEl = document.getElementById('error-emoji');
+                                          msgEl.innerText = msg; emojiEl.innerText = emoji; errorOverlay.classList.remove('hidden');}
+    function closeAlert() {errorOverlay.classList.add('hidden');} 
+    errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
 
-    // 🗂️ 分類 CATEGORY TABS
+    // ✅ 加載 LOADING INFO
+    async function init() {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) {window.location.href = 'index.html'; return;} USERNAME = savedName;
+                           toggleLoading(true, "移動中");
+                           try {const res = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(USERNAME)}`); const data = await res.json(); const history = document.getElementById('purchase-history');
+                                history.href = `purchasehistory.html?user=${encodeURIComponent(savedName)}`;
+                                if (data.success) {document.getElementById('coin-val').innerText = data.userBalance.coin.toLocaleString(); document.getElementById('gem-val').innerText = data.userBalance.gem.toLocaleString();
+                                                   allProducts = data.productList; setupCategories(); renderShop();} 
+                                else {showAlert("商店休息中: " + data.message, "🙏🏻");}} catch (e) {showAlert("連線失敗", "🙏🏻");} toggleLoading(false);}
+    
+    // 🚘 加載遮罩 LOADING OVERLAY
+    function toggleLoading(show, text) {const overlay = document.getElementById('loading-overlay'); const textEl = document.getElementById('loading-text');
+                                        if (!overlay) return;
+                                        if (show) {overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); if (textEl) textEl.innerText = text || "移動中";} 
+                                        else {overlay.style.display = 'none'; overlay.classList.add('fade-out'); setTimeout(() => {overlay.style.display = 'none';}, 500);}}
+
+    window.onload = init;
+
+    // ✏️🗂️ 分類 CATEGORY
     function setupCategories() {const categories = ["全部", ...new Set(allProducts.map(p => p.Category))]; const tabContainer = document.getElementById('category-tabs');
                                 tabContainer.innerHTML = categories.map(cat => 
-                                    `<div class="font-cubic text-white thin-border bg-white/20 tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
+                                    `<div class="bg-white/20 font-cubic text-white thin-border tab ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</div>`).join('');}
     function filterCategory(cat) {currentCategory = cat; setupCategories(); renderShop();}
 
-    // 🧸 商品 PRODUCTS
+    // ✏️🧸 商品 PRODUCTS
     function renderShop() {const grid = document.getElementById('shop-grid'); const filtered = currentCategory === "全部" ? allProducts : allProducts.filter(p => p.Category === currentCategory);
                            grid.innerHTML = filtered.map(p => {const isGem = p.PriceGem > 0; const price = isGem ? p.PriceGem : p.PriceCoin; const iconUrl = isGem ? GEM_ICON : COIN_ICON; const isOutOfStock = p.MaxQuantity <= 0;
                                                                return `
                                                                <div class="product-card">
                                                                    <div class="img-container"><img src="${p.ImgURL}" class="product-img pointer-events-none" draggable="false"></div>
                                                                    <div class="info p-3">
-                                                                       <div class="font-cubic text-slate-600 thin-border text-[16px] mb-1 text-center">${p.AssetType}</div>
-                                                                       <div class="font-cubic text-slate-400 text-[13px] mb-[10px] text-center">${p.Description || ''}</div>
-                                                                       <div class="font-cubic text-slate-500 text-[10px] mb-2 text-center">剩餘 ${p.MaxQuantity}</div>
+                                                                       <div class="font-cubic text-slate-600 text-[16px] thin-border text-center mb-1">${p.AssetType}</div>
+                                                                       <div class="font-cubic text-slate-400 text-[13px] text-center mb-[10px]">${p.Description || ''}</div>
+                                                                       <div class="font-cubic text-slate-500 text-[10px] text-center mb-2">剩餘 ${p.MaxQuantity}</div>
                                                                        <button class="price-btn ${isGem ? 'gem' : 'coin'}" 
                                                                            onclick="addToCart('${p.AssetType}')" 
                                                                            ${isOutOfStock ? 'disabled' : ''}>
@@ -217,7 +246,7 @@
         // ➖ 移除或調整 REMOVE OR EDIT
         function updateCartQty(index, delta) {cart[index].quantity += delta; if (cart[index].quantity <= 0) cart.splice(index, 1); 
             else if (cart[index].quantity > cart[index].max) {cart[index].quantity = cart[index].max; showAlert("已超過限額", "⚠️");} renderCart();}
-        // 🛒 介面 INTERFACE
+        // ✏️🧾 購物清單
         function renderCart() {const list = document.getElementById('cart-items-list'); const countBadge = document.getElementById('cart-count'); 
                                const checkoutBtn = document.getElementById('checkout-btn'); const totalDisplay = document.getElementById('cart-total-display');
                                if (cart.length === 0) {list.innerHTML = '<div class="text-center py-8 tracking-wider">空空如也</div>';
@@ -227,9 +256,9 @@
                                          if (item.isGem) totalGem += item.price * item.quantity; 
                                          else totalCoin += item.price * item.quantity; 
                                          const unitIcon = item.isGem ? GEM_ICON : COIN_ICON; return`<div class="cart-item">
-                                                                                                        <div class="flex flex-col max-w-[150px]">
+                                                                                                        <div class="max-w-[150px] flex flex-col">
                                                                                                         <span class="truncate">${item.assetType}</span>
-                                                                                                        <span class="text-[9px] text-slate-400 flex items-center gap-1">單價 <img src="${unitIcon}" class="h-2.5 w-auto" draggable="false"> ${item.price.toLocaleString()}</span>
+                                                                                                        <span class="text-slate-400 text-[9px] flex items-center gap-1">單價 <img src="${unitIcon}" class="h-2.5 w-auto" draggable="false"> ${item.price.toLocaleString()}</span>
                                                                                                         </div>
                                                                                                         <div class="flex items-center gap-2">
                                                                                                             <button onclick="updateCartQty(${index}, -1)" class="w-6 h-6 bg-white/50 rounded-full shadow-inner">-</button>
@@ -238,8 +267,8 @@
                                                                                                         </div>
                                                                                                     </div>`;}).join('');
                                      totalDisplay.innerHTML = `
-                                     ${totalCoin > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${COIN_ICON}" class="h-3 w-auto" draggable="false">${totalCoin}</span>` : ''}
-                                     ${totalGem > 0 ? `<span class="flex items-center gap-1 text-slate-500 thin-border tracking-wider"><img src="${GEM_ICON}" class="h-3 w-auto" draggable="false">${totalGem}</span>` : ''}`;}} 
+                                     ${totalCoin > 0 ? `<span class="text-slate-500 thin-border tracking-wider flex items-center gap-1"><img src="${COIN_ICON}" class="h-3 w-auto" draggable="false">${totalCoin}</span>` : ''}
+                                     ${totalGem > 0 ? `<span class="text-slate-500 thin-border tracking-wider flex items-center gap-1"><img src="${GEM_ICON}" class="h-3 w-auto" draggable="false">${totalGem}</span>` : ''}`;}} 
         // 💳 結帳 CHECKOUT
         async function checkout() {const confirmed = await showConfirm(`確定購買商品`);
                                    if (!confirmed) return; toggleLoading(true, "運送中");
@@ -251,32 +280,11 @@
                                    catch (e) {showAlert("連線失敗", "🙏🏻");} 
                                    finally {toggleLoading(false);}}
 
-    // 🚘 加載遮罩 LOADING OVERLAY
-    function toggleLoading(show, text) {const overlay = document.getElementById('loading-overlay'); const textEl = document.getElementById('loading-text');
-                                        if (!overlay) return;
-                                        if (show) {overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); if (textEl) textEl.innerText = text || "移動中";} 
-                                        else {overlay.style.display = 'none'; overlay.classList.add('fade-out'); setTimeout(() => {overlay.style.display = 'none';}, 500);}}
-
-    window.onload = init;
-
-    // ✅ 確認彈窗 CONFIRM MODAL
+    // 💬✅ 確認彈窗 CONFIRM MODAL
     const confirmModal = document.getElementById('confirm-modal');
-    let confirmResolver;
-    function showConfirm(text) {document.getElementById('confirm-title').innerText = text; confirmModal.classList.remove('hidden');
-                                return new Promise((resolve) => {confirmResolver = resolve;});}
+    let confirmResolver; function showConfirm(text) {document.getElementById('confirm-title').innerText = text; confirmModal.classList.remove('hidden');
+                                                     return new Promise((resolve) => {confirmResolver = resolve;});}
     function resolveConfirm(result) {confirmModal.classList.add('hidden'); if (confirmResolver) confirmResolver(result);}
-
-    // ❌ 錯誤彈窗 ERROR MODAL
-    const errorOverlay = document.getElementById('error-overlay');
-    function showAlert(msg, emoji = "🙏🏻") {
-        const msgEl = document.getElementById('error-message');
-        const emojiEl = document.getElementById('error-emoji');
-        msgEl.innerText = msg;
-        emojiEl.innerText = emoji;
-        errorOverlay.classList.remove('hidden');
-    }
-    function closeAlert() {errorOverlay.classList.add('hidden');}
-    errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
     confirmModal.addEventListener('click', (e) => {if (e.target === confirmModal) {confirmModal.classList.add('hidden');}});
 
     // 🫵🏻 手勢禁止 DISABLE GESTURE
@@ -290,8 +298,14 @@
                                                      }, { passive: false });
         // 雙擊縮放
         let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
-    
+        
+    // 📱 手機旋轉提示 ORIENTATION NOTI
+    function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
+                                        const isLandscape = window.innerWidth > window.innerHeight; const isMobileOrTablet = window.innerWidth < 1024;
+                                        if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    handleOrientationChange();
 </script>
-
 </body>
 </html>
