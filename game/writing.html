@@ -58,9 +58,20 @@
             #sync-status.show {opacity: 1;}
         
         .canvas-container {position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
-        #hanzi-target svg path[bundleid], #hanzi-target svg .hanzi-writer-stroke-outline {stroke-width: 10px !important; fill: #f1f5f9 !important; fill-opacity: 1 !important; stroke: #f1f5f9 !important;}
-        #hanzi-target svg path:not([bundleid]) {stroke-width: 25px !important; stroke: #38C0FF !important; fill: none !important; stroke-linecap: round !important; stroke-linejoin: round !important; opacity: 1 !important;}
-        #hanzi-target svg .hanzi-writer-stroke-highlight {fill: #1e293b !important; stroke: #1e293b !important; stroke-width: 10px !important;}
+/* 🌚 底層灰字與動畫：交給 JS 控制，這裡保持乾淨 */
+#hanzi-target svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ✍️ 玩家寫字時的藍色線條：強制設定寬度與圓潤度 */
+#hanzi-target svg path:not([bundleid]) {
+    stroke-width: 25px !important; /* 藍色線條的視覺寬度 */
+    stroke: #38C0FF !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+}
+
         
         #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                           display: flex; pointer-events: none;}
@@ -232,14 +243,14 @@ function renderGame() {
         strokeAnimationSpeed: 1,
         delayBetweenStrokes: 200,
         
-        // 🎨 顏色設定
-        strokeColor: '#1e293b',
-        outlineColor: '#f1f5f9',
-        drawingColor: '#38C0FF',
+        // 🎨 顏色與外觀
+        strokeColor: '#1e293b',    // 動畫播放時的顏色
+        outlineColor: '#f1f5f9',   // 預設底層灰字的顏色
+        drawingColor: '#38C0FF',   // 寫字顏色
         
-        // 📏 厚度設定
-        drawingThickness: 25, // 藍色線條判定寬度
-        strokeWidth: 2,       // 基礎骨架寬度（其餘交給 CSS 控制）
+        // 📏 厚度設定 (這是解決問題的核心)
+        strokeWidth: 20,           // 👈 調大這個數值，底層灰字就會變厚！(建議 15-25)
+        drawingThickness: 25,      // 👈 玩家寫字時的判定寬度
         
         showHintAfterMisses: 1
     });
