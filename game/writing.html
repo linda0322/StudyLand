@@ -58,9 +58,9 @@
             #sync-status.show {opacity: 1;}
         
         .canvas-container {position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
-        #hanzi-target {width: 100%; height: 100%;}
-        #hanzi-target svg path[bundleid], #hanzi-target svg .hanzi-writer-stroke-outline {stroke-width: 80px !important; opacity: 0.8;}
-        #hanzi-target svg path:not([bundleid]) {stroke-width: 28px !important; stroke-linecap: round !important; stroke-linejoin: round !important;}
+        #hanzi-target svg path[bundleid], #hanzi-target svg .hanzi-writer-stroke-outline {stroke-width: 10px !important; fill: #f1f5f9 !important; fill-opacity: 1 !important; stroke: #f1f5f9 !important;}
+        #hanzi-target svg path:not([bundleid]) {stroke-width: 25px !important; stroke: #38C0FF !important; fill: none !important; stroke-linecap: round !important; stroke-linejoin: round !important; opacity: 1 !important;}
+        #hanzi-target svg .hanzi-writer-stroke-highlight {fill: #1e293b !important; stroke: #1e293b !important; stroke-width: 10px !important;}
         
         #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                           display: flex; pointer-events: none;}
@@ -218,16 +218,41 @@
     }
 }
 
-    function renderGame() {if (!userCharacters[currentIndex]) return; const current = userCharacters[currentIndex]; document.getElementById('hanzi-target').innerHTML = '';
-                           writer = HanziWriter.create('hanzi-target', current.char, {width: document.getElementById('hanzi-target').clientWidth,
-                                                                                      height: document.getElementById('hanzi-target').clientHeight,
-                                                                                      padding: 25,
-                                                                                      showOutline: true,
-                                                                                      strokeAnimationSpeed: 1, delayBetweenStrokes: 200,
-                                                                                      strokeColor: '#1e293b', outlineColor: '#f1f5f9', drawingColor: '#38C0FF', strokeWidth: 4, drawingThickness: 30, strokeCap: 'round'});
+function renderGame() {
+    if (!userCharacters[currentIndex]) return;
+    const current = userCharacters[currentIndex];
+    const target = document.getElementById('hanzi-target');
+    target.innerHTML = '';
+    
+    writer = HanziWriter.create('hanzi-target', current.char, {
+        width: target.clientWidth,
+        height: target.clientHeight,
+        padding: 25,
+        showOutline: true,
+        strokeAnimationSpeed: 1,
+        delayBetweenStrokes: 200,
+        
+        // 🎨 顏色設定
+        strokeColor: '#1e293b',
+        outlineColor: '#f1f5f9',
+        drawingColor: '#38C0FF',
+        
+        // 📏 厚度設定
+        drawingThickness: 25, // 藍色線條判定寬度
+        strokeWidth: 2,       // 基礎骨架寬度（其餘交給 CSS 控制）
+        
+        showHintAfterMisses: 1
+    });
 
-                           writer.quiz({onComplete: function(summary) {userCharacters[currentIndex].completed = true; showSuccess(); saveProgress();},
-                                        onMistake: function(strokeData) {showToast("筆劃錯誤");}});}
+    writer.quiz({
+        onComplete: function() {
+            userCharacters[currentIndex].completed = true;
+            showSuccess();
+            saveProgress();
+        },
+        onMistake: () => showToast("筆劃錯誤")
+    });
+}
 
     function renderSteps() {
         stepContainer.innerHTML = '';
