@@ -44,7 +44,7 @@
             /* 🫵🏻 手勢禁止 NO GESTURE */
             .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
             /* 🔘 按鈕 BUTTON */
-            a, button, [role="button"], .step-button, .gallery-category-filter {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+            a, button, [role="button"], .step-button, .gallery-category-filter, .gallery-card {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
             button {transition: transform 0.1s ease;} 
             @media (hover: hover) {a:hover, button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
             a:active, button:active, [role="button"]:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
@@ -261,7 +261,7 @@
         if (matchesSearch && matchesCategory) {
             const isCompleted = userCharacters[index]?.completed;
             const card = document.createElement('div');
-            card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
+            card.className = `gallery-card aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
                 index === currentIndex ? 'border-sky-500 bg-sky-50' : 'border-slate-100 bg-slate-50 hover:bg-white'
             }`;
             card.innerHTML = `<span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>`;
