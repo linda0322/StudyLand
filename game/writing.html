@@ -57,29 +57,10 @@
             #sync-status {transition: opacity 0.3s; opacity: 0;}
             #sync-status.show {opacity: 1;}
         
-.canvas-container {
-    position: relative; 
-    background: white; 
-    border-radius: 2.5rem; 
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
-    overflow: hidden;
-}
+        .canvas-container { position: relative; background: white; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;}
+        #hanzi-target { width: 100%; height: 100%; }
+        #hanzi-target svg path:not([bundleid]) {stroke-linecap: round !important; stroke-linejoin: round !important;}
 
-#hanzi-target {
-    width: 100%;
-    height: 100%;
-}
-
-/* ✍️ 僅針對玩家寫出的「藍色筆跡」強制加粗與圓潤 */
-/* 這樣可以確保底層灰字是正常的，而你寫出來的線是漂亮的 25px */
-#hanzi-target svg path:not([bundleid]):not(.hanzi-writer-stroke-outline):not(.hanzi-writer-stroke-highlight) {
-    stroke-width: 25px !important;
-    stroke: #38C0FF !important;
-    stroke-linecap: round !important;
-    stroke-linejoin: round !important;
-}: round !important;
-
-        
         #success-overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 50; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                           display: flex; pointer-events: none;}
         #success-overlay.active {transform: translate(-50%, -50%) scale(1.5);}
@@ -228,49 +209,22 @@
             if (masterLibrary.length === 0) masterLibrary = [{char: "一", strokes: 1}];
             userCharacters = masterLibrary.map(item => ({ ...item, completed: false }));
         } finally {
-        syncStatus.classList.remove('show');
-        setupCategoryFilter(); // <--- 1. 先建立選單選項
-        renderGame(); 
-        renderSteps();
-        renderGallery();      // <--- 2. 預渲染一次字庫
+            syncStatus.classList.remove('show');
+            renderGame(); 
+            renderSteps();
+        }
     }
-}
 
-function renderGame() {
-    if (!userCharacters[currentIndex]) return;
-    const current = userCharacters[currentIndex];
-    const target = document.getElementById('hanzi-target');
-    target.innerHTML = '';
-    
-    writer = HanziWriter.create('hanzi-target', current.char, {
-        width: target.clientWidth,
-        height: target.clientHeight,
-        padding: 25,
-        showOutline: true,
-        strokeAnimationSpeed: 1,
-        delayBetweenStrokes: 200,
-        
-        // 🎨 顏色設定
-        strokeColor: '#1e293b',    // 播放示範動畫時的顏色
-        outlineColor: '#f1f5f9',   // 底層灰字的顏色
-        drawingColor: '#38C0FF',   // 寫字時的顏色
-        
-        // 📏 厚度設定 (解決太幼/空白的關鍵)
-        strokeWidth: 20,           // 👈 這個數值決定灰字的厚度，建議設定在 20-25 之間
-        drawingThickness: 25,      // 👈 玩家寫字時的感應寬度
-        
-        showHintAfterMisses: 1
-    });
+    function renderGame() {if (!userCharacters[currentIndex]) return; const current = userCharacters[currentIndex]; document.getElementById('hanzi-target').innerHTML = '';
+                           writer = HanziWriter.create('hanzi-target', current.char, {width: document.getElementById('hanzi-target').clientWidth,
+                                                                                      height: document.getElementById('hanzi-target').clientHeight,
+                                                                                      padding: 25,
+                                                                                      showOutline: true,
+                                                                                      strokeAnimationSpeed: 1, delayBetweenStrokes: 200,
+                                                                                      strokeColor: '#1e293b', outlineColor: '#f1f5f9', drawingColor: '#38C0FF', drawingThickness: 35});
 
-    writer.quiz({
-        onComplete: function() {
-            userCharacters[currentIndex].completed = true;
-            showSuccess();
-            saveProgress();
-        },
-        onMistake: () => showToast("筆劃錯誤")
-    });
-}
+                           writer.quiz({onComplete: function(summary) {userCharacters[currentIndex].completed = true; showSuccess(); saveProgress();},
+                                        onMistake: function(strokeData) {showToast("筆劃錯誤");}});}
 
     function renderSteps() {
         stepContainer.innerHTML = '';
@@ -290,63 +244,34 @@ function renderGame() {
     }
 
     const galleryCategoryFilter = document.getElementById('gallery-category-filter');
-    const gallerySearch = document.getElementById('gallery-search');
-    function renderGallery() {
-    const searchTerm = gallerySearch.value.toLowerCase();
-    const categoryTerm = galleryCategoryFilter.value;
-
-    galleryGrid.innerHTML = ''; // 每次執行先清空
-
-    masterLibrary.forEach((item, index) => {
-        const itemCategories = item.categories || ["未分類"];
-        const matchesSearch = item.char.includes(searchTerm) || 
-                             (item.en && String(item.en).toLowerCase().includes(searchTerm));
-        const matchesCategory = (categoryTerm === 'all') || itemCategories.includes(categoryTerm);
-
-        if (matchesSearch && matchesCategory) {
-            const isCompleted = userCharacters[index]?.completed;
-            const card = document.createElement('div');
-            card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
-                index === currentIndex ? 'border-sky-500 bg-sky-50' : 'border-slate-100 bg-slate-50 hover:bg-white'
-            }`;
-            card.innerHTML = `<span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>`;
-            
-            card.onclick = () => {
-                currentIndex = index;
-                renderGame();
-                renderSteps();
-                galleryOverlay.classList.remove('active');
-            };
-            galleryGrid.appendChild(card);
-        }
-    });
-}
+    function renderGallery() {const searchTerm = document.getElementById('gallery-search').value.toLowerCase(); const categoryTerm = galleryCategoryFilter.value;
+                              if (galleryCategoryFilter.options.length === 1 && masterLibrary.length > 0) {const allCats = []; masterLibrary.forEach(item => {if (item.categories) allCats.push(...item.categories);});
+                                                                                                           const uniqueCategories = [...new Set(allCats)]; uniqueCategories.forEach(cat => {const opt = document.createElement('option');
+                                                                                                                                                                                            opt.value = opt.innerText = cat; 
+                                                                                                                                                                                            galleryCategoryFilter.appendChild(opt);});}
+                              galleryGrid.innerHTML = '';
+                              masterLibrary.forEach((item, index) => {const itemCategories = item.categories || ["未分類"];
+                                                                      const matchesChar = item.char.includes(searchTerm);
+                                                                      const matchesEnglish = item.en ? String(item.en).toLowerCase().includes(searchTerm) : false;
+                                                                      const matchesSearch = matchesChar || matchesEnglish;
+                                                                      const matchesCategory = categoryTerm === 'all' || itemCategories.includes(categoryTerm);
+                                                                      if (matchesSearch && matchesCategory) {const isCompleted = userCharacters[index]?.completed; 
+                                                                                                             const card = document.createElement('div');
+                                                                                                             card.className = `aspect-square rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all active:scale-90 border-2 ${
+                                                                                                             index === currentIndex ? 'border-amber-400 bg-amber-50' : 'border-slate-100 bg-slate-50 hover:bg-white'}`;
+                                                                                                             card.innerHTML = `
+                                                                                                             <span class="text-2xl font-iansui ${isCompleted ? 'text-slate-800' : 'text-slate-400'}">${item.char}</span>
+                                                                                                             `;
+                                                                                                             card.onclick = () => {currentIndex = index; renderGame(); renderSteps(); galleryOverlay.classList.remove('active');};
+                                                                                                             galleryGrid.appendChild(card);}});
+                              }
                                                                                                              
                                                                                                             
+    document.getElementById('gallery-button').onclick = () => {renderGallery(); galleryOverlay.classList.add('active');};
+    document.getElementById('close-gallery').onclick = () => galleryOverlay.classList.remove('active');
+    document.getElementById('gallery-search').oninput = renderGallery;
     document.getElementById('clear-button').onclick = () => { renderGame(); };
     document.getElementById('hint-button').onclick = () => { if(writer) writer.animateCharacter(); };
-
-    // 在腳本最後方統一處理事件
-document.addEventListener('DOMContentLoaded', () => {
-    const gBtn = document.getElementById('gallery-button');
-    const cBtn = document.getElementById('close-gallery');
-    const gSearch = document.getElementById('gallery-search');
-    const gFilter = document.getElementById('gallery-category-filter');
-    const gOverlay = document.getElementById('word-gallery');
-
-    gBtn.onclick = () => {
-        renderGallery(); 
-        gOverlay.classList.add('active');
-    };
-
-    cBtn.onclick = () => {
-        gOverlay.classList.remove('active');
-    };
-
-    // 這裡確保輸入或切換選單時，畫面會立刻重繪
-    gSearch.oninput = renderGallery;
-    gFilter.onchange = renderGallery;
-});
 
     function showToast(message) {
         const container = document.getElementById('toast-container');
@@ -382,27 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.onload = initApp;
-
-    function setupCategoryFilter() {
-    const filter = document.getElementById('gallery-category-filter');
-    // 保留 "所有主題"，清除其他舊選項
-    filter.innerHTML = '<option value="all">所有主題</option>';
-    
-    const allCats = [];
-    masterLibrary.forEach(item => {
-        if (item.categories && Array.isArray(item.categories)) {
-            allCats.push(...item.categories);
-        }
-    });
-    
-    const uniqueCategories = [...new Set(allCats)];
-    uniqueCategories.forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.innerText = cat;
-        filter.appendChild(opt);
-    });
-}
     
     // 📲 手機旋轉提示 ORIENTATION NOTI
     function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
