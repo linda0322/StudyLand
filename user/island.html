@@ -279,7 +279,7 @@
                                                    // ✏️🈚️ 庫存用盡 DESIGN
                                                    container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0; const statusClass = isOutOfStock ? "pointer-events-none opacity-50 grayscale" : "active:scale-95";
                                                                                             const countColor = isOutOfStock ? "text-slate-300" : "text-slate-400";
-                                                                                            return `<div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}"  class="inventory-item glass-panel rounded-xl flex flex-col items-center justify-center gap-2 p-2 transition-all ${statusClass}">
+                                                                                            return `<div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}"  class="inventory-item aspect-square glass-panel rounded-xl flex flex-col items-center justify-center gap-2 p-2 transition-all ${statusClass}">
                                                                                                         <img src="${item.imgURL}" class="pointer-events-none w-12 h-12 object-contain" draggable="false">
                                                                                                         <span class="font-cubic ${countColor} text-[16px] thin-border">${item.available}</span>
                                                                                                     </div>`;}).join('');}
