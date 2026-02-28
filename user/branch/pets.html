@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>寵物圖鑑</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap">
+    <link rel="icon" type="image/webp" href="https://lh3.googleusercontent.com/d/1x9g9cC2Z3YOQXjplPElgLOtBuKixb6lD">
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1UL5PytrCRj0UFA9yJ2QFKowmTmBw-rZn">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 🏞️ 整體版面 OVERALL */
+        body {height: 100vh; width: 100vw; position: fixed; margin: 0; 
+              overflow: hidden; overscroll-behavior: none;
+              -webkit-user-select: none; touch-action: none;
+              font-family: 'Noto Sans TC', sans-serif;
+              background-color: #1dc5fd;            
+              cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
+        }
+          /* 🏙️ 背景層 BACKGROUND LAYER */
+            .bg-layer {position: fixed; inset: 0; z-index: -1;
+                       background-size: cover; background-position: center center; background-repeat: no-repeat;
+                       background-image: url('https://lh3.googleusercontent.com/d/1WZPUn9UYK1xsLwXmo4QfSr1LG2-poCxc');}
+            /* 📱 手機背景 PHONE BACKGROUND LAYER */
+            @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');}}
+            /* 📱 手機旋轉提示 ORIENTATION NOTI */
+            #orientation-noti {display: none; position: fixed; inset: 0; z-index: 99999;
+                               background-color: #1dc5fd;
+                               flex-direction: column; align-items: center; justify-content: center;}
+            @media screen and (max-width: 1000px) and (orientation: landscape) {#orientation-noti {display: flex !important;} body {overflow: hidden !important;}}
+            @keyframes phone-portrait {0% { transform: rotate(-90deg); } 30% { transform: rotate(0deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); }}
+            .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
+
+          /* 🌼 樣式 STYLE */
+            /* 🥽 玻璃框 */
+            .glass-panel {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);}
+            /* 🔠 字體 FONTS */
+            @font-face {font-family: "Cubic11"; src: url('https://cdn.jsdelivr.net/gh/ACh-K/Cubic-11@90bc0e197c4db0fc8c75fe30c2d82dea03da707e/fonts/ttf/Cubic_11.ttf') format('truetype'); font-display: swap;}
+            .font-cubic {font-family: 'Cubic11', sans-serif;}
+            .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+            .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+
+        /* 🐕 動畫 ANIMATION */
+            /* 🤖 NPC FLOAT */
+            @keyframes float-loop {0%, 100% {transform: translateY(-2px); animation-timing-function: ease-in-out;} 
+                                   50% {transform: translateY(2px); animation-timing-function: ease-in-out;}}
+            .animate-text-float {animation: float-loop 3s infinite;}
+            .npc-float {animation: float-loop 3s infinite; animation-delay: -1.5s; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.1)); transition: filter 1.5s ease-in-out;}
+
+        /* ⚙️ 選項 CHOICE */
+        .mode-button {display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.2rem; gap: 8px; margin: 0 auto;
+                          aspect-ratio: 4 / 3; width: 100%; max-width: 200px; 
+                          background-color: rgba(255, 255, 255, 0.95); border-radius: 30px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+                          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
+        .mode-title {font-family: 'Cubic11', sans-serif; color: #64748b; font-size: 0.875rem; -webkit-text-stroke: 0.5px currentColor; text-align: center;}
+        .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
+        a, button {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+        @media (hover: hover) {a:hover, button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}
+                               .mode-button:hover {transform: translateY(-4px); background-color: rgba(255, 255, 255, 0.85);}}
+        a:active, button:active, [role="button"]:active, .mode-button:active {transform: scale(0.95); background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1)}
+        .mode-button:active .mode-title {color: white; -webkit-text-stroke: 0.5px white;}
+    </style>
+</head>
+<body>
+    <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
+
+    <!-- 📱 手機旋轉提示 ORIENTATION NOTI -->
+    <div id="orientation-noti">
+        <div class="animate-phone-portrait w-20 h-20 flex items-center justify-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        </div>
+        <h2 class="font-cubic text-xl text-white thick-border tracking-wider">旋轉螢幕以繼續遊戲</h2>
+    </div>
+    
+    <main id="main-content" class="container flex flex-col items-center mx-auto px-8 py-8">
+        <!-- 🔝 頂欄 TOP --><nav class="w-full max-w-[550px] flex justify-between mb-8">
+            <!-- ⬅️ 左邊群組 TOP LEFT-->
+            <div class="flex items-center gap-2">
+                <!-- 📛 用户名稱 USERNAME -->
+                <div class="glass-panel rounded-full shadow-md flex items-center px-4 py-1.5 gap-2">
+                    <span class="font-cubic text-slate-500 text-[10px] thin-border tracking-wider">玩家</span>
+                    <span id="user-display-name" class="font-cubic text-slate-700 text-sm thin-border">載入中...</span>
+                </div>
+                <a href="../index.html" class="no-touch glass-panel rounded-full shadow-md text-slate-500 p-2" title="回到主頁">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </a>
+            </div>
+        </nav>
+        <!-- 🤖 NPC 動畫 ANIMATION -->
+        <header class="flex flex-col items-center text-center mb-6">
+            <div class="relative mb-4">
+                <img src="https://lh3.googleusercontent.com/d/1dCdxRN0oNjOz5lg7rwajTtYZb077zePp" alt="NPC" class="no-touch pointer-events-none npc-float w-[140px] h-auto">
+                <div class="absolute -top-1 -right-3 font-cubic text-white text-[22px] thick-border tracking-widest animate-text-float">GO!</div>
+            </div>
+        </header>
+        <!-- ⚙️ 選項 CHOICE -->
+        <div class="w-full max-w-[500px] grid grid-cols-2 gap-6 px-6">
+            <a href="island.html" class="no-touch mode-button"><h2 class="text-5xl pointer-events-none no-touch">👆🏻</h2><h3 class="mode-title">設定模式</h3></a>
+            <a id="preview-button" href="#" class="no-touch mode-button"><h2 class="text-5xl pointer-events-none no-touch">👀</h2><h3 class="mode-title">預覽模式</h3></a>
+        </div>
+    </main>
+
+    <script>
+        // 🔄 載入網頁 LOADING PAGE
+        window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) {window.location.href = 'index.html'; return;}
+                                                           document.getElementById('user-display-name').textContent = savedName;
+                                                           const previewBtn = document.getElementById('preview-button');
+                                                           // 👀 預覽模式 PREVIEW MODE
+                                                           previewBtn.href = `islanddisplay.html?user=${encodeURIComponent(savedName)}`;});
+
+        // 🫵🏻 手勢禁止 DISABLE GESTURE
+          // 選取及拖動
+          document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
+          // 多指縮放
+          const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) {if (e.cancelable) e.preventDefault();}};
+          ['touchstart', 'wheel', 'gesturestart'].forEach(type => {document.addEventListener(type, preventZoom, {passive: false});});
+          // 雙擊縮放
+          let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
+
+        
+        // 📱 手機旋轉提示 ORIENTATION NOTI
+        function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
+                                            const isLandscape = window.innerWidth > window.innerHeight; const isMobileOrTablet = window.innerWidth < 1024;
+                                            if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
+        window.addEventListener('resize', handleOrientationChange);
+        window.addEventListener('orientationchange', handleOrientationChange);
+        handleOrientationChange();
+         
+    </script>
+</body>
+</html>
