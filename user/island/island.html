@@ -47,12 +47,12 @@
         .draggable, .inventory-item {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
         .fixed-controls-left {position: absolute !important; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px;}
         .fixed-controls-right {position: absolute !important; top: 10px; right: 10px; z-index: 100; display: flex; gap: 8px;}
-        .fixed-controls-left button:hover, .fixed-controls-right button:hover, #orientation-noti-landscape button:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}
-        .fixed-controls-left button:hover svg, .fixed-controls-right button:hover svg, .fixed-controls-left button:active svg, .fixed-controls-right button:active svg {stroke: white !important;}
-        .fixed-controls-left button:active, .fixed-controls-right button:active, #orientation-noti-landscape button:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
+        .nav-button:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1); }
+        .nav-button:hover svg, .nav-button:active svg {stroke: white !important;}
+        .nav-button:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
         @media screen and (max-width: 932px) {.fixed-controls-left, .fixed-controls-right {gap: 8px; top: 15px;}
-                                              .fixed-controls-left button, .fixed-controls-right button {background: rgba(255, 255, 255, 0.9); padding: 12px;}
-                                              .fixed-controls-left svg, .fixed-controls-right svg {width: 26px !important; height: 26px !important;}
+                                              .nav-button {background: rgba(255, 255, 255, 0.9); padding: 12px;}
+                                              .nav-button svg {width: 26px !important; height: 26px !important;}
                                               button[onclick*="toggle"] svg.lucide-x {width: 32px !important; height: 32px !important;}}
       
       /* =========================================
@@ -95,14 +95,14 @@
          /* 🏝️ 島嶼 Island */
          #island-buttons-container a, #island-buttons-container img {-webkit-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; touch-action: none; -webkit-touch-callout: none;}
          @media screen and (max-width: 932px) {#island-title {font-size: 18px; margin-left: 2px;}
-                                               button[onclick="toggleIslandMenu()"] {height: 50px; padding-left: 16px; padding-right: 16px;}}
+                                               button[onclick="toggleDOM.islandModal()"] {height: 50px; padding-left: 16px; padding-right: 16px;}}
     </style>
 </head>
 
 <body>
     <!-- 📲 手機旋轉提示 Orientation Noti -->
     <div id="orientation-noti-landscape">
-        <button onclick="location.href='../../index.html'" class="z-[10000] absolute top-5 left-6 normal-button no-touch" title="返回主頁">
+        <button onclick="location.href='../../index.html'" class="z-[10000] absolute top-5 left-6 normal-button nav-button no-touch" title="返回主頁">
             <svg class="normal-button-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         </button>
         <div class="animate-phone-landscape w-20 h-20 flex items-center justify-center mb-6">
@@ -130,9 +130,9 @@
     </div>
         
     <!-- 🏝️ 島嶼 Island -->
-    <div id="island-menu" class="hidden fixed z-[2000] inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 ease-in-out">
+    <div id="island-modal" class="hidden fixed z-[2000] inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 ease-in-out">
         <div class="w-[80%] max-w-lg glass-panel rounded-[30px] border-white/50 shadow-2xl relative p-8">
-            <button onclick="toggleIslandMenu()" class="absolute top-6 right-8 text-slate-400 text-2xl hover:text-slate-600 hover:scale-110 active:scale-95 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            <button onclick="toggleDOM.islandModal()" class="absolute top-6 right-8 text-slate-400 text-2xl hover:text-slate-600 hover:scale-110 active:scale-95 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
             <h2 class="font-cubic text-slate-600 text-xl thick-border text-center tracking-wider mb-6">想去哪裡？</h2>
             <div id="island-buttons-container" class="w-full grid grid-cols-3 gap-6">
                 <div class="w-full col-span-3 flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🗺️</span>
@@ -160,35 +160,35 @@
         <!-- ⬅️ 左邊 Left -->
         <div class="fixed-controls-left">
           <!-- 🏠 主頁 Home -->
-          <button onclick="handleHome()" class="normal-button no-touch" title="返回主頁">
+          <button onclick="handleHome()" class="normal-button nav-button no-touch" title="返回主頁">
             <svg xmlns="http://www.w3.org/2000/svg" class="normal-button-svg lucide lucide-door-open-icon lucide-door-open" viewBox="0 0 24 24"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg>
           </button>
           <!-- 🏝️ 島嶼 Island -->
-          <button onclick="toggleIslandMenu()" class="group glass-panel rounded-full shadow-md text-slate-500 flex items-center px-4 py-2 gap-3" title="地點">
+          <button onclick="toggleDOM.islandModal()" class="group nav-button glass-panel rounded-full shadow-md text-slate-500 flex items-center px-4 py-2 gap-3" title="地點">
             <svg xmlns="http://www.w3.org/2000/svg" class="normal-button-svg lucide lucide-map-pinned-icon lucide-map-pinned group-hover:text-white transition-colors" viewBox="0 0 24 24"><path d="M18 8c0 3.613-3.869 7.429-5.393 8.795a1 1 0 0 1-1.214 0C9.87 15.429 6 11.613 6 8a6 6 0 0 1 12 0"/><circle cx="12" cy="8" r="2"/><path d="M8.714 14h-3.71a1 1 0 0 0-.948.683l-2.004 6A1 1 0 0 0 3 22h18a1 1 0 0 0 .948-1.316l-2-6a1 1 0 0 0-.949-.684h-3.712"/></svg> 
             <span id="island-title" class="font-cubic text-[13px] text-slate-500 thin-border text-center tracking-wider translate-y-[1px] group-hover:text-white transition-colors">將抵達...</span>
           </button>
           <!-- 🤖 NPC Island -->
-          <button onclick="handleNPC()" class="normal-button no-touch" title="NPC的島嶼">
+          <button onclick="handleNPC()" class="normal-button nav-button no-touch" title="NPC的島嶼">
             <svg xmlns="http://www.w3.org/2000/svg" class="normal-button-svg lucide lucide-bot-icon lucide-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
           </button>
           <!-- 🚪 倉庫按鈕 Storage -->
-          <button onclick="toggleStorage()" class="normal-button no-touch" title="倉庫">
+          <button onclick="toggleStorage()" class="normal-button nav-button no-touch" title="倉庫">
             <svg xmlns="http://www.w3.org/2000/svg" class="normal-button-svg lucide lucide-warehouse-icon lucide-warehouse" viewBox="0 0 24 24"><path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/></svg>
           </button>
         </div>
         <!-- ➡️ 右邊 Right -->
         <div class="fixed-controls-right">
           <!-- 💾 儲存 Save -->
-          <button id="save-button" onclick="handleSave()" class="normal-button no-touch" title="儲存">
+          <button id="save-button" onclick="handleSave()" class="normal-button nav-button no-touch" title="儲存">
             <svg xmlns="http://www.w3.org/2000/svg" class="normal-button-svg lucide lucide-save-icon lucide-save" viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
           </button>
           <!-- 👀 檢視 Preview -->
-          <button id="preview-button" onclick="handlePreview()" class="glass-panel rounded-full text-sky-700 shadow-md p-2" title="預覽模式">
+          <button id="preview-button" onclick="handlePreview()" class="nav-button glass-panel rounded-full text-sky-700 shadow-md p-2" title="預覽模式">
             <svg xmlns="http://www.w3.org/2000/svg" class="normal-button-svg lucide lucide-eye-icon lucide-eye" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
           <!-- 🔄 重新整理 Refresh -->
-          <button id="reload-button" onclick="handleReload()" class="glass-panel rounded-full text-sky-700 shadow-md p-2" title="重新整理">
+          <button id="reload-button" onclick="handleReload()" class="nav-button glass-panel rounded-full text-sky-700 shadow-md p-2" title="重新整理">
             <svg class="normal-button-svg" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
           </button>  
         </div>
@@ -213,40 +213,81 @@
     // 🌎 GAS
     // =========================================
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUqJxvUn_seiDHWNYfbKZVKYVFqNEov1wmDTiMYUupFrmVURQUFp-nbujh3YhCXlNF/exec'; 
-        
-        const username = localStorage.getItem('userID');
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentIslandId = urlParams.get('id') || 'island_1';
-        let assetLibrary = {};
-        let userInventory = []; 
 
-        // ✏️🏞️ 島嶼背景 ISLAND BACKGROUND
-        const islandConfig = {'island_1': { name: '草地', bg: 'https://lh3.googleusercontent.com/d/1j_GFfezO8NNHnF1M-q7euOdDHOdtP8vF', color: 'bg-lime-200', icon: '🌳' },
-                              'island_2': { name: '海洋', bg: 'https://lh3.googleusercontent.com/d/1Roy33fghpQHRS1IZk2N_MxYbY1-YKVRu', color: 'bg-sky-200', icon: '🌊' },
-                              'island_3': { name: '沙漠', bg: 'https://lh3.googleusercontent.com/d/15OIBcHpnpYkV1hH4pk64qJjEon-y1plq', color: 'bg-amber-200', icon: '🏜️' },
-                             };
+    // =========================================
+    // 🌳 DOM 統一管理
+    // =========================================
+    const DOM = {
+        // 💬 彈窗 Modal
+        storageModal: document.getElementById('storage-modal'),
+        islandModal: document.getElementById('island-modal'),
+        confirmModal: document.getElementById('confirm-modal'),
+        confirmBtn: document.getElementById('confirm-button'),
+        confirmTitle: document.getElementById('confirm-title'),
+        // 🍞 通知 Notification
+        toast: document.getElementById('toast'),
+        toastIcon: document.getElementById('toast-icon');
+        toastMessage: document.getElementById('toast-msg');
+        // 🔘 按鈕 Button
+        saveBtn: document.getElementById('save-button')
+        // 🏞️ 島嶼 Island
+        stage: document.getElementById('game-stage'),
+        islandTitle: document.getElementById('island-title'),
+        bgIMG: document.getElementById('background-img'),
+        itemsLayer: document.getElementById('items-layer'),
+        islandContainer: document.getElementById('island-buttons-container'),
+        // 🚪 倉庫 Storage
+        storageContainer: document.getElementById('storage-items'),
+        tabContainer: document.getElementById('storage-tabs'),
+    };
+
+    // =========================================
+    // 💬 彈窗 Modal
+    // =========================================
+    const hideModal = (modal) => modal.classList.add('hidden');
+    [DOM.storageModal, DOM.islandModal, DOM.confirmModal].forEach(modal => {modal.addEventListener('click', (e) => {if (e.target === modal) hideModal(modal);});});
+
+    // =========================================
+    // 🏞️ 島嶼背景 Island Background
+    // =========================================
+    const islandConfig = {'island_1': {name: '草地', bg: 'https://lh3.googleusercontent.com/d/1j_GFfezO8NNHnF1M-q7euOdDHOdtP8vF', color: 'bg-lime-200', icon: '🌳'},
+                          'island_2': {name: '海洋', bg: 'https://lh3.googleusercontent.com/d/1Roy33fghpQHRS1IZk2N_MxYbY1-YKVRu', color: 'bg-sky-200', icon: '🌊'},
+                          'island_3': {name: '沙漠', bg: 'https://lh3.googleusercontent.com/d/15OIBcHpnpYkV1hH4pk64qJjEon-y1plq', color: 'bg-amber-200', icon: '🏜️'},
+                         };
             
-        // ✅ 加載 LOADING INFO
-        async function initApp() {if (!username) {window.location.href = '../../index.html'; return;}
-                                  const startTime = Date.now();
-                                  toggleLoading(true, "飛行中", "☁️");
-                                  const config = islandConfig[currentIslandId] || islandConfig['island_1'];
-                                  document.getElementById('background-img').src = config.bg; 
-                                  document.getElementById('island-title').innerText = config.name;
-                                  try {const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`), fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
-                                       assetLibrary = await libResp.json();
-                                       const savedItems = await posResp.json(); const itemsLayer = document.getElementById('items-layer');
-                                       itemsLayer.innerHTML = '';
-                                       if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); const assetType = parts.join('_');
-                                                                                                   console.log("正在載入物件:", assetType);
-                                                                                                   if (assetLibrary[assetType]) {createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);}
-                                                                                                   else {console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否一致。");}});}
-                                       await loadIslandList(); await refreshInventory();} 
-                                  catch (err) {console.error("載入失敗:", err); showToast("請檢查網路", "error");} 
-                                  finally {const elapsedTime = Date.now() - startTime; 
-                                           const minimumWait = 1000; 
-                                           const remainingWait = Math.max(0, minimumWait - elapsedTime);
-                                           setTimeout(() => {toggleLoading(false);}, remainingWait);}}
+
+    // =========================================
+    // 🚀 載入 Load
+    // =========================================  
+    const username = localStorage.getItem('userID');
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentIslandId = urlParams.get('id') || 'island_1';
+    let assetLibrary = {};
+    let userInventory = []; 
+    async function initApp() {
+        if (!username) {window.location.href = '../../index.html'; return;}
+        const startTime = Date.now();
+        toggleLoading(true, "飛行中", "☁️");
+        const config = islandConfig[currentIslandId] || islandConfig['island_1'];
+        DOM.bgIMG.src = config.bg; 
+        DOM.islandTitle.innerText = config.name;
+        try {const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`), 
+                                                           fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
+             assetLibrary = await libResp.json();
+             const savedItems = await posResp.json();
+             DOM.itemsLayer.innerHTML = '';
+             if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); const assetType = parts.join('_');
+                 console.log("正在載入物件:", assetType);
+                 if (assetLibrary[assetType]) {createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);}
+                 else {console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否一致。");}});}
+             await loadIslandList(); await refreshInventory();
+        } 
+        catch (err) {console.error("載入失敗:", err); showToast("請檢查網路", "error");} 
+        finally {const elapsedTime = Date.now() - startTime; 
+        const minimumWait = 500; 
+        const remainingWait = Math.max(0, minimumWait - elapsedTime);
+        setTimeout(() => {toggleLoading(false);}, remainingWait);}
+    }
         
         // 🤟🏻 功能 FUNCTION：👆🏻 製造拖曳物件 CREATE DRAGGABLE ITEMS
         function createDraggableElement(id, type, left = 50, top = 50) {const config = assetLibrary[type]; const div = document.createElement('div');
@@ -260,10 +301,10 @@
                                                                         const isBottom = String(config.isBottom).toLowerCase() === 'true'; div.style.zIndex = isBottom ? "1" : "10";
                                                                         if (isBottom) div.dataset.isBottom = "true";
                                                                         div.innerHTML = `<img src="${config.imgURL}">`; div.oncontextmenu = (e) => {e.preventDefault(); handleItemReturn(div);};
-                                                                        document.getElementById('items-layer').appendChild(div); bindDraggable(div);}
+                                                                        DOM.itemsLayer.appendChild(div); bindDraggable(div);}
         
         // 🤟🏻 功能 FUNCTION：👆🏻 拖曳物件 DRAG ITEMS
-        function bindDraggable(el) {const stage = document.getElementById('game-stage'); let longPressTimer; let startX, startY; let isLongPress = false;
+        function bindDraggable(el) {let longPressTimer; let startX, startY; let isLongPress = false;
                                     el.onmousedown = el.ontouchstart = function(e) {if (e.button === 2) return; const isTouch = e.type === 'touchstart'; startX = isTouch ? e.touches[0].clientX : e.clientX; startY = isTouch ? e.touches[0].clientY : e.clientY; isLongPress = false;
                                                                                     longPressTimer = setTimeout(() => {isLongPress = true; handleItemReturn(el);}, 1000);
                                                                                     if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
@@ -283,38 +324,36 @@
                                                                                                              document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
                                                                                     document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, {passive: false}); 
                                                                                     document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);}; el.ondragstart = function() {return false;};}
-        let currentReturningEl = null; function handleItemReturn(el) {if (!confirmModal.classList.contains('hidden')) return; currentReturningEl = el; openConfirm("要收回倉庫嗎？", () => {
+        let currentReturningEl = null; function handleItemReturn(el) {if (!DOM.confirmModal.classList.contains('hidden')) return; currentReturningEl = el; openConfirm("要收回倉庫嗎？", () => {
             const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
             if (invIdx > -1) {userInventory[invIdx].available++;}
             currentReturningEl.remove(); currentReturningEl = null; showToast("已收回倉庫");
             const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);});}
 
         // 🏠 倉庫 STORAGE
-        const storageModal = document.getElementById('storage-modal');
-        function toggleStorage() {if (storageModal.classList.contains('hidden')) {storageModal.classList.remove('hidden'); if (userInventory.length === 0) {refreshInventory();} 
+        function toggleStorage() {if (DOM.storageModal.classList.contains('hidden')) {DOM.storageModal.classList.remove('hidden'); if (userInventory.length === 0) {refreshInventory();} 
                                   else {const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);}} 
-                                  else {storageModal.classList.add('hidden');}}
-        storageModal.addEventListener('click', (e) => {if (e.target === storageModal) {storageModal.classList.add('hidden');}});
+                                  else {DOM.storageModal.classList.add('hidden');}}
             // 🔢 庫存 INVENTORY
-            async function refreshInventory() {const container = document.getElementById('storage-items');
+            async function refreshInventory() {
                 try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`); const serverInventory = await resp.json();
                      const islandIds = ['island_1', 'island_2', 'island_3']; const allPositionsResponses = await Promise.all(islandIds.map(id => fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${id}&action=getPositions`).then(r => r.json())));
                      const activeTypesAcrossIslands = new Set(); allPositionsResponses.forEach(savedItems => {if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); activeTypesAcrossIslands.add(parts.join('_'));});}});
                      const serverTypes = serverInventory.map(i => i.assetType); const combinedTypes = [...new Set([...serverTypes, ...Array.from(activeTypesAcrossIslands)])];
                      userInventory = combinedTypes.map(type => {const libraryInfo = assetLibrary[type]; if (!libraryInfo) return null; const invItem = serverInventory.find(i => i.assetType === type); 
                                                                 return {assetType: type, imgURL: libraryInfo.imgURL, category: libraryInfo.category || '其他', available: invItem ? invItem.available : 0};}).filter(item => item !== null);
-                     const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; const tabContainer = document.getElementById('storage-tabs');
-                     tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
+                     const categories = ['全部', ...new Set(userInventory.map(i => i.category))];
+                     DOM.tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
                      renderInventoryItems('全部'); } catch (e) {console.error("跨島更新倉庫失敗:", e); container.innerHTML = "載入失敗";}}
             // 🤟🏻 功能 FUNCTION：🎨 渲染庫存 RENDER INVENTORY
-            function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
+            function renderInventoryItems(filter) {const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
                                                    // ✏️🚫 庫存空白 DESIGN
-                                                   if (items.length === 0) {container.innerHTML = `<div class="w-full col-span-full flex flex-col items-center justify-center py-5 gap-4">
+                                                   if (items.length === 0) {DOM.storageContainer.innerHTML = `<div class="w-full col-span-full flex flex-col items-center justify-center py-5 gap-4">
                                                                                                        <span class="text-5xl mb-2">🙂‍↔️</span>
                                                                                                        <p class="w-full font-cubic text-slate-400 thin-border tracking-widest text-center">一無所有</p>
                                                                                                    </div>`; return;}
                                                    // ✏️🈚️ 庫存用盡 DESIGN
-                                                   container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0; const statusClass = isOutOfStock ? "pointer-events-none opacity-50 grayscale" : "active:scale-95";
+                                                   DOM.storageContainer.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0; const statusClass = isOutOfStock ? "pointer-events-none opacity-50 grayscale" : "active:scale-95";
                                                                                             const countColor = isOutOfStock ? "text-slate-300" : "text-slate-400";
                                                                                             return `<div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}"  class="inventory-item aspect-square glass-panel rounded-xl flex flex-col items-center justify-center gap-2 p-2 transition-all ${statusClass}">
                                                                                                         <img src="${item.imgURL}" class="pointer-events-none w-12 h-12 object-contain" draggable="false">
@@ -331,13 +370,11 @@
                                               else {showToast("庫存不足", "error");}}
 
         // 🏝️ 島嶼 ISLAND
-        const islandMenu = document.getElementById('island-menu');
-        function toggleIslandMenu() { islandMenu.classList.toggle('hidden'); }
-        islandMenu.addEventListener('click', (e) => {if (e.target === islandMenu) {islandMenu.classList.add('hidden');}});
+        function toggleDOM.islandModal() { DOM.islandModal.classList.toggle('hidden'); }
             // ✏️🏝️ 島嶼 MENU DESIGN
             async function loadIslandList() {try {const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
-                                                  const allowedIslands = await response.json(); const container = document.getElementById('island-buttons-container'); container.innerHTML = ''; 
-                                                  if (allowedIslands.length === 0) {container.innerHTML = `
+                                                  const allowedIslands = await response.json(); DOM.islandContainer.innerHTML = ''; 
+                                                  if (allowedIslands.length === 0) {DOM.islandContainer.innerHTML = `
                                                   <div class="w-full col-span-3 flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🏝️</span>
                                                       <p class="font-cubic text-slate-400 thin-border text-center tracking-widest">目前無島可歸</p>
                                                   </div>`; return;}
@@ -346,40 +383,36 @@
                                                                                 <a href="island.html?id=${id}" class="select-none group bg-slate-50 rounded-[25px] text-center p-4 hover:bg-white hover:shadow-xl active:scale-95 transition-all" draggable="false">
                                                                                     <div class="select-none h-20 ${cfg.color} rounded-[20px] text-3xl flex items-center justify-center mb-2">${cfg.icon}</div>
                                                                                     <h3 class="select-none font-cubic text-slate-500 text-lg thin-border">${cfg.name}</h3>
-                                                                                </a>`; container.innerHTML += btnHtml;});} catch (e) {console.error("載入失敗", e);}}
+                                                                                </a>`; DOM.islandContainer.innerHTML += btnHtml;});} catch (e) {console.error("載入失敗", e);}}
             async function loadIslandData() {try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}`); const data = await resp.json();
                                                   if (data && data.length > 0) {data.forEach(item => {const el = document.getElementById(item.id);
                                                                                                       if (el) { el.style.left = item.leftPercent + '%'; el.style.top = item.topPercent + '%';}});}} 
                                              catch (e) {console.log("歡迎來到此島");}}
         
         // 🤟🏻 功能 FUNCTION：💾 儲存 SAVE    
-        async function saveData() {const btn = document.getElementById('save-button'); if (btn.disabled) return;
+        async function saveData() {if (DOM.saveBtn.disabled) return;
                                    const items = document.querySelectorAll('.draggable');
                                    const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
                                    try {await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
                                         showToast("成功儲存", "success");} catch (e) {console.error("Save Error:", e); showToast("儲存失敗", 'error');} 
-                                   finally { btn.disabled = false; btn.style.opacity = "1";}}
+                                   finally { DOM.saveBtn.disabled = false; DOM.saveBtn.style.opacity = "1";}}
         // 🤟🏻 功能 FUNCTION：✅ 確認 CONFIRM
-        const confirmModal = document.getElementById('confirm-modal');
-        function closeConfirm() {confirmModal.classList.add('hidden'); if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}}
-        function openConfirm(title, onConfirm) {document.getElementById('confirm-title').innerText = title; const btn = document.getElementById('confirm-button'); btn.onclick = () => {onConfirm(); confirmModal.classList.add('hidden'); currentReturningEl = null;}; confirmModal.classList.remove('hidden');}
+        function closeConfirm() {DOM.confirmModal.classList.add('hidden'); if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}}
+        function openConfirm(title, onConfirm) {DOM.confirmTitle.innerText = title; DOM.confirmBtn.onclick = () => {onConfirm(); DOM.confirmModal.classList.add('hidden'); currentReturningEl = null;}; DOM.confirmModal.classList.remove('hidden');}
         function handleSave() {openConfirm("儲存進度", () => {saveData();});}
         function handleReload() {openConfirm("重新載入", () => {location.reload();});}
         function handlePreview() {openConfirm("切換至預覽模式", () => {window.location.href = `islanddisplay.html?user=${encodeURIComponent(username)}`;});}
         function handleHome() {openConfirm("返回主頁", () => {window.location.href = '../../index.html';});}
         function handleNPC() {openConfirm("探訪 NPC", () => {window.location.href = 'islanddisplay.html?user=Testing';});}
-            // ❌ 關閉彈窗 CLOSE MODAL
-            confirmModal.addEventListener('click', (e) => {if (e.target === confirmModal) {confirmModal.classList.add('hidden');}});
 
         // 🤟🏻 功能 FUNCTION：🍞 通知 TOAST
-        let toastTimer; function showToast(message, type = 'success') {const toast = document.getElementById('toast'); const icon = document.getElementById('toast-icon'); const msg = document.getElementById('toast-msg');
-                                                                       clearTimeout(toastTimer); msg.innerText = message; icon.innerText = type === 'success' ? '✨' : '⚠️';        
+        let toastTimer; function showToast(message, type = 'success') {clearTimeout(toastTimer); DOM.toastMessage.innerText = message; DOM.toastIcon.innerText = type === 'success' ? '✨' : '⚠️';        
                                                                        toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
                                                                        toast.classList.add('opacity-100', 'translate-y-0');
-                                                                       toastTimer = setTimeout(() => {toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
-                                                                                                      toast.classList.remove('opacity-100', 'translate-y-0');}, 2500);}
+                                                                       toastTimer = setTimeout(() => {DOM.toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+                                                                                                      DOM.toast.classList.remove('opacity-100', 'translate-y-0');}, 2500);}
 
-
+    
         // 📲 手機旋轉提示 ORIENTATION NOTI
         function handleOrientationChange() {const warning = document.getElementById('orientation-noti-landscape'); 
                                             const isPortrait = window.innerHeight > window.innerWidth; const isMobileOrTablet = window.innerWidth < 700;
@@ -389,9 +422,9 @@
         handleOrientationChange();
 
         // 🔍 縮放比例 SCALE
-        function autoScaleGame() {const stage = document.getElementById('game-stage'); if (!stage) return;
+        function autoScaleGame() {if (!DOM.stage) return;
                                   const windowWidth = window.innerWidth; const windowHeight = window.innerHeight; const targetWidth = 1280; const targetHeight = 720;
-                                  const scaleX = windowWidth / targetWidth; const scaleY = windowHeight / targetHeight; const finalScale = Math.min(scaleX, scaleY);stage.style.transform = `scale(${finalScale})`;}
+                                  const scaleX = windowWidth / targetWidth; const scaleY = windowHeight / targetHeight; const finalScale = Math.min(scaleX, scaleY);DOM.stage.style.transform = `scale(${finalScale})`;}
         window.addEventListener('resize', autoScaleGame);
         window.addEventListener('orientationchange', () => {setTimeout(autoScaleGame, 200);});
         window.addEventListener('load', async () => {autoScaleGame(); setTimeout(async () => {await initApp();}, 100);});
