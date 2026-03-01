@@ -11,12 +11,13 @@
     <style>
         /* 🏞️ 整體版面 OVERALL */
         body {min-height: 100vh; width: 100vw; position: fixed; overflow: hidden; margin: 0; 
-              overscroll-behavior: none; overscroll-behavior-y: none; -webkit-user-select: none; -webkit-touch-callout: none;
+              overscroll-behavior: none; overscroll-behavior-y: none; -webkit-user-select: none; -webkit-touch-callout: none; 
               font-family: 'Noto Sans TC', sans-serif; background-color: #1dc5fd;            
               cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
         #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
-                       display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 0; padding-bottom: 120px;}
+                       display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 0; padding-bottom: 120px; scrollbar-width: none;}
+        #main-content::-webkit-scrollbar {display: none;}
             /* 🏙️ 背景層 BACKGROUND LAYER */
             .bg-layer {position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center center; background-repeat: no-repeat;
                        background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}
@@ -36,14 +37,7 @@
             /* 🐶 加載遮罩 LOADING OVERLAY */
             #loading-overlay {z-index: 6000; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
             #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
-
-        /* 🐕 動畫 ANIMATION */
-            /* 🤖 NPC FLOAT */
-            @keyframes float-loop {0%, 100% {transform: translateY(-2px); animation-timing-function: ease-in-out;} 
-                                   50% {transform: translateY(2px); animation-timing-function: ease-in-out;}}
-            .animate-text-float {animation: float-loop 3s infinite;}
-            .npc-float {animation: float-loop 3s infinite; animation-delay: -1.5s; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.1)); transition: filter 1.5s ease-in-out;}
-
+        
         /* ⚙️ 選項 CHOICE */
         .no-touch {touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-user-drag: none;}
         a, button, .pet-card.onclick {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
