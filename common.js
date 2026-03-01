@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   /* =========================================
-   🫵🏻 手勢禁止 DISABLE GESTURE
+   🫵🏻 手勢禁止 Disable Gesture
    ========================================= */
     // 選取及拖動
     document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                                   lastTouch = now;}, false);
 
   /* =========================================
-   📲 手機旋轉提示 ORIENTATION NOTI
+   📲 手機旋轉提示 Orientation Noti
    ========================================= */
     function handleOrientationChange() {
         const warning = document.getElementById('orientation-noti-portrait'); 
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================
-   🚘 加載遮罩 LOADING OVERLAY
+   🚘 加載遮罩 Loading Overlay
    ========================================= */
 window.toggleLoading = function(show, text = "載入中", emoji = "☁️") {
     let overlay = document.getElementById('loading-overlay');
