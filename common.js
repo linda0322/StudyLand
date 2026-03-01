@@ -32,3 +32,32 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('orientationchange', handleOrientationChange);
     handleOrientationChange();
 });
+
+/* =========================================
+   🚘 加載遮罩 LOADING OVERLAY
+   ========================================= */
+window.toggleLoading = function(show, text = "載入中", emoji = "☁️") {
+    let overlay = document.getElementById('loading-overlay');
+    if (show) {
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'loading-overlay';
+            overlay.innerHTML = `
+                <div id="loading-emoji" class="animate-bounce text-3xl mb-4"></div>
+                <div id="loading-text" class="font-cubic text-white text-xl thick-border tracking-widest"></div>
+            `;
+            document.body.appendChild(overlay);
+        }
+        document.getElementById('loading-emoji').innerText = emoji;
+        document.getElementById('loading-text').innerText = text;
+        overlay.style.display = 'flex';
+        overlay.classList.remove('fade-out');
+    } else {
+        if (overlay) {
+            overlay.classList.add('fade-out');
+            setTimeout(() => { 
+                overlay.style.display = 'none'; 
+            }, 500);
+        }
+    }
+};
