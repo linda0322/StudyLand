@@ -1,5 +1,5 @@
 /* =========================================
-   🔠 字體 FONTS
+   🔠 字體 Fonts
    ========================================= */
   @font-face {
       font-family: "Cubic11"; 
@@ -11,7 +11,7 @@
   .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
 
 /* =========================================
-   🥽 玻璃框 GLASS PANEL
+   🥽 玻璃框 Glass Panel
    ========================================= */
   .glass-panel {
       background: rgba(255, 255, 255, 0.7); 
@@ -20,7 +20,7 @@
   }
 
 /* =========================================
-   🚘 加載遮罩 LOADING OVERLAY
+   🚘 加載遮罩 Loading Overlay
    ========================================= */
 #loading-overlay {
     z-index: 6000; 
@@ -33,7 +33,7 @@
 #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
 
 /* =========================================
-   📲 手機旋轉提示 ORIENTATION NOTI
+   📲 手機旋轉提示 Orientation Noti
    ========================================= */
   /* ↕️ 橫轉直 PORTRAIT */
   #orientation-noti-portrait {
@@ -57,7 +57,7 @@
   .animate-phone-portrait {animation: phone-portrait 3s ease-in-out infinite; transform-origin: center;}
 
 /* =========================================
-   🐕 動畫 ANIMATION
+   🐕 動畫 Animation
    ========================================= */
 
   /* 🤖 NPC 漂浮 FLOAT */
@@ -74,7 +74,7 @@
   }
 
 /* =========================================
-   🫵🏻 手勢禁止 NO GESTURE
+   🫵🏻 手勢禁止 Disable Gesture
    ========================================= */
   .no-touch {
       touch-action: none; 
@@ -84,12 +84,12 @@
   }
 
 /* =========================================
-   🙈 隱藏圖層 HIDDEN
+   🙈 隱藏圖層 Hidden Layer
    ========================================= */
   .hidden {display: none !important;}
 
 /* =========================================
-   🔘 按鈕 BUTTONS
+   🔘 按鈕 Button
    ========================================= */
 
    a, button, [role="button"] {
