@@ -100,7 +100,7 @@
 
     <script>
         // ✅ 自動登入 AUTO LOGIN (CACHE)
-        window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) {window.location.href = 'index.html'; return;}
+        window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('userID'); if (!savedName) {window.location.href = 'index.html'; return;}
                                                            document.getElementById('user-display-name').textContent = savedName;
                                                            const previewBtn = document.getElementById('preview-button');
                                                            // 👀 預覽模式 PREVIEW MODE
