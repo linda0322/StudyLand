@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>植物圖鑑</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap">
+    <link rel="icon" type="image/webp" href="https://lh3.googleusercontent.com/d/1x9g9cC2Z3YOQXjplPElgLOtBuKixb6lD">
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1UL5PytrCRj0UFA9yJ2QFKowmTmBw-rZn">
+    <link rel="stylesheet" href="../../style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* =========================================
+           🏞️ 整體版面 Overall
+           ========================================= */
+        body {
+            min-height: 100vh; width: 100vw;
+            position: fixed;
+            overflow: hidden;
+            margin: 0;
+            overscroll-behavior: none; overscroll-behavior-y: none;
+            -webkit-user-select: none; -webkit-touch-callout: none;
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #1dc5fd;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
+        }
+        
+        #main-content {
+            position: absolute;
+            inset: 0;
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding-top: 0; padding-bottom: 120px;
+            scrollbar-width: none;
+        }
+        #main-content::-webkit-scrollbar {display: none;}
+
+            /* 🏙️ 背景 Background */
+            .bg-layer {
+                position: fixed;
+                inset: 0;
+                z-index: -1;
+                background-size: cover; background-position: center center; background-repeat: no-repeat;
+                background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');
+            }
+    
+            /* 📱 平板背景 Tablet Background */
+            @media screen and (max-width: 800px) {.bg-layer {background-size: contain;}}
+            /* 📱 手機背景 Phone Background */
+            @media screen and (max-width: 600px) {
+                .bg-layer {background-size: 100% auto; background-position: center top;
+                    background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');
+                }
+            }
+        
+        /* =========================================
+           🖼️ 圖鑑 Gallery
+           ========================================= */
+ 
+        /* 🔒 未解鎖植物 Locked Plants */
+        .locked-plant {
+            filter: brightness(0) opacity(0.2);
+            background: transparent;
+            cursor: default !important;
+        }
+        
+        /* 🌵 植物 Plants */
+        .plant-card {
+            position: relative;
+            aspect-ratio: 1/1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .plant-card-active {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+    
+    </style>
+</head>
+    
+<body>
+    <!-- 🏙️ 背景 Background -->
+    <div class="bg-layer"></div>
+    
+    <!-- 📲 手機旋轉提示 Orientation Noti -->
+    <div id="orientation-noti-portrait">
+        <div class="animate-phone-portrait w-20 h-20 flex items-center justify-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        </div>
+        <h2 class="font-cubic text-white text-xl thick-border tracking-wider">旋轉螢幕以繼續瀏覽</h2>
+    </div>
+
+    <!-- 🔝 頂欄 Top Bar -->
+    <div class="fixed z-[400] w-full h-20 top-0 left-0 bg-[#1dc5fd]"></div>
+    <nav class="fixed z-[800] w-full max-w-[550px] top-8 left-1/2 -translate-x-1/2 flex justify-between px-6"> 
+        <div class="flex items-center gap-2">
+            <div class="glass-panel rounded-full shadow-md flex items-center px-4 py-1.5 gap-2">
+                <span class="font-cubic text-slate-500 text-[10px] thin-border tracking-wider">玩家</span>
+                <span id="user-display-name" class="font-cubic text-slate-700 text-sm thin-border">載入中...</span>
+            </div>
+            <a href="islandmode.html" class="normal-button no-touch" title="島嶼選單">
+                <svg xmlns="http://www.w3.org/2000/svg" class="normal-button-svg lucide lucide-chevron-left-icon lucide-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+            </a>
+            <a href="pets.html" class="normal-button no-touch" title="寵物圖鑑">
+                <svg xmlns="http://www.w3.org/2000/svg" class="normal-button-svg lucide lucide-chevron-left-icon lucide-chevron-left" viewBox="0 0 24 24"><path d="M11.25 17.25h1.5L12 18z"/><path d="m15 12 2 2"/><path d="M18 6.5a.5.5 0 0 0-.5-.5"/><path d="M20.69 9.67a4.5 4.5 0 1 0-7.04-5.5 8.35 8.35 0 0 0-3.3 0 4.5 4.5 0 1 0-7.04 5.5C2.49 11.2 2 12.88 2 14.5 2 19.47 6.48 22 12 22s10-2.53 10-7.5c0-1.62-.48-3.3-1.3-4.83"/><path d="M6 6.5a.495.495 0 0 1 .5-.5"/><path d="m9 12-2 2"/></svg>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 🖼️ 圖鑑 Gallery -->
+    <main id="main-content" class="container flex flex-col items-center justify-start mx-auto px-8 py-8">
+        <div id="plant-gallery" class="w-full max-w-[550px] grid grid-cols-3 md:grid-cols-4 gap-6 p-6 pt-24"></div>
+    </main>
+
+<script src="../../common.js"></script>
+<script>
+    // =========================================
+    // 🌎 GAS
+    // =========================================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzTwCPPW7l7pvq16rPkSbA6eacSWRI4geD7stg0Qgt4UNpHFXTrdMNtCy5_m4XLDJdl/exec";
+
+    // =========================================
+    // 🔄 渲染 Render
+    // =========================================
+    async function init() {
+        const savedName = localStorage.getItem('userID');
+        if (!savedName) {window.location.href = '../../index.html'; return;}
+        document.getElementById('user-display-name').textContent = savedName;
+        toggleLoading(true, "灌溉中", "🌱");
+        try {
+            const response = await fetch(`${GAS_URL}?username=${encodeURIComponent(savedName)}`);
+            const data = await response.json();      
+            renderGallery(data.library, data.owned);
+        } catch (error) {
+            console.error("載入失敗:", error);
+            document.getElementById('plant-gallery').innerHTML = "<p class='font-cubic text-white text-center col-span-full tracking-wide'>載入失敗，請檢查網路。</p>";
+        } finally {
+            toggleLoading(false);
+        }
+    }
+
+    // =========================================
+    // 🖼️ 圖鑑 Gallery
+    // =========================================    
+    function renderGallery(plantLibrary, ownedPlants) {
+        const gallery = document.getElementById('plant-gallery');
+        gallery.innerHTML = '';
+        plantLibrary.forEach(plant => {
+            const hasPlant = ownedPlants.includes(plant.AssetType);
+            const card = document.createElement('div');
+            card.className = 'aspect-square bg-white/95 backdrop-blur-sm rounded-[20px] shadow-sm flex items-center justify-center relative overflow-hidden';
+            const shouldResize = String(plant.GalleryResize).toUpperCase() === 'TRUE';
+            const imgSize = shouldResize ? '40%' : '60%';
+            if (hasPlant) {
+                card.classList.add('plant-card-active');
+                card.innerHTML = `<img src="${plant.ImgURL}" style="width: ${imgSize}; height: ${imgSize};" class="no-touch object-contain">`;
+                card.onclick = () => {window.location.href = `plantinfo.html?type=${encodeURIComponent(plant.AssetType)}`;};
+            } else {
+                card.style.cursor = 'default';
+                card.innerHTML = `<img src="${plant.ImgURL}" style="width: ${imgSize}; height: ${imgSize};" class="locked-plant no-touch object-contain">`;
+            }
+            gallery.appendChild(card);
+        });
+    }
+
+    // =========================================
+    // 🚀 載入 Load
+    // =========================================
+    window.onload = () => {init(); setupGesturePrevention();};
+    
+</script>
+</body>
+</html>
