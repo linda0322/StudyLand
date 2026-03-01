@@ -122,7 +122,8 @@ init();
     document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
     // 多指縮放
     const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) {if (e.cancelable) e.preventDefault();}};
-    ['touchstart', 'wheel', 'gesturestart'].forEach(type => {document.addEventListener(type, preventZoom, {passive: false});});
+    document.addEventListener('wheel', preventZoom, {passive: false});
+    document.addEventListener('gesturestart', preventZoom, {passive: false});
     // 雙擊縮放
     let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
 </script>
