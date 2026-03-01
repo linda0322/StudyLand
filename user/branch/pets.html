@@ -95,7 +95,7 @@ function toggleLoading(show, text) {const overlay = document.getElementById('loa
 window.onload = init;
 
 async function init() {const savedName = localStorage.getItem('studyLandUser');
-                       if (!savedName) {window.location.href = 'index.html'; return;}
+                       if (!savedName) {window.location.href = '../../index.html'; return;}
                        document.getElementById('user-display-name').textContent = savedName;
                        toggleLoading(true, "散步中");
                        try {const response = await fetch(`${GAS_URL}?username=${encodeURIComponent(savedName)}`);
