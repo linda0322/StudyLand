@@ -213,7 +213,34 @@
     // 🌎 GAS
     // =========================================
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUqJxvUn_seiDHWNYfbKZVKYVFqNEov1wmDTiMYUupFrmVURQUFp-nbujh3YhCXlNF/exec'; 
-        
+
+    // =========================================
+    // 🌳 DOM 統一管理
+    // =========================================
+    const DOM = {
+        // 🖼️ 16:9 外框 Frame
+        stage: document.getElementById('game-stage'),
+        itemsLayer: document.getElementById('items-layer'),
+        bgImg: document.getElementById('background-img'),
+        islandTitle: document.getElementById('island-title'),
+        // 🚪 倉庫 Storage
+        storageModal: document.getElementById('storage-modal'),
+        storageItems: document.getElementById('storage-items'),
+        storageTabs: document.getElementById('storage-tabs'),
+        // 🏝️ 島嶼 Island
+        islandMenu: document.getElementById('island-menu'),
+        islandButtons: document.getElementById('island-buttons-container'),
+        // ✅ 確認視窗 Confirm Modal
+        confirmModal: document.getElementById('confirm-modal'),
+        confirmTitle: document.getElementById('confirm-title'),
+        confirmBtn: document.getElementById('confirm-button'),
+        // 🍞 通知 Toast
+        toast: document.getElementById('toast'),
+        toastIcon: document.getElementById('toast-icon'),
+        toastMsg: document.getElementById('toast-msg'),
+        // 🔘 按鈕 Button
+        saveBtn: document.getElementById('save-button')
+    };    
         const username = localStorage.getItem('userID');
         const urlParams = new URLSearchParams(window.location.search);
         const currentIslandId = urlParams.get('id') || 'island_1';
@@ -231,12 +258,12 @@
                                   const startTime = Date.now();
                                   toggleLoading(true, "飛行中", "☁️");
                                   const config = islandConfig[currentIslandId] || islandConfig['island_1'];
-                                  document.getElementById('background-img').src = config.bg; 
-                                  document.getElementById('island-title').innerText = config.name;
+                                  DOM.bgImg.src = config.bg;
+                                  DOM.islandTitle.innerText = config.name;
                                   try {const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`), fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
                                        assetLibrary = await libResp.json();
-                                       const savedItems = await posResp.json(); const itemsLayer = document.getElementById('items-layer');
-                                       itemsLayer.innerHTML = '';
+                                       const savedItems = await posResp.json();
+                                       DOM.itemsLayer.innerHTML = '';
                                        if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); const assetType = parts.join('_');
                                                                                                    console.log("正在載入物件:", assetType);
                                                                                                    if (assetLibrary[assetType]) {createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);}
@@ -260,21 +287,21 @@
                                                                         const isBottom = String(config.isBottom).toLowerCase() === 'true'; div.style.zIndex = isBottom ? "1" : "10";
                                                                         if (isBottom) div.dataset.isBottom = "true";
                                                                         div.innerHTML = `<img src="${config.imgURL}">`; div.oncontextmenu = (e) => {e.preventDefault(); handleItemReturn(div);};
-                                                                        document.getElementById('items-layer').appendChild(div); bindDraggable(div);}
+                                                                        DOM.itemsLayer.appendChild(div); bindDraggable(div);}
         
         // 🤟🏻 功能 FUNCTION：👆🏻 拖曳物件 DRAG ITEMS
-        function bindDraggable(el) {const stage = document.getElementById('game-stage'); let longPressTimer; let startX, startY; let isLongPress = false;
+        function bindDraggable(el) {let longPressTimer; let startX, startY; let isLongPress = false;
                                     el.onmousedown = el.ontouchstart = function(e) {if (e.button === 2) return; const isTouch = e.type === 'touchstart'; startX = isTouch ? e.touches[0].clientX : e.clientX; startY = isTouch ? e.touches[0].clientY : e.clientY; isLongPress = false;
                                                                                     longPressTimer = setTimeout(() => {isLongPress = true; handleItemReturn(el);}, 1000);
                                                                                     if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
-                                                                                    const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280; const itemRect = el.getBoundingClientRect();
+                                                                                    const stageRect = DOM.stage.getBoundingClientRect(); const scale = stageRect.width / 1280; const itemRect = el.getBoundingClientRect();
                                                                                     const shiftX = (startX - itemRect.left) / scale; const shiftY = (startY - itemRect.top) / scale;
                                                                                     function moveAt(currentClientX, currentClientY) {if (Math.abs(currentClientX - startX) > 10 || Math.abs(currentClientY - startY) > 10) {clearTimeout(longPressTimer);}
                                                                                                                                      if (isLongPress) return;
                                                                                                                                      let mouseXOnStage = (currentClientX - stageRect.left) / scale;
                                                                                                                                      let mouseYOnStage = (currentClientY - stageRect.top) / scale;
-                                                                                                                                     let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / stage.offsetWidth * 100;
-                                                                                                                                     let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / stage.offsetHeight * 100;
+                                                                                                                                     let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / DOM.stage.offsetWidth * 100;
+                                                                                                                                     let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / DOM.stage.offsetHeight * 100;
                                                                                                                                      newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
                                                                                                                                      el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';}
                                                                                     function onMouseMove(e) {const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY; moveAt(moveX, moveY);}
@@ -290,13 +317,12 @@
             const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);});}
 
         // 🏠 倉庫 STORAGE
-        const storageModal = document.getElementById('storage-modal');
-        function toggleStorage() {if (storageModal.classList.contains('hidden')) {storageModal.classList.remove('hidden'); if (userInventory.length === 0) {refreshInventory();} 
+        function toggleStorage() {if (DOM.storageModal.classList.contains('hidden')) {DOM.storageModal.classList.remove('hidden'); if (userInventory.length === 0) {refreshInventory();} 
                                   else {const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);}} 
-                                  else {storageModal.classList.add('hidden');}}
-        storageModal.addEventListener('click', (e) => {if (e.target === storageModal) {storageModal.classList.add('hidden');}});
+                                  else {DOM.storageModal.classList.add('hidden');}}
+        DOM.storageModal.addEventListener('click', (e) => {if (e.target === DOM.storageModal.) {DOM.storageModal.classList.add('hidden');}});
             // 🔢 庫存 INVENTORY
-            async function refreshInventory() {const container = document.getElementById('storage-items');
+            async function refreshInventory() {
                 try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`); const serverInventory = await resp.json();
                      const islandIds = ['island_1', 'island_2', 'island_3']; const allPositionsResponses = await Promise.all(islandIds.map(id => fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${id}&action=getPositions`).then(r => r.json())));
                      const activeTypesAcrossIslands = new Set(); allPositionsResponses.forEach(savedItems => {if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); activeTypesAcrossIslands.add(parts.join('_'));});}});
@@ -305,7 +331,7 @@
                                                                 return {assetType: type, imgURL: libraryInfo.imgURL, category: libraryInfo.category || '其他', available: invItem ? invItem.available : 0};}).filter(item => item !== null);
                      const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; const tabContainer = document.getElementById('storage-tabs');
                      tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
-                     renderInventoryItems('全部'); } catch (e) {console.error("跨島更新倉庫失敗:", e); container.innerHTML = "載入失敗";}}
+                     renderInventoryItems('全部'); } catch (e) {console.error("跨島更新倉庫失敗:", e); DOM.storageItems.innerHTML = "載入失敗";}}
             // 🤟🏻 功能 FUNCTION：🎨 渲染庫存 RENDER INVENTORY
             function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
                                                    // ✏️🚫 庫存空白 DESIGN
@@ -353,31 +379,30 @@
                                              catch (e) {console.log("歡迎來到此島");}}
         
         // 🤟🏻 功能 FUNCTION：💾 儲存 SAVE    
-        async function saveData() {const btn = document.getElementById('save-button'); if (btn.disabled) return;
+        async function saveData() {if (DOM.saveBtn.disabled) return;
                                    const items = document.querySelectorAll('.draggable');
                                    const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
                                    try {await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
                                         showToast("成功儲存", "success");} catch (e) {console.error("Save Error:", e); showToast("儲存失敗", 'error');} 
-                                   finally { btn.disabled = false; btn.style.opacity = "1";}}
+                                   finally {DOM.saveBtn.disabled = false; DOM.saveBtn.style.opacity = "1";}}
         // 🤟🏻 功能 FUNCTION：✅ 確認 CONFIRM
-        const confirmModal = document.getElementById('confirm-modal');
-        function closeConfirm() {confirmModal.classList.add('hidden'); if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}}
-        function openConfirm(title, onConfirm) {document.getElementById('confirm-title').innerText = title; const btn = document.getElementById('confirm-button'); btn.onclick = () => {onConfirm(); confirmModal.classList.add('hidden'); currentReturningEl = null;}; confirmModal.classList.remove('hidden');}
+        function closeConfirm() {DOM.confirmModal.classList.add('hidden'); if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}}
+        function openConfirm(title, onConfirm) {DOM.confirmTitle.innerText = title; DOM.confirmBtn.onclick = () => {onConfirm(); DOM.confirmModal.classList.add('hidden'); currentReturningEl = null;}; DOM.confirmModal.classList.remove('hidden');}
         function handleSave() {openConfirm("儲存進度", () => {saveData();});}
         function handleReload() {openConfirm("重新載入", () => {location.reload();});}
         function handlePreview() {openConfirm("切換至預覽模式", () => {window.location.href = `islanddisplay.html?user=${encodeURIComponent(username)}`;});}
         function handleHome() {openConfirm("返回主頁", () => {window.location.href = '../../index.html';});}
         function handleNPC() {openConfirm("探訪 NPC", () => {window.location.href = 'islanddisplay.html?user=Testing';});}
             // ❌ 關閉彈窗 CLOSE MODAL
-            confirmModal.addEventListener('click', (e) => {if (e.target === confirmModal) {confirmModal.classList.add('hidden');}});
+            DOM.confirmModal.addEventListener('click', (e) => {if (e.target === DOM.confirmModal) {DOM.confirmModal.classList.add('hidden');}});
 
         // 🤟🏻 功能 FUNCTION：🍞 通知 TOAST
-        let toastTimer; function showToast(message, type = 'success') {const toast = document.getElementById('toast'); const icon = document.getElementById('toast-icon'); const msg = document.getElementById('toast-msg');
+        let toastTimer; function showToast(message, type = 'success') {const icon = document.getElementById('toast-icon'); const msg = document.getElementById('toast-msg');
                                                                        clearTimeout(toastTimer); msg.innerText = message; icon.innerText = type === 'success' ? '✨' : '⚠️';        
-                                                                       toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
-                                                                       toast.classList.add('opacity-100', 'translate-y-0');
-                                                                       toastTimer = setTimeout(() => {toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
-                                                                                                      toast.classList.remove('opacity-100', 'translate-y-0');}, 2500);}
+                                                                       DOM.toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+                                                                       DOM.toast.classList.add('opacity-100', 'translate-y-0');
+                                                                       toastTimer = setTimeout(() => {DOM.toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+                                                                                                      DOM.toast.classList.remove('opacity-100', 'translate-y-0');}, 2500);}
 
 
         // 📲 手機旋轉提示 ORIENTATION NOTI
@@ -389,9 +414,9 @@
         handleOrientationChange();
 
         // 🔍 縮放比例 SCALE
-        function autoScaleGame() {const stage = document.getElementById('game-stage'); if (!stage) return;
+        function autoScaleGame() {if (!DOM.stage) return;
                                   const windowWidth = window.innerWidth; const windowHeight = window.innerHeight; const targetWidth = 1280; const targetHeight = 720;
-                                  const scaleX = windowWidth / targetWidth; const scaleY = windowHeight / targetHeight; const finalScale = Math.min(scaleX, scaleY);stage.style.transform = `scale(${finalScale})`;}
+                                  const scaleX = windowWidth / targetWidth; const scaleY = windowHeight / targetHeight; const finalScale = Math.min(scaleX, scaleY); DOM.stage.style.transform = `scale(${finalScale})`;}
         window.addEventListener('resize', autoScaleGame);
         window.addEventListener('orientationchange', () => {setTimeout(autoScaleGame, 200);});
         window.addEventListener('load', async () => {autoScaleGame(); setTimeout(async () => {await initApp();}, 100);});
