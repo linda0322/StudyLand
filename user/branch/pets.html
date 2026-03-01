@@ -18,11 +18,12 @@
         #main-content {position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
                        display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 0; padding-bottom: 120px;}
             /* 🏙️ 背景層 BACKGROUND LAYER */
-            .bg-layer {position: fixed; inset: 0; z-index: -1;
-                       background-size: cover; background-position: center center; background-repeat: no-repeat;
-                       background-image: url('https://lh3.googleusercontent.com/d/1WZPUn9UYK1xsLwXmo4QfSr1LG2-poCxc');}
-            /* 📱 手機背景 PHONE BACKGROUND LAYER */
-            @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center bottom; background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');}}
+            .bg-layer {position: fixed; inset: 0; z-index: -1; background-size: cover; background-position: center center; background-repeat: no-repeat;
+                       background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}
+                /* 📱 平板背景 IPAD BACKGROUND */
+                @media screen and (max-width: 800px) {.bg-layer {position: fixed; inset: 0; z-index: -1; background-size: contain; background-position: center center; background-repeat: no-repeat; background-image: url('https://lh3.googleusercontent.com/d/1XB4PQJBN1OIo93GUSkfDm4T8TDSOBQg2');}}
+                /* 📱 手機背景 PHONE BACKGROUND */
+                @media screen and (max-width: 600px) {.bg-layer {background-size: 100% auto; background-position: center top; background-image: url('https://lh3.googleusercontent.com/d/1OZe9V17SD7onLwgnE2IDiPG2D9KBjqAA');}}
 
         /* 🌼 樣式 STYLE */
             /* 🥽 玻璃框 */
@@ -81,7 +82,7 @@
     </nav>
 
     <!-- 🖼️ 圖鑑 GALLERY --><main id="main-content" class="container flex flex-col items-center mx-auto px-8 py-8 pt-15">
-        <div id="pet-gallery" class="w-full max-w-[550px] grid grid-cols-3 md:grid-cols-4 gap-4 p-6"></div>
+        <div id="pet-gallery" class="w-full max-w-[550px] grid grid-cols-3 md:grid-cols-4 gap-6 p-6"></div>
     </main>
 <script>
 
