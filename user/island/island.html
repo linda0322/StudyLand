@@ -214,188 +214,336 @@
     // =========================================
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUqJxvUn_seiDHWNYfbKZVKYVFqNEov1wmDTiMYUupFrmVURQUFp-nbujh3YhCXlNF/exec'; 
         
-        const username = localStorage.getItem('userID');
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentIslandId = urlParams.get('id') || 'island_1';
-        let assetLibrary = {};
-        let userInventory = []; 
+    const username = localStorage.getItem('userID');
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentIslandId = urlParams.get('id') || 'island_1';
+    let assetLibrary = {};
+    let userInventory = []; 
 
-        // ✏️🏞️ 島嶼背景 ISLAND BACKGROUND
-        const islandConfig = {'island_1': { name: '草地', bg: 'https://lh3.googleusercontent.com/d/1j_GFfezO8NNHnF1M-q7euOdDHOdtP8vF', color: 'bg-lime-200', icon: '🌳' },
-                              'island_2': { name: '海洋', bg: 'https://lh3.googleusercontent.com/d/1Roy33fghpQHRS1IZk2N_MxYbY1-YKVRu', color: 'bg-sky-200', icon: '🌊' },
-                              'island_3': { name: '沙漠', bg: 'https://lh3.googleusercontent.com/d/15OIBcHpnpYkV1hH4pk64qJjEon-y1plq', color: 'bg-amber-200', icon: '🏜️' },
-                             };
-            
-        // ✅ 加載 LOADING INFO
-        async function initApp() {if (!username) {window.location.href = '../../index.html'; return;}
-                                  const startTime = Date.now();
-                                  toggleLoading(true, "飛行中", "☁️");
-                                  const config = islandConfig[currentIslandId] || islandConfig['island_1'];
-                                  document.getElementById('background-img').src = config.bg; 
-                                  document.getElementById('island-title').innerText = config.name;
-                                  try {const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`), fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
-                                       assetLibrary = await libResp.json();
-                                       const savedItems = await posResp.json(); const itemsLayer = document.getElementById('items-layer');
-                                       itemsLayer.innerHTML = '';
-                                       if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); const assetType = parts.join('_');
-                                                                                                   console.log("正在載入物件:", assetType);
-                                                                                                   if (assetLibrary[assetType]) {createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);}
-                                                                                                   else {console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否一致。");}});}
-                                       await loadIslandList(); await refreshInventory();} 
-                                  catch (err) {console.error("載入失敗:", err); showToast("請檢查網路", "error");} 
-                                  finally {const elapsedTime = Date.now() - startTime; 
-                                           const minimumWait = 1000; 
-                                           const remainingWait = Math.max(0, minimumWait - elapsedTime);
-                                           setTimeout(() => {toggleLoading(false);}, remainingWait);}}
-        
-        // 🤟🏻 功能 FUNCTION：👆🏻 製造拖曳物件 CREATE DRAGGABLE ITEMS
-        function createDraggableElement(id, type, left = 50, top = 50) {const config = assetLibrary[type]; const div = document.createElement('div');
-                                                                        console.log(`正在部署 ${type}, 設定寬度為: ${config.width}`);
-                                                                        div.className = 'draggable'; div.id = id;
-                                                                        if (config && config.width) {let widthStr = String(config.width); if (widthStr.includes('%')) {
-                                                                            const percentValue = parseFloat(widthStr) / 100;
-                                                                            const actualPixelWidth = 1280 * percentValue; div.style.width = actualPixelWidth + 'px';
-                                                                            console.log(`物件 ${type} 寬度計算：1280 * ${percentValue} = ${actualPixelWidth}px`);} else {div.style.width = widthStr.includes('px') ? widthStr : widthStr + 'px';}}
-                                                                        else {div.style.width = '150px';} div.style.left = left + '%'; div.style.top = top + '%'; div.style.transform = 'translate(-50%, -50%)';
-                                                                        const isBottom = String(config.isBottom).toLowerCase() === 'true'; div.style.zIndex = isBottom ? "1" : "10";
-                                                                        if (isBottom) div.dataset.isBottom = "true";
-                                                                        div.innerHTML = `<img src="${config.imgURL}">`; div.oncontextmenu = (e) => {e.preventDefault(); handleItemReturn(div);};
-                                                                        document.getElementById('items-layer').appendChild(div); bindDraggable(div);}
-        
-        // 🤟🏻 功能 FUNCTION：👆🏻 拖曳物件 DRAG ITEMS
-        function bindDraggable(el) {const stage = document.getElementById('game-stage'); let longPressTimer; let startX, startY; let isLongPress = false;
-                                    el.onmousedown = el.ontouchstart = function(e) {if (e.button === 2) return; const isTouch = e.type === 'touchstart'; startX = isTouch ? e.touches[0].clientX : e.clientX; startY = isTouch ? e.touches[0].clientY : e.clientY; isLongPress = false;
-                                                                                    longPressTimer = setTimeout(() => {isLongPress = true; handleItemReturn(el);}, 1000);
-                                                                                    if (el.dataset.isBottom !== "true") {document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";}
-                                                                                    const stageRect = stage.getBoundingClientRect(); const scale = stageRect.width / 1280; const itemRect = el.getBoundingClientRect();
-                                                                                    const shiftX = (startX - itemRect.left) / scale; const shiftY = (startY - itemRect.top) / scale;
-                                                                                    function moveAt(currentClientX, currentClientY) {if (Math.abs(currentClientX - startX) > 10 || Math.abs(currentClientY - startY) > 10) {clearTimeout(longPressTimer);}
-                                                                                                                                     if (isLongPress) return;
-                                                                                                                                     let mouseXOnStage = (currentClientX - stageRect.left) / scale;
-                                                                                                                                     let mouseYOnStage = (currentClientY - stageRect.top) / scale;
-                                                                                                                                     let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / stage.offsetWidth * 100;
-                                                                                                                                     let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / stage.offsetHeight * 100;
-                                                                                                                                     newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
-                                                                                                                                     el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';}
-                                                                                    function onMouseMove(e) {const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY; moveAt(moveX, moveY);}
-                                                                                    const onMouseUp = () => {clearTimeout(longPressTimer); 
-                                                                                                             document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('touchmove', onMouseMove); 
-                                                                                                             document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
-                                                                                    document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, {passive: false}); 
-                                                                                    document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);}; el.ondragstart = function() {return false;};}
-        let currentReturningEl = null; function handleItemReturn(el) {if (!confirmModal.classList.contains('hidden')) return; currentReturningEl = el; openConfirm("要收回倉庫嗎？", () => {
+    // =========================================
+    // 🌳 DOM 統一管理
+    // =========================================
+    const DOM = {
+        // 🖼️ 16:9 外框 Frame
+        gameStage: document.getElementById('game-stage'),
+        bgImg: document.getElementById('background-img'),
+        itemsLayer: document.getElementById('items-layer'),
+        islandTitle: document.getElementById('island-title'), 
+        // 🚪 倉庫 Storage
+        storageModal: document.getElementById('storage-modal'),
+        storageTabs: document.getElementById('storage-tabs'),
+        storageItems: document.getElementById('storage-items'),
+        // 🏝️ 島嶼 Island
+        islandMenu: document.getElementById('island-menu'),
+        islandButtonsContainer: document.getElementById('island-buttons-container'),
+        // ✅ 確認視窗 Confirm Modal
+        confirmModal: document.getElementById('confirm-modal'),
+        confirmTitle: document.getElementById('confirm-title'),
+        confirmBtn: document.getElementById('confirm-button'),
+        // 🔘 按鈕 Button
+        saveBtn: document.getElementById('save-button'),
+        // 🍞 通知 Toast
+        toast: document.getElementById('toast'),
+        toastIcon: document.getElementById('toast-icon'),
+        toastMsg: document.getElementById('toast-msg'),
+        // 📲 旋轉提示 Orientation Noti
+        orientationNoti: document.getElementById('orientation-noti-landscape')
+    };
+
+    // =========================================
+    // 🏞️ 島嶼背景 Island Background
+    // =========================================    
+    const islandConfig = {'island_1': { name: '草地', bg: 'https://lh3.googleusercontent.com/d/1j_GFfezO8NNHnF1M-q7euOdDHOdtP8vF', color: 'bg-lime-200', icon: '🌳' },
+                          'island_2': { name: '海洋', bg: 'https://lh3.googleusercontent.com/d/1Roy33fghpQHRS1IZk2N_MxYbY1-YKVRu', color: 'bg-sky-200', icon: '🌊' },
+                          'island_3': { name: '沙漠', bg: 'https://lh3.googleusercontent.com/d/15OIBcHpnpYkV1hH4pk64qJjEon-y1plq', color: 'bg-amber-200', icon: '🏜️' },
+    };
+
+    // =========================================
+    // 🚀 載入 Load
+    // =========================================   
+    async function initApp() {
+        if (!username) {window.location.href = '../../index.html'; return;}
+        const startTime = Date.now();
+        const config = islandConfig[currentIslandId] || islandConfig['island_1'];
+        DOM.bgImg.src = config.bg; 
+        DOM.islandTitle.innerText = config.name;
+        try {
+            const [libResp, posResp] = await Promise.all([
+                fetch(`${SCRIPT_URL}?action=getLibrary`), 
+                fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)
+            ]);
+            assetLibrary = await libResp.json();
+            const savedItems = await posResp.json();     
+            DOM.itemsLayer.innerHTML = '';
+            if (Array.isArray(savedItems)) {
+                savedItems.forEach(item => {
+                    const parts = item.id.split('_'); parts.shift(); parts.pop(); const assetType = parts.join('_');
+                    console.log("正在載入物件:", assetType);
+                    if (assetLibrary[assetType]) {createDraggableElement(item.id, assetType, item.leftPercent, item.topPercent);}
+                    else {console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否一致。");}
+                });
+            }
+            await loadIslandList(); await refreshInventory();
+        } catch (err) {
+            console.error("載入失敗:", err); showToast("請檢查網路", "error");
+        } finally {
+            const elapsedTime = Date.now() - startTime; const minimumWait = 500; const remainingWait = Math.max(0, minimumWait - elapsedTime);
+            setTimeout(() => {toggleLoading(true, "飛行中", "☁️");}, remainingWait);
+        }
+    }
+    
+    // =========================================
+    // 🧸 製造拖曳物件 Create Draggable Items
+    // =========================================   
+    function createDraggableElement(id, type, left = 50, top = 50) {
+        const config = assetLibrary[type]; const div = document.createElement('div');
+        console.log(`正在部署 ${type}, 設定寬度為: ${config.width}`);
+        div.className = 'draggable'; div.id = id;      
+        if (config && config.width) {
+            let widthStr = String(config.width); 
+            if (widthStr.includes('%')) {
+                const percentValue = parseFloat(widthStr) / 100;
+                const actualPixelWidth = 1280 * percentValue; div.style.width = actualPixelWidth + 'px';
+                console.log(`物件 ${type} 寬度計算：1280 * ${percentValue} = ${actualPixelWidth}px`);
+            } else {
+                div.style.width = widthStr.includes('px') ? widthStr : widthStr + 'px';
+            }
+        } else {div.style.width = '150px';}     
+        div.style.left = left + '%'; div.style.top = top + '%'; div.style.transform = 'translate(-50%, -50%)';
+        const isBottom = String(config.isBottom).toLowerCase() === 'true'; div.style.zIndex = isBottom ? "1" : "10";
+        if (isBottom) div.dataset.isBottom = "true";
+        div.innerHTML = `<img src="${config.imgURL}">`; 
+        div.oncontextmenu = (e) => {e.preventDefault(); handleItemReturn(div);};    
+        DOM.itemsLayer.appendChild(div); bindDraggable(div);
+    }
+    
+    // =========================================
+    // 👆🏻 拖曳物件 Drag Items
+    // =========================================           
+    function bindDraggable(el) {
+        let longPressTimer; let startX, startY; let isLongPress = false;
+        el.onmousedown = el.ontouchstart = function(e) {
+            if (e.button === 2) return; 
+            const isTouch = e.type === 'touchstart'; startX = isTouch ? e.touches[0].clientX : e.clientX; startY = isTouch ? e.touches[0].clientY : e.clientY; isLongPress = false;
+            longPressTimer = setTimeout(() => {isLongPress = true; handleItemReturn(el);}, 1000); 
+            if (el.dataset.isBottom !== "true") {
+                document.querySelectorAll('.draggable:not([data-is-bottom="true"])').forEach(d => d.style.zIndex = "10"); el.style.zIndex = "100";
+            }        
+            const stageRect = DOM.gameStage.getBoundingClientRect(); const scale = stageRect.width / 1280; const itemRect = el.getBoundingClientRect();
+            const shiftX = (startX - itemRect.left) / scale; const shiftY = (startY - itemRect.top) / scale;    
+            function moveAt(currentClientX, currentClientY) {
+                if (Math.abs(currentClientX - startX) > 10 || Math.abs(currentClientY - startY) > 10) {clearTimeout(longPressTimer);}
+                if (isLongPress) return;
+                let mouseXOnStage = (currentClientX - stageRect.left) / scale;
+                let mouseYOnStage = (currentClientY - stageRect.top) / scale;
+                let newPercentL = (mouseXOnStage - shiftX + (el.offsetWidth / 2)) / DOM.gameStage.offsetWidth * 100;
+                let newPercentT = (mouseYOnStage - shiftY + (el.offsetHeight / 2)) / DOM.gameStage.offsetHeight * 100;
+                newPercentL = Math.max(0, Math.min(newPercentL, 100)); newPercentT = Math.max(0, Math.min(newPercentT, 100));
+                el.style.left = newPercentL + '%'; el.style.top = newPercentT + '%';
+            } 
+            function onMouseMove(e) {const moveX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; const moveY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY; moveAt(moveX, moveY);}
+            const onMouseUp = () => {clearTimeout(longPressTimer); 
+                                     document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('touchmove', onMouseMove); 
+                                     document.removeEventListener('mouseup', onMouseUp); document.removeEventListener('touchend', onMouseUp);};
+            document.addEventListener('mousemove', onMouseMove); document.addEventListener('touchmove', onMouseMove, {passive: false}); 
+            document.addEventListener('mouseup', onMouseUp); document.addEventListener('touchend', onMouseUp);
+        }; 
+        el.ondragstart = function() {return false;};
+    }
+    
+    let currentReturningEl = null; 
+    function handleItemReturn(el) {
+        if (!DOM.confirmModal.classList.contains('hidden')) return; 
+        currentReturningEl = el; 
+        openConfirm("要收回倉庫嗎？", () => {
             const parts = currentReturningEl.id.split('_'); parts.shift(); parts.pop(); const type = parts.join('_'); const invIdx = userInventory.findIndex(i => i.assetType === type);
             if (invIdx > -1) {userInventory[invIdx].available++;}
             currentReturningEl.remove(); currentReturningEl = null; showToast("已收回倉庫");
-            const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);});}
+            const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);
+        });
+    }
 
-        // 🏠 倉庫 STORAGE
-        const storageModal = document.getElementById('storage-modal');
-        function toggleStorage() {if (storageModal.classList.contains('hidden')) {storageModal.classList.remove('hidden'); if (userInventory.length === 0) {refreshInventory();} 
-                                  else {const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);}} 
-                                  else {storageModal.classList.add('hidden');}}
-        storageModal.addEventListener('click', (e) => {if (e.target === storageModal) {storageModal.classList.add('hidden');}});
-            // 🔢 庫存 INVENTORY
-            async function refreshInventory() {const container = document.getElementById('storage-items');
-                try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`); const serverInventory = await resp.json();
-                     const islandIds = ['island_1', 'island_2', 'island_3']; const allPositionsResponses = await Promise.all(islandIds.map(id => fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${id}&action=getPositions`).then(r => r.json())));
-                     const activeTypesAcrossIslands = new Set(); allPositionsResponses.forEach(savedItems => {if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); activeTypesAcrossIslands.add(parts.join('_'));});}});
-                     const serverTypes = serverInventory.map(i => i.assetType); const combinedTypes = [...new Set([...serverTypes, ...Array.from(activeTypesAcrossIslands)])];
-                     userInventory = combinedTypes.map(type => {const libraryInfo = assetLibrary[type]; if (!libraryInfo) return null; const invItem = serverInventory.find(i => i.assetType === type); 
-                                                                return {assetType: type, imgURL: libraryInfo.imgURL, category: libraryInfo.category || '其他', available: invItem ? invItem.available : 0};}).filter(item => item !== null);
-                     const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; const tabContainer = document.getElementById('storage-tabs');
-                     tabContainer.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
-                     renderInventoryItems('全部'); } catch (e) {console.error("跨島更新倉庫失敗:", e); container.innerHTML = "載入失敗";}}
-            // 🤟🏻 功能 FUNCTION：🎨 渲染庫存 RENDER INVENTORY
-            function renderInventoryItems(filter) {const container = document.getElementById('storage-items'); const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
-                                                   // ✏️🚫 庫存空白 DESIGN
-                                                   if (items.length === 0) {container.innerHTML = `<div class="w-full col-span-full flex flex-col items-center justify-center py-5 gap-4">
-                                                                                                       <span class="text-5xl mb-2">🙂‍↔️</span>
-                                                                                                       <p class="w-full font-cubic text-slate-400 thin-border tracking-widest text-center">一無所有</p>
-                                                                                                   </div>`; return;}
-                                                   // ✏️🈚️ 庫存用盡 DESIGN
-                                                   container.innerHTML = items.map(item => {const isOutOfStock = item.available <= 0; const statusClass = isOutOfStock ? "pointer-events-none opacity-50 grayscale" : "active:scale-95";
-                                                                                            const countColor = isOutOfStock ? "text-slate-300" : "text-slate-400";
-                                                                                            return `<div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}"  class="inventory-item aspect-square glass-panel rounded-xl flex flex-col items-center justify-center gap-2 p-2 transition-all ${statusClass}">
-                                                                                                        <img src="${item.imgURL}" class="pointer-events-none w-12 h-12 object-contain" draggable="false">
-                                                                                                        <span class="font-cubic ${countColor} text-[16px] thin-border">${item.available}</span>
-                                                                                                    </div>`;}).join('');}
-            // 🤟🏻 功能 FUNCTION：🗂️ 分類 CATEGORY
-            function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}                                                                                    
-            // 🤟🏻 功能 FUNCTION：👆🏻 從庫存拿出物件 TAKE ITEMS
-            function deployFromStorage(type) {const invIdx = userInventory.findIndex(i => i.assetType === type); 
-                                              if (invIdx > -1 && userInventory[invIdx].available > 0) {userInventory[invIdx].available--; 
-                                                                                                       const existing = document.querySelectorAll(`[id^="item_${type}_"]`); let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
-                                                                                                       const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); 
-                                                                                                       const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab); showToast("已放置");} 
-                                              else {showToast("庫存不足", "error");}}
+    // =========================================
+    // 🏠 倉庫 Storage
+    // =========================================        
+    function toggleStorage() {
+        if (DOM.storageModal.classList.contains('hidden')) {
+            DOM.storageModal.classList.remove('hidden'); 
+            if (userInventory.length === 0) {refreshInventory();} 
+            else {const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);}
+        } else {
+            DOM.storageModal.classList.add('hidden');
+        }
+    }
+    DOM.storageModal.addEventListener('click', (e) => {if (e.target === DOM.storageModal) {DOM.storageModal.classList.add('hidden');}});
+        // =========================================
+        // 🔢 庫存 Inventory
+        // =========================================       
+        async function refreshInventory() {
+            try {
+                const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getInventory`); const serverInventory = await resp.json();
+                const islandIds = ['island_1', 'island_2', 'island_3']; const allPositionsResponses = await Promise.all(islandIds.map(id => fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${id}&action=getPositions`).then(r => r.json())));
+                const activeTypesAcrossIslands = new Set(); 
+                allPositionsResponses.forEach(savedItems => {if (Array.isArray(savedItems)) {savedItems.forEach(item => {const parts = item.id.split('_'); parts.shift(); parts.pop(); activeTypesAcrossIslands.add(parts.join('_'));});}});
+                const serverTypes = serverInventory.map(i => i.assetType); const combinedTypes = [...new Set([...serverTypes, ...Array.from(activeTypesAcrossIslands)])];
+                
+                userInventory = combinedTypes.map(type => {
+                    const libraryInfo = assetLibrary[type]; if (!libraryInfo) return null; const invItem = serverInventory.find(i => i.assetType === type); 
+                    return {assetType: type, imgURL: libraryInfo.imgURL, category: libraryInfo.category || '其他', available: invItem ? invItem.available : 0};
+                }).filter(item => item !== null);
+                
+                const categories = ['全部', ...new Set(userInventory.map(i => i.category))]; 
+                DOM.storageTabs.innerHTML = categories.map(cat => `<button onclick="filterStorage('${cat}')" class="tab-btn whitespace-nowrap px-4 py-1 rounded-full bg-white text-sm font-cubic thin-border text-slate-500 transition-all">${cat}</button>`).join('');
+                renderInventoryItems('全部'); 
+            } catch (e) {console.error("跨島更新倉庫失敗:", e); DOM.storageItems.innerHTML = "載入失敗";}
+        }
+        function renderInventoryItems(filter) {
+            const items = filter === '全部' ? userInventory : userInventory.filter(i => i.category === filter);
+            // 🚫 庫存空白 Empty
+            if (items.length === 0) {
+                DOM.storageItems.innerHTML = `<div class="w-full col-span-full flex flex-col items-center justify-center py-5 gap-4">
+                                                <span class="text-5xl mb-2">🙂‍↔️</span>
+                                                <p class="w-full font-cubic text-slate-400 thin-border tracking-widest text-center">一無所有</p>
+                                              </div>`; return;
+            }
+            // 🈚️ 庫存用盡 Used Up
+            DOM.storageItems.innerHTML = items.map(item => {
+                const isOutOfStock = item.available <= 0; const statusClass = isOutOfStock ? "pointer-events-none opacity-50 grayscale" : "active:scale-95";
+                const countColor = isOutOfStock ? "text-slate-300" : "text-slate-400";
+                return `<div onclick="${isOutOfStock ? '' : `deployFromStorage('${item.assetType}')`}"  class="inventory-item aspect-square glass-panel rounded-xl flex flex-col items-center justify-center gap-2 p-2 transition-all ${statusClass}">
+                            <img src="${item.imgURL}" class="pointer-events-none w-12 h-12 object-contain" draggable="false">
+                            <span class="font-cubic ${countColor} text-[16px] thin-border">${item.available}</span>
+                        </div>`;
+            }).join('');
+        }
+        // 🗂️ 分類 Category
+        function filterStorage(cat) {document.querySelectorAll('.tab-btn').forEach(btn => {btn.classList.toggle('tab-active', btn.innerText.trim() === cat);}); renderInventoryItems(cat);}                                                                                   
+        // 👆🏻 從庫存拿出物件 Take Items
+        function deployFromStorage(type) {
+            const invIdx = userInventory.findIndex(i => i.assetType === type); 
+            if (invIdx > -1 && userInventory[invIdx].available > 0) {
+                userInventory[invIdx].available--; 
+                const existing = document.querySelectorAll(`[id^="item_${type}_"]`); let maxNum = 0; existing.forEach(el => {const num = parseInt(el.id.split('_').pop()); if (num > maxNum) maxNum = num;});
+                const newId = `item_${type}_${maxNum + 1}`; createDraggableElement(newId, type, 50, 50); 
+                const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab); showToast("已放置");
+            } else {showToast("庫存不足", "error");}
+        }
 
-        // 🏝️ 島嶼 ISLAND
-        const islandMenu = document.getElementById('island-menu');
-        function toggleIslandMenu() { islandMenu.classList.toggle('hidden'); }
-        islandMenu.addEventListener('click', (e) => {if (e.target === islandMenu) {islandMenu.classList.add('hidden');}});
-            // ✏️🏝️ 島嶼 MENU DESIGN
-            async function loadIslandList() {try {const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
-                                                  const allowedIslands = await response.json(); const container = document.getElementById('island-buttons-container'); container.innerHTML = ''; 
-                                                  if (allowedIslands.length === 0) {container.innerHTML = `
-                                                  <div class="w-full col-span-3 flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🏝️</span>
-                                                      <p class="font-cubic text-slate-400 thin-border text-center tracking-widest">目前無島可歸</p>
-                                                  </div>`; return;}
-                                                  allowedIslands.forEach(id => {const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
-                                                                                const btnHtml = `
-                                                                                <a href="island.html?id=${id}" class="select-none group bg-slate-50 rounded-[25px] text-center p-4 hover:bg-white hover:shadow-xl active:scale-95 transition-all" draggable="false">
-                                                                                    <div class="select-none h-20 ${cfg.color} rounded-[20px] text-3xl flex items-center justify-center mb-2">${cfg.icon}</div>
-                                                                                    <h3 class="select-none font-cubic text-slate-500 text-lg thin-border">${cfg.name}</h3>
-                                                                                </a>`; container.innerHTML += btnHtml;});} catch (e) {console.error("載入失敗", e);}}
-            async function loadIslandData() {try {const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}`); const data = await resp.json();
-                                                  if (data && data.length > 0) {data.forEach(item => {const el = document.getElementById(item.id);
-                                                                                                      if (el) { el.style.left = item.leftPercent + '%'; el.style.top = item.topPercent + '%';}});}} 
-                                             catch (e) {console.log("歡迎來到此島");}}
+    // =========================================
+    // 🏝️ 島嶼 Island
+    // =========================================        
+    function toggleIslandMenu() { DOM.islandMenu.classList.toggle('hidden'); }
+    DOM.islandMenu.addEventListener('click', (e) => {if (e.target === DOM.islandMenu) {DOM.islandMenu.classList.add('hidden');}});
+    async function loadIslandList() {
+        try {
+            const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
+            const allowedIslands = await response.json(); 
+            DOM.islandButtonsContainer.innerHTML = ''; 
+            
+            if (allowedIslands.length === 0) {
+                DOM.islandButtonsContainer.innerHTML = `
+                <div class="w-full col-span-3 flex flex-col items-center justify-center py-12 gap-4"><span class="text-5xl">🏝️</span>
+                    <p class="font-cubic text-slate-400 thin-border text-center tracking-widest">目前無島可歸</p>
+                </div>`; return;
+            }
+            allowedIslands.forEach(id => {
+                const cfg = islandConfig[id] || { name: '未知島嶼', color: 'bg-slate-100', icon: '🏝️' };
+                const btnHtml = `
+                <a href="island.html?id=${id}" class="select-none group bg-slate-50 rounded-[25px] text-center p-4 hover:bg-white hover:shadow-xl active:scale-95 transition-all" draggable="false">
+                    <div class="select-none h-20 ${cfg.color} rounded-[20px] text-3xl flex items-center justify-center mb-2">${cfg.icon}</div>
+                    <h3 class="select-none font-cubic text-slate-500 text-lg thin-border">${cfg.name}</h3>
+                </a>`; DOM.islandButtonsContainer.innerHTML += btnHtml;
+            });
+        } catch (e) {console.error("載入失敗", e);}
+    }
+    async function loadIslandData() {
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}`); const data = await resp.json();
+            if (data && data.length > 0) {data.forEach(item => {const el = document.getElementById(item.id); if (el) { el.style.left = item.leftPercent + '%'; el.style.top = item.topPercent + '%';}});}
+        } catch (e) {console.log("歡迎來到此島");}
+    }
+
+    // =========================================
+    // 💾 儲存 Save 
+    // =========================================          
+    async function saveData() {
+        if (DOM.saveBtn.disabled) return;
+        const items = document.querySelectorAll('.draggable');
+        const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
         
-        // 🤟🏻 功能 FUNCTION：💾 儲存 SAVE    
-        async function saveData() {const btn = document.getElementById('save-button'); if (btn.disabled) return;
-                                   const items = document.querySelectorAll('.draggable');
-                                   const positions = Array.from(items).map(el => ({id: el.id, leftPercent: parseFloat(el.style.left), topPercent: parseFloat(el.style.top)}));
-                                   try {await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
-                                        showToast("成功儲存", "success");} catch (e) {console.error("Save Error:", e); showToast("儲存失敗", 'error');} 
-                                   finally { btn.disabled = false; btn.style.opacity = "1";}}
-        // 🤟🏻 功能 FUNCTION：✅ 確認 CONFIRM
-        const confirmModal = document.getElementById('confirm-modal');
-        function closeConfirm() {confirmModal.classList.add('hidden'); if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}}
-        function openConfirm(title, onConfirm) {document.getElementById('confirm-title').innerText = title; const btn = document.getElementById('confirm-button'); btn.onclick = () => {onConfirm(); confirmModal.classList.add('hidden'); currentReturningEl = null;}; confirmModal.classList.remove('hidden');}
-        function handleSave() {openConfirm("儲存進度", () => {saveData();});}
-        function handleReload() {openConfirm("重新載入", () => {location.reload();});}
-        function handlePreview() {openConfirm("切換至預覽模式", () => {window.location.href = `islanddisplay.html?user=${encodeURIComponent(username)}`;});}
-        function handleHome() {openConfirm("返回主頁", () => {window.location.href = '../../index.html';});}
-        function handleNPC() {openConfirm("探訪 NPC", () => {window.location.href = 'islanddisplay.html?user=Testing';});}
-            // ❌ 關閉彈窗 CLOSE MODAL
-            confirmModal.addEventListener('click', (e) => {if (e.target === confirmModal) {confirmModal.classList.add('hidden');}});
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: username, islandId: currentIslandId, positions: positions })});
+            showToast("成功儲存", "success");
+        } catch (e) {
+            console.error("Save Error:", e); showToast("儲存失敗", 'error');
+        } finally { 
+            DOM.saveBtn.disabled = false; DOM.saveBtn.style.opacity = "1";
+        }
+    }
 
-        // 🤟🏻 功能 FUNCTION：🍞 通知 TOAST
-        let toastTimer; function showToast(message, type = 'success') {const toast = document.getElementById('toast'); const icon = document.getElementById('toast-icon'); const msg = document.getElementById('toast-msg');
-                                                                       clearTimeout(toastTimer); msg.innerText = message; icon.innerText = type === 'success' ? '✨' : '⚠️';        
-                                                                       toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
-                                                                       toast.classList.add('opacity-100', 'translate-y-0');
-                                                                       toastTimer = setTimeout(() => {toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
-                                                                                                      toast.classList.remove('opacity-100', 'translate-y-0');}, 2500);}
+    // =========================================
+    // ✅ 確認 Confirm
+    // =========================================   
+    function closeConfirm() {
+        DOM.confirmModal.classList.add('hidden'); 
+        if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}
+    }
+    
+    function openConfirm(title, onConfirm) {
+        DOM.confirmTitle.innerText = title; 
+        DOM.confirmBtn.onclick = () => {onConfirm(); DOM.confirmModal.classList.add('hidden'); currentReturningEl = null;}; 
+        DOM.confirmModal.classList.remove('hidden');
+    }
+    function handleSave() {openConfirm("儲存進度", () => {saveData();});}
+    function handleReload() {openConfirm("重新載入", () => {location.reload();});}
+    function handlePreview() {openConfirm("切換至預覽模式", () => {window.location.href = `islanddisplay.html?user=${encodeURIComponent(username)}`;});}
+    function handleHome() {openConfirm("返回主頁", () => {window.location.href = '../../index.html';});}
+    function handleNPC() {openConfirm("探訪 NPC", () => {window.location.href = 'islanddisplay.html?user=Testing';});}
+    // ❌ 關閉彈窗 Close Modal
+    DOM.confirmModal.addEventListener('click', (e) => {if (e.target === DOM.confirmModal) {DOM.confirmModal.classList.add('hidden');}});
 
+    // =========================================
+    // 🍞 通知 Toast
+    // =========================================   
+    let toastTimer; 
+    function showToast(message, type = 'success') {
+        clearTimeout(toastTimer); 
+        DOM.toastMsg.innerText = message; 
+        DOM.toastIcon.innerText = type === 'success' ? '✨' : '⚠️';        
+        DOM.toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+        DOM.toast.classList.add('opacity-100', 'translate-y-0');
+        toastTimer = setTimeout(() => {
+            DOM.toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+            DOM.toast.classList.remove('opacity-100', 'translate-y-0');
+        }, 2500);
+    }
 
-        // 📲 手機旋轉提示 ORIENTATION NOTI
-        function handleOrientationChange() {const warning = document.getElementById('orientation-noti-landscape'); 
-                                            const isPortrait = window.innerHeight > window.innerWidth; const isMobileOrTablet = window.innerWidth < 700;
-                                            if (isPortrait && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
-        window.addEventListener('resize', handleOrientationChange);
-        window.addEventListener('orientationchange', handleOrientationChange);
-        handleOrientationChange();
+    // =========================================
+    // 📲 手機旋轉提示 Orientation Noti
+    // =========================================   
+    function handleOrientationChange() {
+        const isPortrait = window.innerHeight > window.innerWidth; const isMobileOrTablet = window.innerWidth < 700;
+        if (isPortrait && isMobileOrTablet) {DOM.orientationNoti.style.setProperty('display', 'flex', 'important');} 
+        else {DOM.orientationNoti.style.display = 'none';}
+    }
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    handleOrientationChange();
 
-        // 🔍 縮放比例 SCALE
-        function autoScaleGame() {const stage = document.getElementById('game-stage'); if (!stage) return;
-                                  const windowWidth = window.innerWidth; const windowHeight = window.innerHeight; const targetWidth = 1280; const targetHeight = 720;
-                                  const scaleX = windowWidth / targetWidth; const scaleY = windowHeight / targetHeight; const finalScale = Math.min(scaleX, scaleY);stage.style.transform = `scale(${finalScale})`;}
-        window.addEventListener('resize', autoScaleGame);
-        window.addEventListener('orientationchange', () => {setTimeout(autoScaleGame, 200);});
-        window.addEventListener('load', async () => {autoScaleGame(); setTimeout(async () => {await initApp();}, 100);});
-        document.getElementById('island-buttons-container').addEventListener('dragstart', function(event) { if (event.target.tagName.toLowerCase() === 'a' || event.target.tagName.toLowerCase() === 'img') {event.preventDefault();}}, false);
-    </script>
+    // =========================================
+    // 🔍 縮放比例 Scale
+    // =========================================   
+    function autoScaleGame() {
+        if (!DOM.gameStage) return;
+        const windowWidth = window.innerWidth; const windowHeight = window.innerHeight; const targetWidth = 1280; const targetHeight = 720;
+        const scaleX = windowWidth / targetWidth; const scaleY = windowHeight / targetHeight; const finalScale = Math.min(scaleX, scaleY);
+        DOM.gameStage.style.transform = `scale(${finalScale})`;
+    }
+    window.addEventListener('resize', autoScaleGame);
+    window.addEventListener('orientationchange', () => {setTimeout(autoScaleGame, 200);});
+    window.addEventListener('load', async () => {autoScaleGame(); setTimeout(async () => {await initApp();}, 100);});
+    DOM.islandButtonsContainer.addEventListener('dragstart', function(event) { if (event.target.tagName.toLowerCase() === 'a' || event.target.tagName.toLowerCase() === 'img') {event.preventDefault();}}, false);
+
+</script>
 </body>
 </html>
