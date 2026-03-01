@@ -104,17 +104,17 @@ async function init() {const savedName = localStorage.getItem('studyLandUser');
                        catch (error) {console.error("載入失敗:", error);
                                       document.getElementById('pet-gallery').innerHTML = "<p class='font-cubic text-white text-center col-span-full tracking-wide'>載入失敗，請檢查網路。</p>";} toggleLoading(false); }
     
-function renderGallery(petLibrary, ownedPets) {const gallery = document.getElementById('pet-gallery');
-                                               gallery.innerHTML = '';
-                                               petLibrary.forEach(pet => {const hasPet = ownedPets.includes(pet.AssetType);
-                                                                          const card = document.createElement('div');
+function renderGallery(petLibrary, ownedPets) {const gallery = document.getElementById('pet-gallery'); gallery.innerHTML = '';
+                                               petLibrary.forEach(pet => {const hasPet = ownedPets.includes(pet.AssetType); const card = document.createElement('div');
                                                                           card.className = 'bg-white rounded-[20px] aspect-square flex items-center justify-center relative shadow-sm cursor-pointer overflow-hidden';
-                                                                          if (hasPet) {card.innerHTML = `<img src="${pet.ImgURL}" class="w-4/5 h-4/5 object-contain no-touch">`;
+                                                                          if (hasPet) {const shouldResize = String(pet.GalleryResize).toUpperCase() === 'TRUE';
+                                                                                       const imgSize = shouldResize ? '72%' : '80%';
+                                                                                       card.innerHTML = `<img src="${pet.ImgURL}" style="width: ${imgSize}; height: ${imgSize};" class="object-contain no-touch">`;
                                                                                        card.onclick = () => {window.location.href = `petinfo.html?type=${encodeURIComponent(pet.AssetType)}`;};} 
-                                                                          else {card.innerHTML = `
-                                                                          <img src="${pet.ImgURL}" class="locked-pet no-touch w-4/5 h-4/5 object-contain">
-                                                                          `;
-                                                                          card.style.cursor = 'default';}
+                                                                          else {const shouldResize = String(pet.GalleryResize).toUpperCase() === 'TRUE';
+                                                                                const imgSize = shouldResize ? '72%' : '80%';
+                                                                                card.innerHTML = `<img src="${pet.ImgURL}" style="width: ${imgSize}; height: ${imgSize};" class="locked-pet no-touch object-contain">`;
+                                                                                card.style.cursor = 'default';}
                                                                           gallery.appendChild(card);});}
 init();
     
