@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   /* =========================================
-   🫵🏻 手勢禁止 NO GESTURE
+   🫵🏻 手勢禁止 DISABLE GESTURE
    ========================================= */
     // 選取及拖動
     document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
