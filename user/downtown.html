@@ -86,7 +86,7 @@
               .price-btn:active {transform: scale(0.95);}
               .price-btn:disabled {background: #e7e5e4; color: #78716c; cursor: not-allowed;}            
               /* 🛒 購物車 SHOPPING CART */
-              #cart-panel {position: fixed; z-index: 5000; top: 70px; right: 40px; width: 280px; max-height: 450px;
+              #cart-panel {position: fixed; z-index: 1000; top: 85px; right: 40px; width: 280px; max-height: 450px;
                            box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 15px; border: 2px solid white;
                            display: none; flex-direction: column;}
               .cart-item {border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -165,7 +165,7 @@
         <!-- 🧸 商品 PRODUCTS -->
         <div class="container w-full max-w-[550px] pt-40 px-8"> <div class="shop-grid" id="shop-grid"></div></div>
         <!-- 🛒 購物車 SHOPPING CART -->
-        <div id="cart-panel z-[5000]" class="glass-panel p-4">
+        <div id="cart-panel" class="glass-panel p-4">
             <h3 class="font-cubic text-slate-600 border-b border-white/50 flex justify-between pb-2 mb-2"><span class="thin-border tracking-wider">購物車</span>
                 <button onclick="toggleCart()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
             </h3>
