@@ -396,6 +396,11 @@
         if (e.cancelable) e.preventDefault();
     },{ passive: false });
 
+  /* =========================================
+   🫵🏻 手勢禁止補充：選取及拖動 Select & Drag
+   ========================================= */
+    document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
+
 </script>
 </body>
 </html>
