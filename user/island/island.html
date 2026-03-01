@@ -300,10 +300,7 @@
             await loadIslandList(); await refreshInventory();
         } catch (err) {
             console.error("載入失敗:", err); showToast("請檢查網路", "error");
-        } finally {
-            const elapsedTime = Date.now() - startTime; const minimumWait = 500; const remainingWait = Math.max(0, minimumWait - elapsedTime);
-            setTimeout(() => {toggleLoading(false);}, remainingWait);
-        }
+        } finally {toggleLoading(false);}
     }
     
     // =========================================
