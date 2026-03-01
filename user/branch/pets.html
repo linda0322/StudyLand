@@ -53,8 +53,7 @@
         /* 🖼️ 圖鑑 GALLERY */
         /* 🔒 未解鎖 LOCKED */
         .locked-pet {filter: brightness(0) opacity(0.2); background: transparent;}
-        .pet-card {position: relative; aspect-ratio: 1/1; background: white; border-radius: 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden;}
-        .question-mark {position: absolute; font-family: "Cubic11", font-size: 2rem; color: white; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
+        .pet-card {position: relative; aspect-ratio: 1/1; background: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden;}
     </style>
 </head>
 <body>
@@ -109,11 +108,11 @@ function renderGallery(petLibrary, ownedPets) {const gallery = document.getEleme
                                                gallery.innerHTML = '';
                                                petLibrary.forEach(pet => {const hasPet = ownedPets.includes(pet.AssetType);
                                                                           const card = document.createElement('div');
-                                                                          card.className = 'bg-white rounded-[2rem] aspect-square flex items-center justify-center relative shadow-sm cursor-pointer overflow-hidden';
+                                                                          card.className = 'bg-white rounded-[20px] aspect-square flex items-center justify-center relative shadow-sm cursor-pointer overflow-hidden';
                                                                           if (hasPet) {card.innerHTML = `<img src="${pet.ImgURL}" class="w-4/5 h-4/5 object-contain no-touch">`;
                                                                                        card.onclick = () => {window.location.href = `petinfo.html?type=${encodeURIComponent(pet.AssetType)}`;};} 
                                                                           else {card.innerHTML = `
-                                                                          <span class="absolute z-10 font-cubic text-white text-2xl thick-border">?</span>
+                                                                          <span class="absolute z-10 font-cubic text-white text-2xl thick-border text-shadow-lg">?</span>
                                                                           <img src="${pet.ImgURL}" class="locked-pet no-touch w-4/5 h-4/5 object-contain">
                                                                           `;
                                                                           card.style.cursor = 'default';}
