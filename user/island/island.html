@@ -23,7 +23,7 @@
               cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
             /* 📲 手機旋轉提示 Orientation Noti */
-            #orientation-noti-landscape-landscape {
+            #orientation-noti-landscape {
               display: none;
               position: fixed;
               inset: 0;
@@ -31,7 +31,7 @@
               background-color: #1dc5fd;
               flex-direction: column; align-items: center; justify-content: center;}
             @media screen and (max-width: 700px) and (orientation: portrait) {
-              #orientation-noti-landscape-landscape {display: flex !important;} #game-stage {display: none;}}
+              #orientation-noti-landscape {display: flex !important;} #game-stage {display: none;}}
             @keyframes phone-landscape {
               0% {transform: rotate(0deg);} 
               30% {transform: rotate(-90deg);} 
