@@ -213,7 +213,7 @@
             const card = document.createElement('div');
             card.className = 'aspect-square bg-white/95 backdrop-blur-sm rounded-[20px] shadow-sm flex items-center justify-center relative overflow-hidden';
             const shouldResize = String(plant.GalleryResize).toUpperCase() === 'TRUE';
-            const imgSize = shouldResize ? '50%' : '75%';
+            const imgSize = shouldResize ? '40%' : '60%';
             if (hasPlant) {
                 card.classList.add('plant-card-active');
                 card.innerHTML = `<img src="${plant.ImgURL}" style="width: ${imgSize}; height: ${imgSize};" class="no-touch object-contain">`;
