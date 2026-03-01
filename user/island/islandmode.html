@@ -120,6 +120,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const previewBtn = document.getElementById('preview-button');
     previewBtn.href = `islanddisplay.html?user=${encodeURIComponent(savedName)}`;});
 
+    // ======================================================
+    // 🫵🏻 手勢禁止補充：選取及拖動 Disable Gesture: Select & Drag
+    // ======================================================
+    document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
+
 </script>
 </body>
 </html>
