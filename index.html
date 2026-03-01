@@ -276,7 +276,7 @@
     }
 
     // =========================================
-    // 📥 登入 LOGIN
+    // 📥 登入 Login
     // =========================================
     
     function resetLoginBtn() {DOM.loginBtn.innerText = "進入遊戲"; DOM.loginBtn.disabled = false;}
@@ -319,7 +319,7 @@
     });
 
     // =========================================
-    // 📤 登出 LOGOUT
+    // 📤 登出 Logout
     // =========================================
     DOM.logoutBtn.addEventListener('click', () => showModal(DOM.logoutModal));
     DOM.confirmLogout.addEventListener('click', () => {
@@ -329,7 +329,7 @@
     });
 
     // =========================================
-    // 🚀 顯示主畫面 SHOW MAIN
+    // 🚀 載入 Load
     // =========================================    
     function showMainPage(name, permissions, notionWeb, notionPW) {
         DOM.userDisplayName.textContent = name; 
@@ -378,7 +378,7 @@
     DOM.pwInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') DOM.pwConfirm.click(); });
 
     // ==============================================
-    // 🫵🏻 手勢禁止補充：捲動控制 DISABLE GESTURE: SCROLL
+    // 🫵🏻 手勢禁止補充：捲動控制 Disable Gesture: Scroll
     // ==============================================    
     let startY = 0; 
     document.addEventListener('touchstart', (e) => {
