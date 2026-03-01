@@ -219,12 +219,14 @@
                               'island_2': { name: '海洋', bg: 'https://lh3.googleusercontent.com/d/1Roy33fghpQHRS1IZk2N_MxYbY1-YKVRu', color: 'bg-sky-200', icon: '🌊' },
                               'island_3': { name: '沙漠', bg: 'https://lh3.googleusercontent.com/d/15OIBcHpnpYkV1hH4pk64qJjEon-y1plq', color: 'bg-amber-200', icon: '🏜️' },
                              };
-
+            
         // ✅ 加載 LOADING INFO
         async function initApp() {if (!username) {window.location.href = '../../index.html'; return;}
                                   const startTime = Date.now();
+                                  toggleLoading(true, "飛行中", "☁️");
                                   const config = islandConfig[currentIslandId] || islandConfig['island_1'];
-                                  document.getElementById('background-img').src = config.bg; document.getElementById('island-title').innerText = config.name;
+                                  document.getElementById('background-img').src = config.bg; 
+                                  document.getElementById('island-title').innerText = config.name;
                                   try {const [libResp, posResp] = await Promise.all([fetch(`${SCRIPT_URL}?action=getLibrary`), fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&islandId=${currentIslandId}&action=getPositions`)]);
                                        assetLibrary = await libResp.json();
                                        const savedItems = await posResp.json(); const itemsLayer = document.getElementById('items-layer');
@@ -235,8 +237,10 @@
                                                                                                    else {console.error("找不到資產定義:", assetType, "。請檢查 Asset_Library 的名稱是否一致。");}});}
                                        await loadIslandList(); await refreshInventory();} 
                                   catch (err) {console.error("載入失敗:", err); showToast("請檢查網路", "error");} 
-                                  finally {const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
-                                           setTimeout(() => {toggleLoading(true, "飛行中", "☁️");}, remainingWait);}}
+                                  finally {const elapsedTime = Date.now() - startTime; 
+                                           const minimumWait = 1000; 
+                                           const remainingWait = Math.max(0, minimumWait - elapsedTime);
+                                           setTimeout(() => {toggleLoading(false);}, remainingWait);}}
         
         // 🤟🏻 功能 FUNCTION：👆🏻 製造拖曳物件 CREATE DRAGGABLE ITEMS
         function createDraggableElement(id, type, left = 50, top = 50) {const config = assetLibrary[type]; const div = document.createElement('div');
