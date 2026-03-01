@@ -49,7 +49,7 @@
         /* 🔒 未解鎖 LOCKED */
         .locked-pet {filter: brightness(0) opacity(0.2); background: transparent;}
         .pet-card {position: relative; aspect-ratio: 1/1; background: rgba(255, 255, 255, 0.9); border-radius: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden;
-                  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
+                   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
     </style>
 </head>
 <body>
@@ -103,7 +103,7 @@ async function init() {const savedName = localStorage.getItem('studyLandUser');
     
 function renderGallery(petLibrary, ownedPets) {const gallery = document.getElementById('pet-gallery'); gallery.innerHTML = '';
                                                petLibrary.forEach(pet => {const hasPet = ownedPets.includes(pet.AssetType); const card = document.createElement('div');
-                                                                          card.className = 'bg-white rounded-[20px] aspect-square flex items-center justify-center relative shadow-sm overflow-hidden';
+                                                                          card.className = 'bg-white/90 rounded-[20px] aspect-square flex items-center justify-center relative shadow-sm overflow-hidden';
                                                                           if (hasPet) {const shouldResize = String(pet.GalleryResize).toUpperCase() === 'TRUE';
                                                                                        const imgSize = shouldResize ? '50%' : '75%';
                                                                                        card.innerHTML = `<img src="${pet.ImgURL}" style="width: ${imgSize}; height: ${imgSize};" class="object-contain no-touch">`;
