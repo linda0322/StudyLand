@@ -103,7 +103,7 @@ async function init() {const savedName = localStorage.getItem('studyLandUser');
     
 function renderGallery(petLibrary, ownedPets) {const gallery = document.getElementById('pet-gallery'); gallery.innerHTML = '';
                                                petLibrary.forEach(pet => {const hasPet = ownedPets.includes(pet.AssetType); const card = document.createElement('div');
-                                                                          card.className = 'bg-white/90 rounded-[20px] aspect-square flex items-center justify-center relative shadow-sm overflow-hidden';
+                                                                          card.className = 'bg-white/90 backdrop-blur-sm rounded-[20px] aspect-square flex items-center justify-center relative shadow-sm overflow-hidden';
                                                                           if (hasPet) {card.classList.add('pet-card-active');
                                                                                        const shouldResize = String(pet.GalleryResize).toUpperCase() === 'TRUE';
                                                                                        const imgSize = shouldResize ? '50%' : '75%';
