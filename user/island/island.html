@@ -251,6 +251,14 @@
     };
 
     // =========================================
+    // 💬 彈窗管理 Modal Management
+    // =========================================
+    const showModal = (modal) => modal.classList.remove('hidden');
+    const hideModal = (modal) => modal.classList.add('hidden');    
+    [DOM.storageModal, DOM.islandMenu, DOM.confirmModal].forEach(modal => {modal.addEventListener('click', (e) => {
+        if (e.target === modal) {if (modal === DOM.confirmModal) {closeConfirm();} else {hideModal(modal);}}});});
+    
+    // =========================================
     // 🏞️ 島嶼背景 Island Background
     // =========================================    
     const islandConfig = {'island_1': { name: '草地', bg: 'https://lh3.googleusercontent.com/d/1j_GFfezO8NNHnF1M-q7euOdDHOdtP8vF', color: 'bg-lime-200', icon: '🌳' },
@@ -369,14 +377,13 @@
     // =========================================        
     function toggleStorage() {
         if (DOM.storageModal.classList.contains('hidden')) {
-            DOM.storageModal.classList.remove('hidden'); 
+            showModal(DOM.storageModal);
             if (userInventory.length === 0) {refreshInventory();} 
             else {const activeTab = document.querySelector('.tab-active')?.innerText.trim() || '全部'; renderInventoryItems(activeTab);}
         } else {
-            DOM.storageModal.classList.add('hidden');
+            hideModal(DOM.storageModal);
         }
     }
-    DOM.storageModal.addEventListener('click', (e) => {if (e.target === DOM.storageModal) {DOM.storageModal.classList.add('hidden');}});
         // =========================================
         // 🔢 庫存 Inventory
         // =========================================       
@@ -433,8 +440,7 @@
     // =========================================
     // 🏝️ 島嶼 Island
     // =========================================        
-    function toggleIslandMenu() { DOM.islandMenu.classList.toggle('hidden'); }
-    DOM.islandMenu.addEventListener('click', (e) => {if (e.target === DOM.islandMenu) {DOM.islandMenu.classList.add('hidden');}});
+    function toggleIslandMenu() {if (DOM.islandMenu.classList.contains('hidden')) {showModal(DOM.islandMenu);} else {hideModal(DOM.islandMenu);}}
     async function loadIslandList() {
         try {
             const response = await fetch(`${SCRIPT_URL}?user=${encodeURIComponent(username)}&action=getIslands`);
@@ -485,24 +491,14 @@
     // =========================================
     // ✅ 確認 Confirm
     // =========================================   
-    function closeConfirm() {
-        DOM.confirmModal.classList.add('hidden'); 
-        if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl);currentReturningEl = null;}
-    }
-    
-    function openConfirm(title, onConfirm) {
-        DOM.confirmTitle.innerText = title; 
-        DOM.confirmBtn.onclick = () => {onConfirm(); DOM.confirmModal.classList.add('hidden'); currentReturningEl = null;}; 
-        DOM.confirmModal.classList.remove('hidden');
-    }
+    function closeConfirm() {hideModal(DOM.confirmModal); if (currentReturningEl && currentReturningEl.parentNode) {bindDraggable(currentReturningEl); currentReturningEl = null;}}
+    function openConfirm(title, onConfirm) {DOM.confirmTitle.innerText = title; DOM.confirmBtn.onclick = () => {onConfirm(); hideModal(DOM.confirmModal); currentReturningEl = null;}; 
+                                            showModal(DOM.confirmModal);}
     function handleSave() {openConfirm("儲存進度", () => {saveData();});}
     function handleReload() {openConfirm("重新載入", () => {location.reload();});}
     function handlePreview() {openConfirm("切換至預覽模式", () => {window.location.href = `islanddisplay.html?user=${encodeURIComponent(username)}`;});}
     function handleHome() {openConfirm("返回主頁", () => {window.location.href = '../../index.html';});}
     function handleNPC() {openConfirm("探訪 NPC", () => {window.location.href = 'islanddisplay.html?user=Testing';});}
-    // ❌ 關閉彈窗 Close Modal
-    DOM.confirmModal.addEventListener('click', (e) => {if (e.target === DOM.confirmModal) {DOM.confirmModal.classList.add('hidden');}});
-
     // =========================================
     // 🍞 通知 Toast
     // =========================================   
