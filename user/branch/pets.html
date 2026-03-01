@@ -32,6 +32,9 @@
             .font-cubic {font-family: 'Cubic11', sans-serif;}
             .thin-border {-webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
             .thick-border {-webkit-text-stroke: 1px currentColor; paint-order: stroke fill;}
+            /* 🐶 加載遮罩 LOADING OVERLAY */
+            #loading-overlay {z-index: 6000; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease;}
+            #loading-overlay.fade-out {opacity: 0; visibility: hidden;}
 
         /* 🐕 動畫 ANIMATION */
             /* 🤖 NPC FLOAT */
@@ -55,6 +58,8 @@
     </style>
 </head>
 <body>
+    <!-- 🐶 加載遮罩 LOADING OVERLAY -->
+    <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">🐕</div><div id="loading-text" class="font-cubic text-white text-xl thick-border tracking-widest">移動中</div></div>
     <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
 
     <main id="main-content" class="container flex flex-col items-center mx-auto px-8 py-8">
@@ -83,14 +88,22 @@
 // 🌎 GAS
 const GAS_URL = "https://script.google.com/macros/s/AKfycbymZ2elTy3RmtNja5W92-A6AMVirujU-j9MxJUTW8yjxis6UhKzJ7-IO8lq23CSwpcf/exec";
 
+// 🐶 加載遮罩 LOADING OVERLAY
+function toggleLoading(show, text) {const overlay = document.getElementById('loading-overlay'); const textEl = document.getElementById('loading-text');
+                                        if (!overlay) return;
+                                        if (show) {overlay.style.display = 'flex'; overlay.classList.remove('fade-out'); if (textEl) textEl.innerText = text || "散步中";} 
+                                        else {overlay.style.display = 'none'; overlay.classList.add('fade-out'); setTimeout(() => {overlay.style.display = 'none';}, 500);}}
+window.onload = init;
+
 async function init() {const savedName = localStorage.getItem('studyLandUser');
                        if (!savedName) {window.location.href = 'index.html'; return;}
                        document.getElementById('user-display-name').textContent = savedName;
+                       toggleLoading(true, "散步中");
                        try {const response = await fetch(`${GAS_URL}?username=${encodeURIComponent(savedName)}`);
                             const data = await response.json();      
                             renderGallery(data.library, data.owned);} 
                        catch (error) {console.error("載入失敗:", error);
-                                      document.getElementById('pet-gallery').innerHTML = "<p class='font-cubic text-white text-center col-span-full tracking-wide'>載入失敗，請檢查網路。</p>";}}
+                                      document.getElementById('pet-gallery').innerHTML = "<p class='font-cubic text-white text-center col-span-full tracking-wide'>載入失敗，請檢查網路。</p>";} toggleLoading(false); }
     
 function renderGallery(petLibrary, ownedPets) {const gallery = document.getElementById('pet-gallery');
                                                gallery.innerHTML = '';
