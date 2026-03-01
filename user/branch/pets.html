@@ -112,7 +112,6 @@ function renderGallery(petLibrary, ownedPets) {const gallery = document.getEleme
                                                                           if (hasPet) {card.innerHTML = `<img src="${pet.ImgURL}" class="w-4/5 h-4/5 object-contain no-touch">`;
                                                                                        card.onclick = () => {window.location.href = `petinfo.html?type=${encodeURIComponent(pet.AssetType)}`;};} 
                                                                           else {card.innerHTML = `
-                                                                          <span class="absolute z-10 font-cubic text-white text-2xl thick-border text-shadow-lg">?</span>
                                                                           <img src="${pet.ImgURL}" class="locked-pet no-touch w-4/5 h-4/5 object-contain">
                                                                           `;
                                                                           card.style.cursor = 'default';}
