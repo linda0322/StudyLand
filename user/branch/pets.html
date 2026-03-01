@@ -229,6 +229,7 @@
     // =========================================
     // 🫵🏻 手勢禁止 DISABLE GESTURE
     // =========================================
+    
     function setupGesturePrevention() {
         // 選取及拖動
         document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
@@ -241,6 +242,14 @@
         document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) {e.preventDefault();}
                                                       lastTouch = now;}, false);
     }
+    
+    // 📱 手機旋轉提示 ORIENTATION NOTI
+    function handleOrientationChange() {const warning = document.getElementById('orientation-noti'); 
+                                        const isLandscape = window.innerWidth > window.innerHeight; const isMobileOrTablet = window.innerWidth < 1024;
+                                        if (isLandscape && isMobileOrTablet) {warning.style.setProperty('display', 'flex', 'important');} else {warning.style.display = 'none';}}
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    handleOrientationChange();
 
     // =========================================
     // 🚀 啟動 LAUNCH
