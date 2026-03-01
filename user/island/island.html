@@ -264,6 +264,7 @@
     async function initApp() {
         if (!username) {window.location.href = '../../index.html'; return;}
         const startTime = Date.now();
+        toggleLoading(true, "飛行中", "☁️");
         const config = islandConfig[currentIslandId] || islandConfig['island_1'];
         DOM.bgImg.src = config.bg; 
         DOM.islandTitle.innerText = config.name;
@@ -287,8 +288,8 @@
         } catch (err) {
             console.error("載入失敗:", err); showToast("請檢查網路", "error");
         } finally {
-            const elapsedTime = Date.now() - startTime; const minimumWait = 1000; const remainingWait = Math.max(0, minimumWait - elapsedTime);
-            setTimeout(() => {toggleLoading(true, "飛行中", "☁️");}, remainingWait);
+            const elapsedTime = Date.now() - startTime; const minimumWait = 500; const remainingWait = Math.max(0, minimumWait - elapsedTime);
+            setTimeout(() => {toggleLoading(false);}, remainingWait);
         }
     }
     
