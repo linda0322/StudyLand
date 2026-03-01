@@ -11,12 +11,13 @@
     <style>
         /* 🏞️ 整體版面 OVERALL */
         body {height: 100vh; width: 100vw; position: fixed; margin: 0; 
-              overflow: hidden; overscroll-behavior: none; -webkit-user-select: none; touch-action: pan-y;
+              overflow: hidden; -webkit-user-select: none;
               font-family: 'Noto Sans TC', sans-serif;
               background-color: #1dc5fd;            
               cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' style='font-size:36px'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>☁️</text></svg>") 25 25, auto;
         }
-        #main-content {height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch;}
+        #main-content {height: 100vh; display: flex; flex-direction: column; overflow: hidden;}
+        nav {flex-shrink: 0;}
           /* 🏙️ 背景層 BACKGROUND LAYER */
             .bg-layer {position: fixed; inset: 0; z-index: -1;
                        background-size: cover; background-position: center center; background-repeat: no-repeat;
@@ -54,6 +55,8 @@
         /* 🔒 未解鎖 LOCKED */
         .locked-pet {filter: brightness(0) opacity(0.2); background: transparent;}
         .pet-card {position: relative; aspect-ratio: 1/1; background: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden;}
+        #pet-gallery {flex-grow: 1; overflow-y: auto; padding-bottom: 100px; -ms-overflow-style: none; scrollbar-width: none;}
+        #pet-gallery::-webkit-scrollbar {display: none;}
     </style>
 </head>
 <body>
@@ -61,7 +64,7 @@
     <div id="loading-overlay"><div class="animate-bounce text-3xl mb-4">🐕</div><div id="loading-text" class="font-cubic text-white text-xl thick-border tracking-widest">移動中</div></div>
     <!-- 🏙️ 背景圖 BACKGROUND --><div class="bg-layer"></div>
 
-    <main id="main-content" class="container flex flex-col items-center mx-auto px-8 py-8">
+    <main id="main-content" class="container mx-auto px-8 py-8">
         <!-- 🔝 頂欄 TOP --><nav class="w-full max-w-[550px] flex justify-between mb-8">
             <!-- ⬅️ 左邊群組 TOP LEFT-->
             <div class="flex items-center gap-2">
@@ -80,8 +83,7 @@
         </nav>
         <!-- 🖼️ 圖鑑 GALLERY -->
         <div id="pet-gallery" class="no-touch w-full max-w-[550px] grid grid-cols-3 md:grid-cols-4 gap-4 p-6"></div>
-    </main>
-
+    </main> 
 <script>
 
 // 🌎 GAS
