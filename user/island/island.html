@@ -360,7 +360,7 @@
         function handleSave() {openConfirm("儲存進度", () => {saveData();});}
         function handleReload() {openConfirm("重新載入", () => {location.reload();});}
         function handlePreview() {openConfirm("切換至預覽模式", () => {window.location.href = `islanddisplay.html?user=${encodeURIComponent(username)}`;});}
-        function handleHome() {openConfirm("返回主頁", () => {window.location.href = '../index.html';});}
+        function handleHome() {openConfirm("返回主頁", () => {window.location.href = '../../index.html';});}
         function handleNPC() {openConfirm("探訪 NPC", () => {window.location.href = 'islanddisplay.html?user=Testing';});}
             // ❌ 關閉彈窗 CLOSE MODAL
             confirmModal.addEventListener('click', (e) => {if (e.target === confirmModal) {confirmModal.classList.add('hidden');}});
