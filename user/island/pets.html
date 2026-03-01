@@ -54,16 +54,17 @@
             }
         
         /* =========================================
-           🖼️ 圖鑑 GALLERY
+           🖼️ 圖鑑 Gallery
            ========================================= */
        
-        /* 🔒 未解鎖寵物 LOCKED PETS */
+        /* 🔒 未解鎖寵物 Locked Pets */
         .locked-pet {
             filter: brightness(0) opacity(0.2);
             background: transparent;
             cursor: default !important;
         }
-        /* 🐶 寵物 PETS */
+        
+        /* 🐶 寵物 Pets */
         .pet-card {
             position: relative;
             aspect-ratio: 1/1;
@@ -75,8 +76,8 @@
         .pet-card-active {cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
    
     </style>
-    
 </head>
+    
 <body>
     <!-- 🏙️ 背景 Background -->
     <div class="bg-layer"></div>
@@ -86,7 +87,7 @@
         <div class="animate-phone-portrait w-20 h-20 flex items-center justify-center mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
         </div>
-        <h2 class="font-cubic text-white text-xl thick-border tracking-wider">旋轉螢幕以進入島嶼</h2>
+        <h2 class="font-cubic text-white text-xl thick-border tracking-wider">旋轉螢幕以繼續瀏覽</h2>
     </div>
 
     <!-- 🔝 頂欄 Top Bar -->
@@ -119,7 +120,7 @@
     const GAS_URL = "https://script.google.com/macros/s/AKfycbymZ2elTy3RmtNja5W92-A6AMVirujU-j9MxJUTW8yjxis6UhKzJ7-IO8lq23CSwpcf/exec";
 
     // =========================================
-    // 🔄 載入資料及渲染 RENDER
+    // 🔄 渲染 Render
     // =========================================
     async function init() {
         const savedName = localStorage.getItem('userID');
@@ -138,7 +139,9 @@
         }
     }
 
-    // 🖼️ 圖鑑 GALLERY
+    // =========================================
+    // 🖼️ 圖鑑 Gallery
+    // =========================================    
     function renderGallery(petLibrary, ownedPets) {
         const gallery = document.getElementById('pet-gallery');
         gallery.innerHTML = '';
