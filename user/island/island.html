@@ -71,7 +71,6 @@
        /* =========================================
           🧸 物件 Items
           ========================================= */         
-         
          #items-layer {position: absolute; inset: 0; z-index: 10; pointer-events: none;}
          .draggable {position: absolute; z-index: 10;
                      cursor: move; pointer-events: auto; touch-action: none; -webkit-touch-callout: none; -webkit-user-drag: none; -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none;
@@ -79,7 +78,9 @@
          .draggable img {width: 100%; height: auto; display: block;
                          pointer-events: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; -webkit-user-drag: none;}
          
-         /* 🏠 倉庫 Storage */
+       /* =========================================
+          🏠 倉庫 Storage
+          ========================================= */    
          #storage-modal {overscroll-behavior: none;}
          .tab-active {background: #38C0FF !important; color: white !important;}
          .tab-btn:hover {z-index: 10; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: scale(0.95);}
@@ -92,10 +93,14 @@
                                                .inventory-item {border-radius: 20px; padding: 15px 10px;}
                                                .inventory-item img {width: 70px; height: 70px;}
                                                .inventory-item span {font-size: 12px;}}
-         /* 🏝️ 島嶼 Island */
+
+       /* =========================================
+          🏝️ 島嶼 Island
+          ========================================= */         
          #island-buttons-container a, #island-buttons-container img {-webkit-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; touch-action: none; -webkit-touch-callout: none;}
          @media screen and (max-width: 932px) {#island-title {font-size: 18px; margin-left: 2px;}
                                                button[onclick="toggleIslandMenu()"] {height: 50px; padding-left: 16px; padding-right: 16px;}}
+   
     </style>
 </head>
 
