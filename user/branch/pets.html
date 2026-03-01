@@ -95,7 +95,7 @@ function renderGallery() {const gallery = document.getElementById('pet-gallery')
                                                   const card = document.createElement('div');
                                                   card.className = 'pet-card shadow-sm cursor-pointer';
                                                   if (hasPet) {card.innerHTML = `<img src="${pet.ImgURL}" class="w-4/5 h-4/5 object-contain">`;
-                                                               card.onclick = () => window.location.href = `pet-detail.html?type=${pet.AssetType}`;} 
+                                                               card.onclick = () => window.location.href = `petinfo.html?type=${pet.AssetType}`;} 
                                                   else {card.innerHTML = `
                                                   <span class="question-mark">?</span>
                                                   <img src="${pet.ImgURL}" class="w-4/5 h-4/5 object-contain locked-pet">
