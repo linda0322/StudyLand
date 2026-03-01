@@ -74,44 +74,47 @@
                 </a>
             </div>
         </nav>
-        <-- 🖼️ 圖鑑 GALLERY -->
+        <!-- 🖼️ 圖鑑 GALLERY -->
         <div id="pet-gallery" class="no-touch w-full max-w-[550px] grid grid-cols-3 md:grid-cols-5 gap-4 p-6"></div>
     </main>
 
 <script>
-const SCRIPT_URL = '(GAS)';
-const assetLibrary = [...]; // 透過 GAS 從 Google Sheet 讀取
-const userPermissions = [...]; // 透過 GAS 從 Google Sheet 讀取
 
-// 🔄 載入網頁 LOADING PAGE
-window.addEventListener('DOMContentLoaded', () => {const savedName = localStorage.getItem('studyLandUser'); if (!savedName) {window.location.href = 'index.html'; return;}
-                                                   document.getElementById('user-display-name').textContent = savedName;});
+// 🌎 GAS
+const GAS_URL = "你的_GAS_網頁應用程式網址";
 
-        
-// 🖼️ 圖鑑 GALLERY
-function renderGallery() {const gallery = document.getElementById('pet-gallery');
-                          const allPets = assetLibrary.filter(item => item.Category === '寵物');
-                          allPets.forEach(pet => {const hasPet = userPermissions.some(up => up.AssetType === pet.AssetType);
-                                                  const card = document.createElement('div');
-                                                  card.className = 'pet-card shadow-sm cursor-pointer';
-                                                  if (hasPet) {card.innerHTML = `<img src="${pet.ImgURL}" class="w-4/5 h-4/5 object-contain">`;
-                                                               card.onclick = () => window.location.href = `petinfo.html?type=${pet.AssetType}`;} 
-                                                  else {card.innerHTML = `
-                                                  <span class="question-mark">?</span>
-                                                  <img src="${pet.ImgURL}" class="w-4/5 h-4/5 object-contain locked-pet">
-                                                  `;
-                                                  card.style.cursor = 'not-allowed';}
-                                                  gallery.appendChild(card);});
-                         }
-
-        // 🫵🏻 手勢禁止 DISABLE GESTURE
-          // 選取及拖動
-          document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
-          // 多指縮放
-          const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) {if (e.cancelable) e.preventDefault();}};
-          ['touchstart', 'wheel', 'gesturestart'].forEach(type => {document.addEventListener(type, preventZoom, {passive: false});});
-          // 雙擊縮放
-          let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
-    </script>
+async function init() {const savedName = localStorage.getItem('studyLandUser');
+                       if (!savedName) {window.location.href = 'index.html'; return;}
+                       document.getElementById('user-display-name').textContent = savedName;
+                       try {const response = await fetch(`${GAS_URL}?username=${encodeURIComponent(savedName)}`);
+                            const data = await response.json();      
+                            renderGallery(data.library, data.owned);} 
+                       catch (error) {console.error("載入失敗:", error);
+                                      document.getElementById('pet-gallery').innerHTML = "<p class='font-cubic text-white text-center col-span-full tracking-wide'>載入失敗，請檢查網路。</p>";}}
+    
+function renderGallery(petLibrary, ownedPets) {const gallery = document.getElementById('pet-gallery');
+                                               gallery.innerHTML = '';
+                                               petLibrary.forEach(pet => {const hasPet = ownedPets.includes(pet.AssetType);
+                                                                          const card = document.createElement('div');
+                                                                          card.className = 'bg-white rounded-[2rem] aspect-square flex items-center justify-center relative shadow-sm cursor-pointer overflow-hidden';
+                                                                          if (hasPet) {card.innerHTML = `<img src="${pet.ImgURL}" class="w-4/5 h-4/5 object-contain no-touch">`;
+                                                                                       card.onclick = () => {window.location.href = `petinfo.html?type=${encodeURIComponent(pet.AssetType)}`;};} 
+                                                                          else {card.innerHTML = `
+                                                                          <span class="absolute text-gray-400 text-3xl font-bold z-10">?</span>
+                                                                          <img src="${pet.ImgURL}" class="no-touch w-4/5 h-4/5 object-contain grayscale opacity-30">
+                                                                          `;
+                                                                          card.style.cursor = 'default';}
+                                                                          gallery.appendChild(card);});}
+init();
+    
+// 🫵🏻 手勢禁止 DISABLE GESTURE
+    // 選取及拖動
+    document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
+    // 多指縮放
+    const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) {if (e.cancelable) e.preventDefault();}};
+    ['touchstart', 'wheel', 'gesturestart'].forEach(type => {document.addEventListener(type, preventZoom, {passive: false});});
+    // 雙擊縮放
+    let lastTouch = 0; document.addEventListener('touchend', (e) => {const now = Date.now(); if (now - lastTouch <= 300) e.preventDefault(); lastTouch = now;}, false);
+</script>
 </body>
 </html>
