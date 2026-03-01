@@ -20,6 +20,19 @@
   }
 
 /* =========================================
+   🚘 加載遮罩 LOADING OVERLAY
+   ========================================= */
+#loading-overlay {
+    z-index: 6000; 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); 
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+#loading-overlay.fade-out {opacity: 0; visibility: hidden;}
+
+/* =========================================
    📲 手機旋轉提示 ORIENTATION NOTI
    ========================================= */
   /* ↕️ 橫轉直 PORTRAIT */
