@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =========================================
    🫵🏻 手勢禁止 Disable Gesture
    ========================================= */
-    // 選取及拖動
-    document.querySelectorAll('.no-touch').forEach(el => {el.addEventListener('dragstart', (e) => e.preventDefault());});
     // 多指縮放
     const preventZoom = (e) => {if (e.touches?.length > 1 || (e.type === 'wheel' && (e.ctrlKey || e.metaKey))) {if (e.cancelable) e.preventDefault();}};
     document.addEventListener('wheel', preventZoom, {passive: false});
