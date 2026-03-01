@@ -52,7 +52,7 @@
 
         /* 🖼️ 圖鑑 GALLERY */
         /* 🔒 未解鎖 LOCKED */
-        .locked-pet {filter: brightness(0) opacity(0.3);}
+        .locked-pet {filter: brightness(0) opacity(0.2); background: transparent;}
         .pet-card {position: relative; aspect-ratio: 1/1; background: white; border-radius: 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden;}
         .question-mark {position: absolute; font-family: "Cubic11", font-size: 2rem; color: white; -webkit-text-stroke: 0.5px currentColor; paint-order: stroke fill;}
     </style>
@@ -114,7 +114,7 @@ function renderGallery(petLibrary, ownedPets) {const gallery = document.getEleme
                                                                                        card.onclick = () => {window.location.href = `petinfo.html?type=${encodeURIComponent(pet.AssetType)}`;};} 
                                                                           else {card.innerHTML = `
                                                                           <span class="absolute text-gray-400 text-3xl font-bold z-10">?</span>
-                                                                          <img src="${pet.ImgURL}" class="no-touch w-4/5 h-4/5 object-contain grayscale opacity-30">
+                                                                          <img src="${pet.ImgURL}" class="locked-pet no-touch w-4/5 h-4/5 object-contain">
                                                                           `;
                                                                           card.style.cursor = 'default';}
                                                                           gallery.appendChild(card);});}
