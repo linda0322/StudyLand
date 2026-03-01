@@ -92,9 +92,19 @@
    🔘 按鈕 BUTTONS
    ========================================= */
 
-a, button, [role="button"] {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;}
-
-@media (hover: hover) {
-  a:hover, button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
-  a:active, button:active, [role="button"]:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
+   a, button, [role="button"] {
+     cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='55' height='55' style='font-size:40px; opacity:0.8'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'>🌥️</text></svg>") 27 27, pointer !important;
+   }
+   
+   @media (hover: hover) {a:hover, button:hover, [role="button"]:hover {background-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 1);}}
+   
+   a:active, button:active, [role="button"]:active {background-color: rgba(255, 255, 255, 0.3); color: rgba(255, 255, 255, 1); transform: scale(0.95);}
+   
+   .normal-button {background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);
+                   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+                   border-radius: 9999px;
+                   color: #64748b;
+                   padding: 0.5rem;
+   }
+   .normal-button-svg {stroke: currentColor; stroke-width: 2.5px; stroke-linecap: round; stroke-linejoin: round; fill: none;
+                       width: 18px; height: 18px;}
