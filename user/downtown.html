@@ -196,9 +196,9 @@
     errorOverlay.addEventListener('click', (e) => {if (e.target === errorOverlay) {errorOverlay.classList.add('hidden');}});
 
     // ✅ 加載 LOADING INFO
-    async function init() {const savedName = localStorage.getItem('studyLandUser');
+    async function init() {const savedName = localStorage.getItem('userID');
                            console.log("當前儲存的名字:", savedName);
-                           if (!savedName) {window.location.href = 'index.html'; return;} USERNAME = savedName;
+                           if (!savedName) {window.location.href = '../index.html'; return;} USERNAME = savedName;
                            toggleLoading(true, "移動中");
                            try {const res = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(USERNAME)}`); const data = await res.json();
                                 console.log("1. GAS 回傳的完整數據:", data); console.log("2. 餘額數據:", data.userBalance); console.log("3. 產品列表:", data.productList);
